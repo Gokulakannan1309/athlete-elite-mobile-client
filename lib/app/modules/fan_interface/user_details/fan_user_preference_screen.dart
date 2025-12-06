@@ -18,7 +18,8 @@ class FanUserPreferenceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AthleteSettingsController());
+    final controller = Get.find<AthleteSettingsController>();
+
     return AppScaffold(
       backgroundColor: AppColors.screenBackgroundColor,
       body: SafeArea(
@@ -43,7 +44,7 @@ class FanUserPreferenceScreen extends StatelessWidget {
                       ),
                       Center(
                         child: Text(
-                          'PREFERENCES',
+                          'PREFERENCES'.tr.toUpperCase(),
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -59,13 +60,13 @@ class FanUserPreferenceScreen extends StatelessWidget {
                   _PreferenceTile(
                     title: "Push Notifications",
                     value: controller.fanPushNotifications,
-                    onChanged: controller.toggleStudioPushNotifications,
+                    onChanged: controller.togglePushNotifications,
                   ),
                   SizedBox(height: 10.h),
                   _PreferenceTile(
                     title: "Comment Response",
                     value: controller.fanCommentResponse,
-                    onChanged: controller.toggleCheersAndComments,
+                    onChanged: controller.toggleCommentNotifications,
                   ),
                   SizedBox(height: 10.h),
                   GestureDetector(
@@ -85,8 +86,8 @@ class FanUserPreferenceScreen extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
-                            child:
-                                AppText("Preferred Languages", fontSize: 16.sp),
+                            child: AppText("Preferred Languages".tr,
+                                fontSize: 16.sp),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9, bottom: 9),
@@ -157,9 +158,8 @@ class _PreferenceTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: AppText(title, fontSize: 16.sp),
+              child: AppText(title.tr, fontSize: 16.sp),
             ),
-            // ✅ Switch with GetX reactive binding
             Obx(
               () => Switch(
                 value: value.value,

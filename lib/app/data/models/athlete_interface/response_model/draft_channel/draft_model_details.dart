@@ -1,72 +1,3 @@
-// import 'package:freezed_annotation/freezed_annotation.dart';
-// part 'draft_model_details.freezed.dart';
-// part 'draft_model_details.g.dart';
-
-// @freezed
-// class DraftResponse with _$DraftResponse {
-//   const factory DraftResponse({
-//     required List<DraftItem> items,
-//     required DraftMeta meta,
-//   }) = _DraftResponse;
-
-//   factory DraftResponse.fromJson(Map<String, dynamic> json) =>
-//       _$DraftResponseFromJson(json);
-// }
-
-// @freezed
-// class DraftMeta with _$DraftMeta {
-//   const factory DraftMeta({
-//     required int total,
-//     required int page,
-//     required int limit,
-//     required int totalPages,
-//   }) = _DraftMeta;
-
-//   factory DraftMeta.fromJson(Map<String, dynamic> json) =>
-//       _$DraftMetaFromJson(json);
-// }
-
-// @freezed
-// class DraftItem with _$DraftItem {
-//   const factory DraftItem({
-//     required String id,
-//     String? title,
-//     String? caption,
-//     String? mediaUrl,
-//     String? thumbnailUrl,
-//     String? category,
-//     String? brand,
-//     String? status,
-//     String? type,
-//     bool? isArchived,
-//     String? scheduledAt,
-//     String? publishedAt,
-//     int? likesCount,
-//     int? commentsCount,
-//     String? createdAt,
-//     String? updatedAt,
-//     required List<DraftMedia> media,
-//   }) = _DraftItem;
-
-//   factory DraftItem.fromJson(Map<String, dynamic> json) =>
-//       _$DraftItemFromJson(json);
-// }
-
-// @freezed
-// class DraftMedia with _$DraftMedia {
-//   const factory DraftMedia({
-//     required String id,
-//     required String url,
-//     String? thumbnailUrl,
-//     int? duration,
-//     int? sortOrder,
-//     String? createdAt,
-//     String? updatedAt,
-//   }) = _DraftMedia;
-
-//   factory DraftMedia.fromJson(Map<String, dynamic> json) =>
-//       _$DraftMediaFromJson(json);
-// }
 
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -101,7 +32,7 @@ class DraftData with _$DraftData {
 @freezed
 class DraftCategoryItem with _$DraftCategoryItem {
   const factory DraftCategoryItem({
-    required String categoryId,
+     String? categoryId,
     String? categoryName,
     required List<DraftChannel> channels,
   }) = _DraftCategoryItem;
@@ -126,6 +57,7 @@ class DraftChannel with _$DraftChannel {
     String? scheduledAt,
     String? publishedAt,
     int? likesCount,
+    bool? isLiked,
     int? commentsCount,
     String? createdAt,
     String? updatedAt,

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/sub_screens/add_intro_edit_screen.dart';
-import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
 import 'package:athlete_elite/app/widgets/AppText.dart';
 import 'package:athlete_elite/app/widgets/common_reusable_widgets.dart';
@@ -17,7 +16,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../widgets/common_back_button.dart' show CommonBackButton;
 import '../athelete_landing_controller.dart';
 
-class FavSportsMomentSelectScreen extends GetView<AtheleteLandingController> {
+class FavSportsMomentSelectScreen extends GetWidget<AtheleteLandingController> {
   final bool isAthlete;
   const FavSportsMomentSelectScreen({super.key, required this.isAthlete});
 
@@ -45,7 +44,7 @@ class FavSportsMomentSelectScreen extends GetView<AtheleteLandingController> {
                       ),
                       Center(
                         child: Text(
-                          "UPLOAD VIDEO",
+                          "UPLOAD VIDEO".tr.toUpperCase(),
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -73,7 +72,7 @@ class FavSportsMomentSelectScreen extends GetView<AtheleteLandingController> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: AppText(
-                                "Upload your Fave sports Moment",
+                                "Upload your Fave sports Moment".tr,
                                 color: AppColors.lightWhite,
                               ),
                             ),
@@ -86,12 +85,12 @@ class FavSportsMomentSelectScreen extends GetView<AtheleteLandingController> {
                           if (controller.favMomentThumbnail.value.isEmpty) {
                             controller.uploadFavSportMoment().then((value) {
                               if (value) {
-                                CustomToast.show("Video uploaded successfully");
+                                CustomToast.show("Video uploaded successfully".tr);
                               }
                             });
                           } else {
                             CustomToast.show(
-                                "Video already uploaded. Please remove and try again");
+                                "Video already uploaded. Please remove and try again".tr);
                           }
                         },
                         child: Container(
@@ -183,7 +182,7 @@ class FavSportsMomentSelectScreen extends GetView<AtheleteLandingController> {
                                     CustomDialogbox.showConfirmation(
                                         title: "Delete Video",
                                         message:
-                                            "Are you sure you want to delete this video?",
+                                            "Are you sure you want to delete this video?".tr,
                                         onConfirm: () {
                                           if (hasPickedVideo) {
                                             displayThumbnail = null;

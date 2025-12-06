@@ -75,6 +75,7 @@ _$ContentItemImpl _$$ContentItemImplFromJson(Map<String, dynamic> json) =>
           ? null
           : BrandData.fromJson(json['brand'] as Map<String, dynamic>),
       likesCount: (json['likesCount'] as num).toInt(),
+      isLiked: json['isLiked'] as bool,
       commentsCount: (json['commentsCount'] as num).toInt(),
     );
 
@@ -90,6 +91,7 @@ Map<String, dynamic> _$$ContentItemImplToJson(_$ContentItemImpl instance) =>
       'athlete': instance.athlete,
       'brand': instance.brand,
       'likesCount': instance.likesCount,
+      'isLiked': instance.isLiked,
       'commentsCount': instance.commentsCount,
     };
 

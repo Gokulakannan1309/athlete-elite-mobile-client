@@ -480,6 +480,7 @@ mixin _$LatestChannelItem {
   BrandRes? get brand => throw _privateConstructorUsedError;
   int get likesCount => throw _privateConstructorUsedError;
   int get commentsCount => throw _privateConstructorUsedError;
+  bool get isLiked => throw _privateConstructorUsedError;
 
   /// Serializes this LatestChannelItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -509,7 +510,8 @@ abstract class $LatestChannelItemCopyWith<$Res> {
       CategoryRes? category,
       BrandRes? brand,
       int likesCount,
-      int commentsCount});
+      int commentsCount,
+      bool isLiked});
 
   $AthleteResCopyWith<$Res> get athlete;
   $CategoryResCopyWith<$Res>? get category;
@@ -543,6 +545,7 @@ class _$LatestChannelItemCopyWithImpl<$Res, $Val extends LatestChannelItem>
     Object? brand = freezed,
     Object? likesCount = null,
     Object? commentsCount = null,
+    Object? isLiked = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -593,6 +596,10 @@ class _$LatestChannelItemCopyWithImpl<$Res, $Val extends LatestChannelItem>
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -655,7 +662,8 @@ abstract class _$$LatestChannelItemImplCopyWith<$Res>
       CategoryRes? category,
       BrandRes? brand,
       int likesCount,
-      int commentsCount});
+      int commentsCount,
+      bool isLiked});
 
   @override
   $AthleteResCopyWith<$Res> get athlete;
@@ -690,6 +698,7 @@ class __$$LatestChannelItemImplCopyWithImpl<$Res>
     Object? brand = freezed,
     Object? likesCount = null,
     Object? commentsCount = null,
+    Object? isLiked = null,
   }) {
     return _then(_$LatestChannelItemImpl(
       id: null == id
@@ -740,6 +749,10 @@ class __$$LatestChannelItemImplCopyWithImpl<$Res>
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -759,7 +772,8 @@ class _$LatestChannelItemImpl implements _LatestChannelItem {
       required this.category,
       required this.brand,
       required this.likesCount,
-      required this.commentsCount});
+      required this.commentsCount,
+      required this.isLiked});
 
   factory _$LatestChannelItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$LatestChannelItemImplFromJson(json);
@@ -789,10 +803,12 @@ class _$LatestChannelItemImpl implements _LatestChannelItem {
   final int likesCount;
   @override
   final int commentsCount;
+  @override
+  final bool isLiked;
 
   @override
   String toString() {
-    return 'LatestChannelItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, mediaType: $mediaType, publishedAt: $publishedAt, athlete: $athlete, category: $category, brand: $brand, likesCount: $likesCount, commentsCount: $commentsCount)';
+    return 'LatestChannelItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, mediaType: $mediaType, publishedAt: $publishedAt, athlete: $athlete, category: $category, brand: $brand, likesCount: $likesCount, commentsCount: $commentsCount, isLiked: $isLiked)';
   }
 
   @override
@@ -818,7 +834,8 @@ class _$LatestChannelItemImpl implements _LatestChannelItem {
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
             (identical(other.commentsCount, commentsCount) ||
-                other.commentsCount == commentsCount));
+                other.commentsCount == commentsCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -836,7 +853,8 @@ class _$LatestChannelItemImpl implements _LatestChannelItem {
       category,
       brand,
       likesCount,
-      commentsCount);
+      commentsCount,
+      isLiked);
 
   /// Create a copy of LatestChannelItem
   /// with the given fields replaced by the non-null parameter values.
@@ -868,7 +886,8 @@ abstract class _LatestChannelItem implements LatestChannelItem {
       required final CategoryRes? category,
       required final BrandRes? brand,
       required final int likesCount,
-      required final int commentsCount}) = _$LatestChannelItemImpl;
+      required final int commentsCount,
+      required final bool isLiked}) = _$LatestChannelItemImpl;
 
   factory _LatestChannelItem.fromJson(Map<String, dynamic> json) =
       _$LatestChannelItemImpl.fromJson;
@@ -897,6 +916,8 @@ abstract class _LatestChannelItem implements LatestChannelItem {
   int get likesCount;
   @override
   int get commentsCount;
+  @override
+  bool get isLiked;
 
   /// Create a copy of LatestChannelItem
   /// with the given fields replaced by the non-null parameter values.

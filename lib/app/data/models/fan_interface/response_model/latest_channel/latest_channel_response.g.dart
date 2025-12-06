@@ -62,6 +62,7 @@ _$LatestChannelItemImpl _$$LatestChannelItemImplFromJson(
           : BrandRes.fromJson(json['brand'] as Map<String, dynamic>),
       likesCount: (json['likesCount'] as num).toInt(),
       commentsCount: (json['commentsCount'] as num).toInt(),
+      isLiked: json['isLiked'] as bool,
     );
 
 Map<String, dynamic> _$$LatestChannelItemImplToJson(
@@ -79,6 +80,7 @@ Map<String, dynamic> _$$LatestChannelItemImplToJson(
       'brand': instance.brand,
       'likesCount': instance.likesCount,
       'commentsCount': instance.commentsCount,
+      'isLiked': instance.isLiked,
     };
 
 _$AthleteResImpl _$$AthleteResImplFromJson(Map<String, dynamic> json) =>

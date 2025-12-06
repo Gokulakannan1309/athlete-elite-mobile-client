@@ -40,6 +40,7 @@ class CommentItem with _$CommentItem {
     required int repliesCount,
     required int reactionsCount,
     required Map<String, dynamic> reactionCounts,
+    required bool isReacted,
     String? userReaction,
     required List<CommentItem> replies,
   }) = _CommentItem;

@@ -9,11 +9,11 @@ import 'package:athlete_elite/app/data/models/fan_interface/response_model/fan_a
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/infinite_content_response/infinite_content_response.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/latest_channel/latest_channel_response.dart'
     show LatestChannelItem, LatestChannelResponse;
+import 'package:athlete_elite/app/data/models/fan_interface/response_model/notification_model/fan_notification_response_model.dart'
+    hide Athlete;
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/story_view/latest_story_response.dart'
     hide Athlete;
 import 'package:athlete_elite/app/data/providers/api_provider.dart';
-import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart'
-    hide BrandItem;
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -382,9 +382,6 @@ class FanLandingController extends GetxController {
   ApiProvider apiProvider =
       Get.isRegistered() ? Get.find<ApiProvider>() : Get.put(ApiProvider());
 
-  /// ----------------------------
-  /// MAIN MODELS
-  /// ----------------------------
   RxList<Athlete> searchedAthletes = <Athlete>[].obs;
   RxList<ContentItem> allChannelCategory = <ContentItem>[].obs;
   Rxn<FanUserModel> fanUser = Rxn<FanUserModel>();
@@ -403,7 +400,9 @@ class FanLandingController extends GetxController {
   /// PAGINATION STATES
   /// ----------------------------
   var hasMoreLatestChannel = true.obs;
+  var hasMoreFanNotifications = true.obs;
   var isLoadingMoreLatestChannel = false.obs;
+  var isLoadingMoreFanNotifications = false.obs;
 
   var hasMoreCategoriesList = true.obs;
   var isLoadingMoreCategoriesList = false.obs;
@@ -421,6 +420,7 @@ class FanLandingController extends GetxController {
   /// PAGE COUNTERS
   /// ----------------------------
   final latestChannelContentPage = 1.obs;
+  final fanNotificationsPage = 1.obs;
   final categoryListContentPage = 1.obs;
   final athleteStoriesViewContentPage = 1.obs;
 
@@ -434,6 +434,7 @@ class FanLandingController extends GetxController {
   /// LOADING STATES
   /// ----------------------------
   final getAllLatestChannelLoading = false.obs;
+  final getAllFanNotificationsLoading = false.obs;
   final getAllCategoryListLoading = false.obs;
   final getAllSportsCategoriesLoading = false.obs;
   final getAllSportsBrandsLoading = false.obs;
@@ -455,6 +456,8 @@ class FanLandingController extends GetxController {
   /// SCROLL CONTROLLERS
   /// ----------------------------
   late ScrollController latestChannelScrollController;
+  late ScrollController fanNotificationsScrollController;
+  late ScrollController trackedAthletesScrollController;
   late ScrollController categoriesListScrollController;
   late ScrollController searchedAthletesScrollController;
   late ScrollController athleteStoriesViewScrollController;
@@ -492,11 +495,12 @@ class FanLandingController extends GetxController {
     getAllAthleteStoriesView();
     getAllLatestContent();
     getAllCategoryContent();
-    // getAllChannelInfiniteScroll();
+    getAllChannelInfiniteScroll();
     getSportVision();
     getSportAllTrackAthletes();
     getAllSportsBrands();
     getAllSportsCategories();
+    fetchFanNotifications();
 
     debounce(
       searchQuery,
@@ -511,12 +515,41 @@ class FanLandingController extends GetxController {
       time: const Duration(milliseconds: 300),
     );
 
+    ever(selectedOuterTab, (tab) {
+      if (tab == 0) {
+        getLoggedInUser();
+        getFanDetails();
+        getAllAthleteStoriesView();
+        getAllLatestContent();
+        getAllCategoryContent();
+      }
+
+      // if (tab == 1) {
+      //   getAllChannelInfiniteScroll();
+      // }
+      if (tab == 2) {
+        getSportVision();
+        getSportAllTrackAthletes();
+        getAllSportsBrands();
+        getAllSportsCategories();
+      }
+      if (tab == 3) {
+        fetchFanNotifications();
+      }
+    });
+
     /// Scroll listeners
     searchedAthletesScrollController = ScrollController()
       ..addListener(paginationListenerForAllSearchedAthletes);
 
     latestChannelScrollController = ScrollController()
       ..addListener(paginationListenerForAllLatestContent);
+
+    fanNotificationsScrollController = ScrollController()
+      ..addListener(paginationListenerForAllFanNotifications);
+
+    trackedAthletesScrollController = ScrollController()
+      ..addListener(paginationListenerForAllTrackedAthletes);
 
     categoriesListScrollController = ScrollController()
       ..addListener(paginationListenerForAllCategoriesList);
@@ -1139,49 +1172,149 @@ class FanLandingController extends GetxController {
     }
   }
 
-  // RxList<Category> categories = <Category>[].obs;
-  // RxList<Brand> brands = <Brand>[].obs;
+  Future<void> markAllNotificationsAsRead(String id) async {
+    try {
+      final result = await apiProvider.post(
+        ApiEndpoints.markAllNotificationsAsRead,
+        {
+          'userId': fanUser.value?.id ?? '',
+          'ids': [id],
+        },
+      );
 
-  var notifications = <NotificationItem>[].obs;
+      AppLogger.d("Mark Notifications As Read: ${result.data}");
 
-  void loadNotifications() {
-    notifications.assignAll([
-      NotificationItem(
-        profileImage: "assets/images/profile.png",
-        username: "@Nick Kyrgios",
-        message: "Nick just shared a new story — be the first to check it out!",
-      ),
-      NotificationItem(
-        profileImage: "assets/images/profile.png",
-        username: "@john_deo",
-        message:
-            "Anik reacted to your comment on Nick’s post — see what they liked!",
-      ),
-      NotificationItem(
-        profileImage: "assets/images/profile.png",
-        username: "@Nick Kyrgios",
-        message: "Nick just shared a new story — be the first to check it out!",
-      ),
-      NotificationItem(
-        profileImage: "assets/images/profile.png",
-        username: "@john_deo",
-        message:
-            "Anik reacted to your comment on Nick’s post — see what they liked!",
-      ),
-    ]);
+      if (result.success) {
+        // Refresh notifications
+        notifications.clear();
+        await fetchFanNotifications(isRefresh: true);
+      }
+    } catch (e) {
+      AppLogger.e("Mark All Notifications Error: $e");
+    }
   }
-}
 
-class NotificationItem {
-  final String profileImage;
-  final String username;
-  final String message;
+  final getTrackedAllAthletesByFanLoading = false.obs;
+  final getTrackAllAthletesByFanLimit = 10;
+  final getTrackAllAthletesByFanPage = 1.obs;
+  var trackedAthletes = <Athlete>[].obs;
+  final isLoadingMoreTrackedAthletes = false.obs;
+  final hasMoreTrackedAthletesByFan = true.obs;
 
-  NotificationItem({
-    required this.profileImage,
-    required this.username,
-    required this.message,
-  });
+  Future<void> getTrackedAllAthletesByFan({bool isRefresh = true}) async {
+    if (isRefresh) {
+      getTrackAllAthletesByFanPage.value = 1;
+      trackedAthletes.clear();
+      hasMoreTrackedAthletesByFan.value = true;
+    }
+    final result = await apiProvider.get(
+      ApiEndpoints.getTrackedAthletesByFan,
+      query: {
+        'userId': fanUser.value?.id ?? '',
+        'page': getTrackAllAthletesByFanPage.value.toString(),
+        'limit': getTrackAllAthletesByFanLimit.toString()
+      },
+      isLoading: getTrackedAllAthletesByFanLoading,
+    );
+
+    if (result.success) {
+      final data = AthletesResponse.fromJson(result.data);
+      AppLogger.d("Tracked Athletes: ${data.data.athletes}");
+      trackedAthletes.addAll(data.data.athletes ?? []);
+      if (data.data.pagination!.page >= data.data.pagination!.totalPages) {
+        hasMoreTrackedAthletesByFan.value = false;
+      }
+    } else {
+      AppLogger.d("Error fetching tracked athletes: ${result.error}");
+    }
+  }
+
+  void paginationListenerForAllTrackedAthletes() {
+    if (trackedAthletesScrollController.position.pixels >=
+            trackedAthletesScrollController.position.maxScrollExtent - 200 &&
+        !isLoadingMoreTrackedAthletes.value &&
+        hasMoreTrackedAthletesByFan.value) {
+      loadMoreAllTrackedAthletes();
+    }
+  }
+
+  Future<void> loadMoreAllTrackedAthletes() async {
+    if (isLoadingMoreTrackedAthletes.value) return;
+
+    isLoadingMoreTrackedAthletes.value = true;
+    getTrackAllAthletesByFanPage.value += 1;
+    await getTrackedAllAthletesByFan(isRefresh: false);
+    isLoadingMoreTrackedAthletes.value = false;
+  }
+
+  var notifications = <FanNotificationItem>[].obs;
+  final isFanNotificationsLoading = false.obs;
+
+  Future<void> fetchFanNotifications({bool isRefresh = true}) async {
+    try {
+      if (isRefresh) {
+        fanNotificationsPage.value = 1;
+        notifications.clear();
+        hasMoreFanNotifications.value = true;
+      }
+
+      final result = await apiProvider.get(
+        ApiEndpoints.getFanNotifications,
+        query: {
+          'userId': fanUser.value?.id ?? '',
+          'limit': '10',
+          'page': fanNotificationsPage.value.toString(),
+          'filter': 'all'
+        },
+        isLoading: isFanNotificationsLoading,
+      );
+
+      AppLogger.d("Fan Notifications: ${result.data}");
+
+      if (result.success) {
+        final data = FanNotificationResponseModel.fromJson(result.data);
+
+        final list = data.data.notifications;
+
+        notifications.value = list.map((item) {
+          return FanNotificationItem(
+            id: item.id,
+            type: item.type,
+            message: item.message,
+            isRead: item.isRead,
+            createdAt: item.createdAt,
+            actor: item.actor,
+            athlete: item.athlete,
+            channel: item.channel,
+          );
+        }).toList();
+
+        if (data.data.pagination!.page >= data.data.pagination!.totalPages) {
+          hasMoreFanNotifications.value = false;
+        }
+      }
+    } catch (e) {
+      AppLogger.e("Notification Error: $e");
+    }
+  }
+
+  void paginationListenerForAllFanNotifications() {
+    if (fanNotificationsScrollController.position.pixels >=
+            fanNotificationsScrollController.position.maxScrollExtent - 200 &&
+        !isLoadingMoreFanNotifications.value &&
+        hasMoreFanNotifications.value) {
+      loadMoreAllFanNotifications();
+    }
+  }
+
+  Future<void> loadMoreAllFanNotifications() async {
+    if (isLoadingMoreFanNotifications.value) return;
+
+    isLoadingMoreFanNotifications.value = true;
+    fanNotificationsPage.value += 1;
+    await fetchFanNotifications(isRefresh: false);
+    isLoadingMoreFanNotifications.value = false;
+  }
 }
 
 class UserDetailsResponse {
@@ -1214,6 +1347,21 @@ class UserDetailsResponse {
       'data': data?.toJson(),
     };
   }
+
+  // ⭐ Add this
+  UserDetailsResponse copyWith({
+    bool? status,
+    int? statusCode,
+    String? message,
+    UserData? data,
+  }) {
+    return UserDetailsResponse(
+      status: status ?? this.status,
+      statusCode: statusCode ?? this.statusCode,
+      message: message ?? this.message,
+      data: data ?? this.data,
+    );
+  }
 }
 
 class UserData {
@@ -1238,6 +1386,17 @@ class UserData {
       'user': user?.toJson(),
     };
   }
+
+  // ⭐ Correct copyWith() implementation
+  UserData copyWith({
+    int? totalTrackedAthletes,
+    AppUser? user,
+  }) {
+    return UserData(
+      totalTrackedAthletes: totalTrackedAthletes ?? this.totalTrackedAthletes,
+      user: user ?? this.user,
+    );
+  }
 }
 
 class AppUser {
@@ -1251,7 +1410,7 @@ class AppUser {
   final String? gender;
   final String? country;
   final String? username;
-  final String? profilePicture;
+  String? profilePicture;
 
   AppUser({
     this.id,
@@ -1297,5 +1456,34 @@ class AppUser {
       'username': username,
       'profilePicture': profilePicture,
     };
+  }
+
+  // ⭐ Correct copyWith for all fields
+  AppUser copyWith({
+    String? id,
+    String? email,
+    String? mobile,
+    String? dateOfBirth,
+    String? name,
+    String? role,
+    int? age,
+    String? gender,
+    String? country,
+    String? username,
+    String? profilePicture,
+  }) {
+    return AppUser(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      mobile: mobile ?? this.mobile,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      age: age ?? this.age,
+      gender: gender ?? this.gender,
+      country: country ?? this.country,
+      username: username ?? this.username,
+      profilePicture: profilePicture ?? this.profilePicture,
+    );
   }
 }

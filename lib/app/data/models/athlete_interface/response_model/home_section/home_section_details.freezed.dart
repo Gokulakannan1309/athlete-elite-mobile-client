@@ -243,11 +243,12 @@ HomeData _$HomeDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$HomeData {
-  String get profilePicture => throw _privateConstructorUsedError;
+  String? get profilePicture => throw _privateConstructorUsedError;
+  String? get bio => throw _privateConstructorUsedError;
   int get fansCount => throw _privateConstructorUsedError;
   String get heading => throw _privateConstructorUsedError;
   IntroData? get intro => throw _privateConstructorUsedError;
-  List<String> get aboutMe => throw _privateConstructorUsedError;
+  List<String>? get aboutMe => throw _privateConstructorUsedError;
   List<FavSportsMoment> get favSportsMoments =>
       throw _privateConstructorUsedError;
   FindAthlete? get findAthlete => throw _privateConstructorUsedError;
@@ -268,11 +269,12 @@ abstract class $HomeDataCopyWith<$Res> {
       _$HomeDataCopyWithImpl<$Res, HomeData>;
   @useResult
   $Res call(
-      {String profilePicture,
+      {String? profilePicture,
+      String? bio,
       int fansCount,
       String heading,
       IntroData? intro,
-      List<String> aboutMe,
+      List<String>? aboutMe,
       List<FavSportsMoment> favSportsMoments,
       FindAthlete? findAthlete});
 
@@ -295,19 +297,24 @@ class _$HomeDataCopyWithImpl<$Res, $Val extends HomeData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? profilePicture = null,
+    Object? profilePicture = freezed,
+    Object? bio = freezed,
     Object? fansCount = null,
     Object? heading = null,
     Object? intro = freezed,
-    Object? aboutMe = null,
+    Object? aboutMe = freezed,
     Object? favSportsMoments = null,
     Object? findAthlete = freezed,
   }) {
     return _then(_value.copyWith(
-      profilePicture: null == profilePicture
+      profilePicture: freezed == profilePicture
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      bio: freezed == bio
+          ? _value.bio
+          : bio // ignore: cast_nullable_to_non_nullable
+              as String?,
       fansCount: null == fansCount
           ? _value.fansCount
           : fansCount // ignore: cast_nullable_to_non_nullable
@@ -320,10 +327,10 @@ class _$HomeDataCopyWithImpl<$Res, $Val extends HomeData>
           ? _value.intro
           : intro // ignore: cast_nullable_to_non_nullable
               as IntroData?,
-      aboutMe: null == aboutMe
+      aboutMe: freezed == aboutMe
           ? _value.aboutMe
           : aboutMe // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String>?,
       favSportsMoments: null == favSportsMoments
           ? _value.favSportsMoments
           : favSportsMoments // ignore: cast_nullable_to_non_nullable
@@ -373,11 +380,12 @@ abstract class _$$HomeDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String profilePicture,
+      {String? profilePicture,
+      String? bio,
       int fansCount,
       String heading,
       IntroData? intro,
-      List<String> aboutMe,
+      List<String>? aboutMe,
       List<FavSportsMoment> favSportsMoments,
       FindAthlete? findAthlete});
 
@@ -400,19 +408,24 @@ class __$$HomeDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? profilePicture = null,
+    Object? profilePicture = freezed,
+    Object? bio = freezed,
     Object? fansCount = null,
     Object? heading = null,
     Object? intro = freezed,
-    Object? aboutMe = null,
+    Object? aboutMe = freezed,
     Object? favSportsMoments = null,
     Object? findAthlete = freezed,
   }) {
     return _then(_$HomeDataImpl(
-      profilePicture: null == profilePicture
+      profilePicture: freezed == profilePicture
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      bio: freezed == bio
+          ? _value.bio
+          : bio // ignore: cast_nullable_to_non_nullable
+              as String?,
       fansCount: null == fansCount
           ? _value.fansCount
           : fansCount // ignore: cast_nullable_to_non_nullable
@@ -425,10 +438,10 @@ class __$$HomeDataImplCopyWithImpl<$Res>
           ? _value.intro
           : intro // ignore: cast_nullable_to_non_nullable
               as IntroData?,
-      aboutMe: null == aboutMe
+      aboutMe: freezed == aboutMe
           ? _value._aboutMe
           : aboutMe // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String>?,
       favSportsMoments: null == favSportsMoments
           ? _value._favSportsMoments
           : favSportsMoments // ignore: cast_nullable_to_non_nullable
@@ -445,11 +458,12 @@ class __$$HomeDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$HomeDataImpl implements _HomeData {
   const _$HomeDataImpl(
-      {required this.profilePicture,
+      {this.profilePicture,
+      this.bio,
       required this.fansCount,
       required this.heading,
       this.intro,
-      required final List<String> aboutMe,
+      final List<String>? aboutMe,
       required final List<FavSportsMoment> favSportsMoments,
       this.findAthlete})
       : _aboutMe = aboutMe,
@@ -459,19 +473,23 @@ class _$HomeDataImpl implements _HomeData {
       _$$HomeDataImplFromJson(json);
 
   @override
-  final String profilePicture;
+  final String? profilePicture;
+  @override
+  final String? bio;
   @override
   final int fansCount;
   @override
   final String heading;
   @override
   final IntroData? intro;
-  final List<String> _aboutMe;
+  final List<String>? _aboutMe;
   @override
-  List<String> get aboutMe {
+  List<String>? get aboutMe {
+    final value = _aboutMe;
+    if (value == null) return null;
     if (_aboutMe is EqualUnmodifiableListView) return _aboutMe;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_aboutMe);
+    return EqualUnmodifiableListView(value);
   }
 
   final List<FavSportsMoment> _favSportsMoments;
@@ -488,7 +506,7 @@ class _$HomeDataImpl implements _HomeData {
 
   @override
   String toString() {
-    return 'HomeData(profilePicture: $profilePicture, fansCount: $fansCount, heading: $heading, intro: $intro, aboutMe: $aboutMe, favSportsMoments: $favSportsMoments, findAthlete: $findAthlete)';
+    return 'HomeData(profilePicture: $profilePicture, bio: $bio, fansCount: $fansCount, heading: $heading, intro: $intro, aboutMe: $aboutMe, favSportsMoments: $favSportsMoments, findAthlete: $findAthlete)';
   }
 
   @override
@@ -498,6 +516,7 @@ class _$HomeDataImpl implements _HomeData {
             other is _$HomeDataImpl &&
             (identical(other.profilePicture, profilePicture) ||
                 other.profilePicture == profilePicture) &&
+            (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.fansCount, fansCount) ||
                 other.fansCount == fansCount) &&
             (identical(other.heading, heading) || other.heading == heading) &&
@@ -514,6 +533,7 @@ class _$HomeDataImpl implements _HomeData {
   int get hashCode => Object.hash(
       runtimeType,
       profilePicture,
+      bio,
       fansCount,
       heading,
       intro,
@@ -539,11 +559,12 @@ class _$HomeDataImpl implements _HomeData {
 
 abstract class _HomeData implements HomeData {
   const factory _HomeData(
-      {required final String profilePicture,
+      {final String? profilePicture,
+      final String? bio,
       required final int fansCount,
       required final String heading,
       final IntroData? intro,
-      required final List<String> aboutMe,
+      final List<String>? aboutMe,
       required final List<FavSportsMoment> favSportsMoments,
       final FindAthlete? findAthlete}) = _$HomeDataImpl;
 
@@ -551,7 +572,9 @@ abstract class _HomeData implements HomeData {
       _$HomeDataImpl.fromJson;
 
   @override
-  String get profilePicture;
+  String? get profilePicture;
+  @override
+  String? get bio;
   @override
   int get fansCount;
   @override
@@ -559,7 +582,7 @@ abstract class _HomeData implements HomeData {
   @override
   IntroData? get intro;
   @override
-  List<String> get aboutMe;
+  List<String>? get aboutMe;
   @override
   List<FavSportsMoment> get favSportsMoments;
   @override
@@ -579,24 +602,25 @@ IntroData _$IntroDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$IntroData {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   String? get caption => throw _privateConstructorUsedError;
-  String get mediaUrl => throw _privateConstructorUsedError;
+  String? get mediaUrl => throw _privateConstructorUsedError;
   String? get thumbnailUrl => throw _privateConstructorUsedError;
-  String get categoryId => throw _privateConstructorUsedError;
+  String? get categoryId => throw _privateConstructorUsedError;
   String? get categoryName => throw _privateConstructorUsedError;
   String? get brandId => throw _privateConstructorUsedError;
   String? get brandName => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  bool get isArchived => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  bool? get isArchived => throw _privateConstructorUsedError;
   String? get scheduledAt => throw _privateConstructorUsedError;
   String? get publishedAt => throw _privateConstructorUsedError;
-  int get likesCount => throw _privateConstructorUsedError;
-  int get commentsCount => throw _privateConstructorUsedError;
-  String get createdAt => throw _privateConstructorUsedError;
-  String get updatedAt => throw _privateConstructorUsedError;
+  int? get likesCount => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
+  int? get commentsCount => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+  String? get updatedAt => throw _privateConstructorUsedError;
   List<MediaItem> get media => throw _privateConstructorUsedError;
 
   /// Serializes this IntroData to a JSON map.
@@ -615,24 +639,25 @@ abstract class $IntroDataCopyWith<$Res> {
       _$IntroDataCopyWithImpl<$Res, IntroData>;
   @useResult
   $Res call(
-      {String id,
-      String title,
+      {String? id,
+      String? title,
       String? caption,
-      String mediaUrl,
+      String? mediaUrl,
       String? thumbnailUrl,
-      String categoryId,
+      String? categoryId,
       String? categoryName,
       String? brandId,
       String? brandName,
-      String status,
-      String type,
-      bool isArchived,
+      String? status,
+      String? type,
+      bool? isArchived,
       String? scheduledAt,
       String? publishedAt,
-      int likesCount,
-      int commentsCount,
-      String createdAt,
-      String updatedAt,
+      int? likesCount,
+      bool? isLiked,
+      int? commentsCount,
+      String? createdAt,
+      String? updatedAt,
       List<MediaItem> media});
 }
 
@@ -651,51 +676,52 @@ class _$IntroDataCopyWithImpl<$Res, $Val extends IntroData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? caption = freezed,
-    Object? mediaUrl = null,
+    Object? mediaUrl = freezed,
     Object? thumbnailUrl = freezed,
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? brandId = freezed,
     Object? brandName = freezed,
-    Object? status = null,
-    Object? type = null,
-    Object? isArchived = null,
+    Object? status = freezed,
+    Object? type = freezed,
+    Object? isArchived = freezed,
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
-    Object? likesCount = null,
-    Object? commentsCount = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? likesCount = freezed,
+    Object? isLiked = freezed,
+    Object? commentsCount = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? media = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
+              as String?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       caption: freezed == caption
           ? _value.caption
           : caption // ignore: cast_nullable_to_non_nullable
               as String?,
-      mediaUrl: null == mediaUrl
+      mediaUrl: freezed == mediaUrl
           ? _value.mediaUrl
           : mediaUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       thumbnailUrl: freezed == thumbnailUrl
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -708,18 +734,18 @@ class _$IntroDataCopyWithImpl<$Res, $Val extends IntroData>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      isArchived: null == isArchived
+              as String?,
+      isArchived: freezed == isArchived
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       scheduledAt: freezed == scheduledAt
           ? _value.scheduledAt
           : scheduledAt // ignore: cast_nullable_to_non_nullable
@@ -728,22 +754,26 @@ class _$IntroDataCopyWithImpl<$Res, $Val extends IntroData>
           ? _value.publishedAt
           : publishedAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      likesCount: null == likesCount
+      likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      commentsCount: null == commentsCount
+              as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
+              as int?,
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
+              as String?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       media: null == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
@@ -761,24 +791,25 @@ abstract class _$$IntroDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String title,
+      {String? id,
+      String? title,
       String? caption,
-      String mediaUrl,
+      String? mediaUrl,
       String? thumbnailUrl,
-      String categoryId,
+      String? categoryId,
       String? categoryName,
       String? brandId,
       String? brandName,
-      String status,
-      String type,
-      bool isArchived,
+      String? status,
+      String? type,
+      bool? isArchived,
       String? scheduledAt,
       String? publishedAt,
-      int likesCount,
-      int commentsCount,
-      String createdAt,
-      String updatedAt,
+      int? likesCount,
+      bool? isLiked,
+      int? commentsCount,
+      String? createdAt,
+      String? updatedAt,
       List<MediaItem> media});
 }
 
@@ -795,51 +826,52 @@ class __$$IntroDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? caption = freezed,
-    Object? mediaUrl = null,
+    Object? mediaUrl = freezed,
     Object? thumbnailUrl = freezed,
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? brandId = freezed,
     Object? brandName = freezed,
-    Object? status = null,
-    Object? type = null,
-    Object? isArchived = null,
+    Object? status = freezed,
+    Object? type = freezed,
+    Object? isArchived = freezed,
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
-    Object? likesCount = null,
-    Object? commentsCount = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? likesCount = freezed,
+    Object? isLiked = freezed,
+    Object? commentsCount = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? media = null,
   }) {
     return _then(_$IntroDataImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
+              as String?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       caption: freezed == caption
           ? _value.caption
           : caption // ignore: cast_nullable_to_non_nullable
               as String?,
-      mediaUrl: null == mediaUrl
+      mediaUrl: freezed == mediaUrl
           ? _value.mediaUrl
           : mediaUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       thumbnailUrl: freezed == thumbnailUrl
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -852,18 +884,18 @@ class __$$IntroDataImplCopyWithImpl<$Res>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      isArchived: null == isArchived
+              as String?,
+      isArchived: freezed == isArchived
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       scheduledAt: freezed == scheduledAt
           ? _value.scheduledAt
           : scheduledAt // ignore: cast_nullable_to_non_nullable
@@ -872,22 +904,26 @@ class __$$IntroDataImplCopyWithImpl<$Res>
           ? _value.publishedAt
           : publishedAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      likesCount: null == likesCount
+      likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      commentsCount: null == commentsCount
+              as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
+              as int?,
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
+              as String?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       media: null == media
           ? _value._media
           : media // ignore: cast_nullable_to_non_nullable
@@ -900,24 +936,25 @@ class __$$IntroDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$IntroDataImpl implements _IntroData {
   const _$IntroDataImpl(
-      {required this.id,
-      required this.title,
+      {this.id,
+      this.title,
       this.caption,
-      required this.mediaUrl,
+      this.mediaUrl,
       this.thumbnailUrl,
-      required this.categoryId,
+      this.categoryId,
       this.categoryName,
       this.brandId,
       this.brandName,
-      required this.status,
-      required this.type,
-      required this.isArchived,
+      this.status,
+      this.type,
+      this.isArchived,
       this.scheduledAt,
       this.publishedAt,
-      required this.likesCount,
-      required this.commentsCount,
-      required this.createdAt,
-      required this.updatedAt,
+      this.likesCount,
+      this.isLiked,
+      this.commentsCount,
+      this.createdAt,
+      this.updatedAt,
       required final List<MediaItem> media})
       : _media = media;
 
@@ -925,17 +962,17 @@ class _$IntroDataImpl implements _IntroData {
       _$$IntroDataImplFromJson(json);
 
   @override
-  final String id;
+  final String? id;
   @override
-  final String title;
+  final String? title;
   @override
   final String? caption;
   @override
-  final String mediaUrl;
+  final String? mediaUrl;
   @override
   final String? thumbnailUrl;
   @override
-  final String categoryId;
+  final String? categoryId;
   @override
   final String? categoryName;
   @override
@@ -943,23 +980,25 @@ class _$IntroDataImpl implements _IntroData {
   @override
   final String? brandName;
   @override
-  final String status;
+  final String? status;
   @override
-  final String type;
+  final String? type;
   @override
-  final bool isArchived;
+  final bool? isArchived;
   @override
   final String? scheduledAt;
   @override
   final String? publishedAt;
   @override
-  final int likesCount;
+  final int? likesCount;
   @override
-  final int commentsCount;
+  final bool? isLiked;
   @override
-  final String createdAt;
+  final int? commentsCount;
   @override
-  final String updatedAt;
+  final String? createdAt;
+  @override
+  final String? updatedAt;
   final List<MediaItem> _media;
   @override
   List<MediaItem> get media {
@@ -970,7 +1009,7 @@ class _$IntroDataImpl implements _IntroData {
 
   @override
   String toString() {
-    return 'IntroData(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
+    return 'IntroData(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
   }
 
   @override
@@ -1002,6 +1041,7 @@ class _$IntroDataImpl implements _IntroData {
                 other.publishedAt == publishedAt) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -1030,6 +1070,7 @@ class _$IntroDataImpl implements _IntroData {
         scheduledAt,
         publishedAt,
         likesCount,
+        isLiked,
         commentsCount,
         createdAt,
         updatedAt,
@@ -1054,41 +1095,42 @@ class _$IntroDataImpl implements _IntroData {
 
 abstract class _IntroData implements IntroData {
   const factory _IntroData(
-      {required final String id,
-      required final String title,
+      {final String? id,
+      final String? title,
       final String? caption,
-      required final String mediaUrl,
+      final String? mediaUrl,
       final String? thumbnailUrl,
-      required final String categoryId,
+      final String? categoryId,
       final String? categoryName,
       final String? brandId,
       final String? brandName,
-      required final String status,
-      required final String type,
-      required final bool isArchived,
+      final String? status,
+      final String? type,
+      final bool? isArchived,
       final String? scheduledAt,
       final String? publishedAt,
-      required final int likesCount,
-      required final int commentsCount,
-      required final String createdAt,
-      required final String updatedAt,
+      final int? likesCount,
+      final bool? isLiked,
+      final int? commentsCount,
+      final String? createdAt,
+      final String? updatedAt,
       required final List<MediaItem> media}) = _$IntroDataImpl;
 
   factory _IntroData.fromJson(Map<String, dynamic> json) =
       _$IntroDataImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
-  String get title;
+  String? get title;
   @override
   String? get caption;
   @override
-  String get mediaUrl;
+  String? get mediaUrl;
   @override
   String? get thumbnailUrl;
   @override
-  String get categoryId;
+  String? get categoryId;
   @override
   String? get categoryName;
   @override
@@ -1096,23 +1138,25 @@ abstract class _IntroData implements IntroData {
   @override
   String? get brandName;
   @override
-  String get status;
+  String? get status;
   @override
-  String get type;
+  String? get type;
   @override
-  bool get isArchived;
+  bool? get isArchived;
   @override
   String? get scheduledAt;
   @override
   String? get publishedAt;
   @override
-  int get likesCount;
+  int? get likesCount;
   @override
-  int get commentsCount;
+  bool? get isLiked;
   @override
-  String get createdAt;
+  int? get commentsCount;
   @override
-  String get updatedAt;
+  String? get createdAt;
+  @override
+  String? get updatedAt;
   @override
   List<MediaItem> get media;
 
@@ -1130,24 +1174,25 @@ FavSportsMoment _$FavSportsMomentFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FavSportsMoment {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
   String? get caption => throw _privateConstructorUsedError;
-  String get mediaUrl => throw _privateConstructorUsedError;
+  String? get mediaUrl => throw _privateConstructorUsedError;
   String? get thumbnailUrl => throw _privateConstructorUsedError;
-  String get categoryId => throw _privateConstructorUsedError;
+  String? get categoryId => throw _privateConstructorUsedError;
   String? get categoryName => throw _privateConstructorUsedError;
   String? get brandId => throw _privateConstructorUsedError;
   String? get brandName => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  bool get isArchived => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  bool? get isArchived => throw _privateConstructorUsedError;
   String? get scheduledAt => throw _privateConstructorUsedError;
   String? get publishedAt => throw _privateConstructorUsedError;
-  int get likesCount => throw _privateConstructorUsedError;
-  int get commentsCount => throw _privateConstructorUsedError;
-  String get createdAt => throw _privateConstructorUsedError;
-  String get updatedAt => throw _privateConstructorUsedError;
+  int? get likesCount => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
+  int? get commentsCount => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+  String? get updatedAt => throw _privateConstructorUsedError;
   List<MediaItem> get media => throw _privateConstructorUsedError;
 
   /// Serializes this FavSportsMoment to a JSON map.
@@ -1167,24 +1212,25 @@ abstract class $FavSportsMomentCopyWith<$Res> {
       _$FavSportsMomentCopyWithImpl<$Res, FavSportsMoment>;
   @useResult
   $Res call(
-      {String id,
-      String title,
+      {String? id,
+      String? title,
       String? caption,
-      String mediaUrl,
+      String? mediaUrl,
       String? thumbnailUrl,
-      String categoryId,
+      String? categoryId,
       String? categoryName,
       String? brandId,
       String? brandName,
-      String status,
-      String type,
-      bool isArchived,
+      String? status,
+      String? type,
+      bool? isArchived,
       String? scheduledAt,
       String? publishedAt,
-      int likesCount,
-      int commentsCount,
-      String createdAt,
-      String updatedAt,
+      int? likesCount,
+      bool? isLiked,
+      int? commentsCount,
+      String? createdAt,
+      String? updatedAt,
       List<MediaItem> media});
 }
 
@@ -1203,51 +1249,52 @@ class _$FavSportsMomentCopyWithImpl<$Res, $Val extends FavSportsMoment>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? caption = freezed,
-    Object? mediaUrl = null,
+    Object? mediaUrl = freezed,
     Object? thumbnailUrl = freezed,
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? brandId = freezed,
     Object? brandName = freezed,
-    Object? status = null,
-    Object? type = null,
-    Object? isArchived = null,
+    Object? status = freezed,
+    Object? type = freezed,
+    Object? isArchived = freezed,
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
-    Object? likesCount = null,
-    Object? commentsCount = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? likesCount = freezed,
+    Object? isLiked = freezed,
+    Object? commentsCount = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? media = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
+              as String?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       caption: freezed == caption
           ? _value.caption
           : caption // ignore: cast_nullable_to_non_nullable
               as String?,
-      mediaUrl: null == mediaUrl
+      mediaUrl: freezed == mediaUrl
           ? _value.mediaUrl
           : mediaUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       thumbnailUrl: freezed == thumbnailUrl
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -1260,18 +1307,18 @@ class _$FavSportsMomentCopyWithImpl<$Res, $Val extends FavSportsMoment>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      isArchived: null == isArchived
+              as String?,
+      isArchived: freezed == isArchived
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       scheduledAt: freezed == scheduledAt
           ? _value.scheduledAt
           : scheduledAt // ignore: cast_nullable_to_non_nullable
@@ -1280,22 +1327,26 @@ class _$FavSportsMomentCopyWithImpl<$Res, $Val extends FavSportsMoment>
           ? _value.publishedAt
           : publishedAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      likesCount: null == likesCount
+      likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      commentsCount: null == commentsCount
+              as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
+              as int?,
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
+              as String?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       media: null == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
@@ -1313,24 +1364,25 @@ abstract class _$$FavSportsMomentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String title,
+      {String? id,
+      String? title,
       String? caption,
-      String mediaUrl,
+      String? mediaUrl,
       String? thumbnailUrl,
-      String categoryId,
+      String? categoryId,
       String? categoryName,
       String? brandId,
       String? brandName,
-      String status,
-      String type,
-      bool isArchived,
+      String? status,
+      String? type,
+      bool? isArchived,
       String? scheduledAt,
       String? publishedAt,
-      int likesCount,
-      int commentsCount,
-      String createdAt,
-      String updatedAt,
+      int? likesCount,
+      bool? isLiked,
+      int? commentsCount,
+      String? createdAt,
+      String? updatedAt,
       List<MediaItem> media});
 }
 
@@ -1347,51 +1399,52 @@ class __$$FavSportsMomentImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? title = null,
+    Object? id = freezed,
+    Object? title = freezed,
     Object? caption = freezed,
-    Object? mediaUrl = null,
+    Object? mediaUrl = freezed,
     Object? thumbnailUrl = freezed,
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? brandId = freezed,
     Object? brandName = freezed,
-    Object? status = null,
-    Object? type = null,
-    Object? isArchived = null,
+    Object? status = freezed,
+    Object? type = freezed,
+    Object? isArchived = freezed,
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
-    Object? likesCount = null,
-    Object? commentsCount = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? likesCount = freezed,
+    Object? isLiked = freezed,
+    Object? commentsCount = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? media = null,
   }) {
     return _then(_$FavSportsMomentImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
+              as String?,
+      title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       caption: freezed == caption
           ? _value.caption
           : caption // ignore: cast_nullable_to_non_nullable
               as String?,
-      mediaUrl: null == mediaUrl
+      mediaUrl: freezed == mediaUrl
           ? _value.mediaUrl
           : mediaUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       thumbnailUrl: freezed == thumbnailUrl
           ? _value.thumbnailUrl
           : thumbnailUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -1404,18 +1457,18 @@ class __$$FavSportsMomentImplCopyWithImpl<$Res>
           ? _value.brandName
           : brandName // ignore: cast_nullable_to_non_nullable
               as String?,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      isArchived: null == isArchived
+              as String?,
+      isArchived: freezed == isArchived
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       scheduledAt: freezed == scheduledAt
           ? _value.scheduledAt
           : scheduledAt // ignore: cast_nullable_to_non_nullable
@@ -1424,22 +1477,26 @@ class __$$FavSportsMomentImplCopyWithImpl<$Res>
           ? _value.publishedAt
           : publishedAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      likesCount: null == likesCount
+      likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      commentsCount: null == commentsCount
+              as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: null == createdAt
+              as int?,
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: null == updatedAt
+              as String?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       media: null == media
           ? _value._media
           : media // ignore: cast_nullable_to_non_nullable
@@ -1452,24 +1509,25 @@ class __$$FavSportsMomentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$FavSportsMomentImpl implements _FavSportsMoment {
   const _$FavSportsMomentImpl(
-      {required this.id,
-      required this.title,
+      {this.id,
+      this.title,
       this.caption,
-      required this.mediaUrl,
+      this.mediaUrl,
       this.thumbnailUrl,
-      required this.categoryId,
+      this.categoryId,
       this.categoryName,
       this.brandId,
       this.brandName,
-      required this.status,
-      required this.type,
-      required this.isArchived,
+      this.status,
+      this.type,
+      this.isArchived,
       this.scheduledAt,
       this.publishedAt,
-      required this.likesCount,
-      required this.commentsCount,
-      required this.createdAt,
-      required this.updatedAt,
+      this.likesCount,
+      this.isLiked,
+      this.commentsCount,
+      this.createdAt,
+      this.updatedAt,
       required final List<MediaItem> media})
       : _media = media;
 
@@ -1477,17 +1535,17 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
       _$$FavSportsMomentImplFromJson(json);
 
   @override
-  final String id;
+  final String? id;
   @override
-  final String title;
+  final String? title;
   @override
   final String? caption;
   @override
-  final String mediaUrl;
+  final String? mediaUrl;
   @override
   final String? thumbnailUrl;
   @override
-  final String categoryId;
+  final String? categoryId;
   @override
   final String? categoryName;
   @override
@@ -1495,23 +1553,25 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
   @override
   final String? brandName;
   @override
-  final String status;
+  final String? status;
   @override
-  final String type;
+  final String? type;
   @override
-  final bool isArchived;
+  final bool? isArchived;
   @override
   final String? scheduledAt;
   @override
   final String? publishedAt;
   @override
-  final int likesCount;
+  final int? likesCount;
   @override
-  final int commentsCount;
+  final bool? isLiked;
   @override
-  final String createdAt;
+  final int? commentsCount;
   @override
-  final String updatedAt;
+  final String? createdAt;
+  @override
+  final String? updatedAt;
   final List<MediaItem> _media;
   @override
   List<MediaItem> get media {
@@ -1522,7 +1582,7 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
 
   @override
   String toString() {
-    return 'FavSportsMoment(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
+    return 'FavSportsMoment(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
   }
 
   @override
@@ -1554,6 +1614,7 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
                 other.publishedAt == publishedAt) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -1582,6 +1643,7 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
         scheduledAt,
         publishedAt,
         likesCount,
+        isLiked,
         commentsCount,
         createdAt,
         updatedAt,
@@ -1607,41 +1669,42 @@ class _$FavSportsMomentImpl implements _FavSportsMoment {
 
 abstract class _FavSportsMoment implements FavSportsMoment {
   const factory _FavSportsMoment(
-      {required final String id,
-      required final String title,
+      {final String? id,
+      final String? title,
       final String? caption,
-      required final String mediaUrl,
+      final String? mediaUrl,
       final String? thumbnailUrl,
-      required final String categoryId,
+      final String? categoryId,
       final String? categoryName,
       final String? brandId,
       final String? brandName,
-      required final String status,
-      required final String type,
-      required final bool isArchived,
+      final String? status,
+      final String? type,
+      final bool? isArchived,
       final String? scheduledAt,
       final String? publishedAt,
-      required final int likesCount,
-      required final int commentsCount,
-      required final String createdAt,
-      required final String updatedAt,
+      final int? likesCount,
+      final bool? isLiked,
+      final int? commentsCount,
+      final String? createdAt,
+      final String? updatedAt,
       required final List<MediaItem> media}) = _$FavSportsMomentImpl;
 
   factory _FavSportsMoment.fromJson(Map<String, dynamic> json) =
       _$FavSportsMomentImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
-  String get title;
+  String? get title;
   @override
   String? get caption;
   @override
-  String get mediaUrl;
+  String? get mediaUrl;
   @override
   String? get thumbnailUrl;
   @override
-  String get categoryId;
+  String? get categoryId;
   @override
   String? get categoryName;
   @override
@@ -1649,23 +1712,25 @@ abstract class _FavSportsMoment implements FavSportsMoment {
   @override
   String? get brandName;
   @override
-  String get status;
+  String? get status;
   @override
-  String get type;
+  String? get type;
   @override
-  bool get isArchived;
+  bool? get isArchived;
   @override
   String? get scheduledAt;
   @override
   String? get publishedAt;
   @override
-  int get likesCount;
+  int? get likesCount;
   @override
-  int get commentsCount;
+  bool? get isLiked;
   @override
-  String get createdAt;
+  int? get commentsCount;
   @override
-  String get updatedAt;
+  String? get createdAt;
+  @override
+  String? get updatedAt;
   @override
   List<MediaItem> get media;
 

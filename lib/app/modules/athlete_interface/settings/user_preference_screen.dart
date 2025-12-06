@@ -42,7 +42,7 @@ class AthleteUserPreferencesScreen extends StatelessWidget {
                       ),
                       Center(
                         child: Text(
-                          'PREFERENCES',
+                          'PREFERENCES'.tr.toUpperCase(),
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontFamily: GoogleFonts.anton().fontFamily,
@@ -95,8 +95,8 @@ class AthleteUserPreferencesScreen extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
-                            child:
-                                AppText("Preferred Languages", fontSize: 16.sp),
+                            child: AppText("Preferred Languages".tr,
+                                fontSize: 16.sp),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9, bottom: 9),
@@ -131,18 +131,7 @@ class AthleteUserPreferencesScreen extends StatelessWidget {
 
                   const Spacer(),
 
-                  // Delete Account Button
-                  CommonButton(
-                    text: "Delete Account",
-                    onPressed: () {},
-                    color: AppColors.red,
-                    icon: "delete",
-                    iconColor: AppColors.red,
-                    isOutlined: true,
-                    textColor: AppColors.red,
-                    fontSize: 16.sp,
-                    iconSize: 22,
-                  ),
+                 
                   SizedBox(height: 10.h),
                 ],
               );
@@ -182,7 +171,7 @@ class _PreferenceTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: AppText(title, fontSize: 16.sp),
+              child: AppText(title.tr, fontSize: 16.sp),
             ),
             // ✅ Switch with GetX reactive binding
             Obx(

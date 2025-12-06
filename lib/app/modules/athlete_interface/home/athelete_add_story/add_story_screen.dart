@@ -8,7 +8,7 @@ import '../../../../widgets/AppText.dart';
 import '../../../../widgets/custom_dialogbox.dart';
 import '../athelete_home_controller.dart';
 
-class AddStoryScreen extends GetView<AtheleteHomeController> {
+class AddStoryScreen extends GetWidget<AtheleteHomeController> {
   final bool isAthlete;
   const AddStoryScreen({super.key, required this.isAthlete});
 

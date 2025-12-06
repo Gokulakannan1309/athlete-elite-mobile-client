@@ -275,6 +275,7 @@ class _StudioPostSelectScreenState extends State<StudioPostSelectScreen> {
                   scheduledAt: "",
                   publishedAt: "" ?? "",
                   likesCount: 0 ?? 0,
+                  isLiked: false ?? false,
                   commentsCount: 0 ?? 0,
                   createdAt: "" ?? "",
                   updatedAt: "" ?? "",
@@ -301,7 +302,7 @@ class _StudioPostSelectScreenState extends State<StudioPostSelectScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: AppText(
-                  "Channel",
+                  "Channel".tr,
                   color: AppColors.white,
                   fontSize: 16.sp,
                   textAlign: TextAlign.center,

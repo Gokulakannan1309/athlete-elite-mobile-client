@@ -54,6 +54,7 @@ class BrandChannelFanView {
   final int? duration;
   final String? publishedAt;
   final int? likesCount;
+  final bool? isLiked;
   final int? commentsCount;
 
   BrandChannelFanView({
@@ -66,6 +67,7 @@ class BrandChannelFanView {
     this.duration,
     this.publishedAt,
     this.likesCount,
+    this.isLiked,
     this.commentsCount,
   });
 
@@ -80,6 +82,7 @@ class BrandChannelFanView {
       duration: json['duration'],
       publishedAt: json['publishedAt'],
       likesCount: json['likesCount'],
+      isLiked: json['isLiked'],
       commentsCount: json['commentsCount'],
     );
   }

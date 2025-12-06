@@ -1,6 +1,7 @@
 import 'package:athlete_elite/app/constants/font_family.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_utils/get_utils.dart';
 import '../constants/app_colors.dart';
 
 class AppText extends StatelessWidget {
@@ -50,7 +51,7 @@ class AppText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textWidget = Text(
-      text,
+      text.tr,
       textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow ?? TextOverflow.ellipsis,

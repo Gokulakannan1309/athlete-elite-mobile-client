@@ -711,6 +711,7 @@ mixin _$BrandContentItem {
   @JsonKey(name: "category")
   CategoryInfo? get category => throw _privateConstructorUsedError;
   int get likesCount => throw _privateConstructorUsedError;
+  bool get isLiked => throw _privateConstructorUsedError;
   int get commentsCount => throw _privateConstructorUsedError;
 
   /// Serializes this BrandContentItem to a JSON map.
@@ -741,6 +742,7 @@ abstract class $BrandContentItemCopyWith<$Res> {
       @JsonKey(name: "sportsAthlete") AthleteData? sportsAthlete,
       @JsonKey(name: "category") CategoryInfo? category,
       int likesCount,
+      bool isLiked,
       int commentsCount});
 
   $AthleteDataCopyWith<$Res>? get athlete;
@@ -774,6 +776,7 @@ class _$BrandContentItemCopyWithImpl<$Res, $Val extends BrandContentItem>
     Object? sportsAthlete = freezed,
     Object? category = freezed,
     Object? likesCount = null,
+    Object? isLiked = null,
     Object? commentsCount = null,
   }) {
     return _then(_value.copyWith(
@@ -821,6 +824,10 @@ class _$BrandContentItemCopyWithImpl<$Res, $Val extends BrandContentItem>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
       commentsCount: null == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -891,6 +898,7 @@ abstract class _$$BrandContentItemImplCopyWith<$Res>
       @JsonKey(name: "sportsAthlete") AthleteData? sportsAthlete,
       @JsonKey(name: "category") CategoryInfo? category,
       int likesCount,
+      bool isLiked,
       int commentsCount});
 
   @override
@@ -925,6 +933,7 @@ class __$$BrandContentItemImplCopyWithImpl<$Res>
     Object? sportsAthlete = freezed,
     Object? category = freezed,
     Object? likesCount = null,
+    Object? isLiked = null,
     Object? commentsCount = null,
   }) {
     return _then(_$BrandContentItemImpl(
@@ -972,6 +981,10 @@ class __$$BrandContentItemImplCopyWithImpl<$Res>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: null == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool,
       commentsCount: null == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -995,6 +1008,7 @@ class _$BrandContentItemImpl implements _BrandContentItem {
       @JsonKey(name: "sportsAthlete") this.sportsAthlete,
       @JsonKey(name: "category") this.category,
       required this.likesCount,
+      required this.isLiked,
       required this.commentsCount});
 
   factory _$BrandContentItemImpl.fromJson(Map<String, dynamic> json) =>
@@ -1029,11 +1043,13 @@ class _$BrandContentItemImpl implements _BrandContentItem {
   @override
   final int likesCount;
   @override
+  final bool isLiked;
+  @override
   final int commentsCount;
 
   @override
   String toString() {
-    return 'BrandContentItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, mediaType: $mediaType, publishedAt: $publishedAt, athlete: $athlete, sportsAthlete: $sportsAthlete, category: $category, likesCount: $likesCount, commentsCount: $commentsCount)';
+    return 'BrandContentItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, mediaType: $mediaType, publishedAt: $publishedAt, athlete: $athlete, sportsAthlete: $sportsAthlete, category: $category, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount)';
   }
 
   @override
@@ -1059,6 +1075,7 @@ class _$BrandContentItemImpl implements _BrandContentItem {
                 other.category == category) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount));
   }
@@ -1078,6 +1095,7 @@ class _$BrandContentItemImpl implements _BrandContentItem {
       sportsAthlete,
       category,
       likesCount,
+      isLiked,
       commentsCount);
 
   /// Create a copy of BrandContentItem
@@ -1110,6 +1128,7 @@ abstract class _BrandContentItem implements BrandContentItem {
       @JsonKey(name: "sportsAthlete") final AthleteData? sportsAthlete,
       @JsonKey(name: "category") final CategoryInfo? category,
       required final int likesCount,
+      required final bool isLiked,
       required final int commentsCount}) = _$BrandContentItemImpl;
 
   factory _BrandContentItem.fromJson(Map<String, dynamic> json) =
@@ -1140,6 +1159,8 @@ abstract class _BrandContentItem implements BrandContentItem {
   CategoryInfo? get category;
   @override
   int get likesCount;
+  @override
+  bool get isLiked;
   @override
   int get commentsCount;
 

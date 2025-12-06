@@ -41,9 +41,14 @@ class FanResetPasswordController extends GetxController {
     );
     if (result.success) {
       AppLogger.d(result.data);
+     AppLogger.d("Access Token: ${result.data['data']['access_token']}");
       NavigationHelper.toNamed(
         AppRoutes.aboutMeDetailScreen,
-        arguments: {'isAthlete': isAthlete, 'userId': userId},
+        arguments: {
+          'isAthlete': isAthlete,
+          'userId': userId,
+          "accessToken": result.data['data']['access_token']
+        },
         transition: Transition.rightToLeft,
       );
       CustomToast.show("Password Reset Successful");

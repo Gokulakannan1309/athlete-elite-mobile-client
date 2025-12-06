@@ -6,18 +6,17 @@ import 'package:get/get.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../constants/font_family.dart';
-import '../../../routes/app_routes.dart';
-import '../../../routes/navigation_helper.dart';
 import '../../../widgets/AppText.dart';
 import '../../../widgets/common_back_button.dart';
 import '../../../widgets/common_button.dart';
 import '../../../widgets/common_text_field.dart';
 import '../../../widgets/custom_toast.dart';
 
-class FanResetPasswordView extends GetView<FanResetPasswordController> {
+class FanResetPasswordView extends GetWidget<FanResetPasswordController> {
   final bool isAthlete;
   final String userId;
-  const FanResetPasswordView({super.key, required this.isAthlete, required this.userId});
+  const FanResetPasswordView(
+      {super.key, required this.isAthlete, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +27,6 @@ class FanResetPasswordView extends GetView<FanResetPasswordController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: CommonBackButton(),
-                ),
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -45,7 +37,7 @@ class FanResetPasswordView extends GetView<FanResetPasswordController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppText(
-                            "SET PASSWORD",
+                            "SET PASSWORD".tr.toUpperCase(),
                             fontFamily: FontFamily.titleTextFont,
                             letterSpacing: 1.8,
                             color: AppColors.primaryColor,
@@ -53,20 +45,20 @@ class FanResetPasswordView extends GetView<FanResetPasswordController> {
                             fontWeight: FontWeight.bold,
                           ),
                           SizedBox(height: 25.h),
-
                           CommonTextField(
                             controller: controller.newPasswordController,
-                            label: "Enter New Password",
+                            label: "Enter New Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Password is required.';
+                                return '*Password is required.'.tr;
                               }
                               final passwordRegex = RegExp(
                                 r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{8,}$',
                               );
                               if (!passwordRegex.hasMatch(value)) {
-                                return '*Password must be at least 8 characters with one uppercase letter and one special character.';
+                                return '*Password must be at least 8 characters with one uppercase letter and one special character.'
+                                    .tr;
                               }
                               return null;
                             },
@@ -74,15 +66,15 @@ class FanResetPasswordView extends GetView<FanResetPasswordController> {
                           SizedBox(height: 25.h),
                           CommonTextField(
                             controller: controller.confirmPasswordController,
-                            label: "Confirm Password",
+                            label: "Confirm Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please confirm your password.';
+                                return '*Please confirm your password.'.tr;
                               }
                               if (value !=
                                   controller.newPasswordController.text) {
-                                return '*Passwords do not match.';
+                                return '*Passwords do not match.'.tr;
                               }
                               return null;
                             },
@@ -94,17 +86,17 @@ class FanResetPasswordView extends GetView<FanResetPasswordController> {
                   ),
                 ),
               ),
-
               Obx(
                 () => CommonButton(
-                  text: "Continue",
+                  text: "Continue".tr,
                   onPressed: () {
                     FocusScope.of(context).unfocus();
 
                     if (controller.formKey.currentState!.validate()) {
-                    controller.onFanSetPassword(userId, isAthlete);
+                      controller.onFanSetPassword(userId, isAthlete);
                     } else {
-                      CustomToast.show("Please fix the errors.");
+                      CustomToast.show(
+                          "Please fill all the required fields.".tr);
                     }
                   },
                   isDisabled: controller.isButtonDisabled.value,

@@ -1,20 +1,26 @@
+import 'dart:async';
+
 import 'package:athlete_elite/app/constants/api_endpoints.dart';
 import 'package:athlete_elite/app/data/models/athlete_user.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/fan_user_model.dart';
 import 'package:athlete_elite/app/data/providers/api_provider.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/settings/archeived_post_screen.dart';
 import 'package:athlete_elite/app/modules/fan_interface/landing/fan_landing_controller.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_picker_controller.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/widgets/common_reusable_widgets.dart';
+import 'package:athlete_elite/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart' show FormData, MultipartFile;
+import 'package:dio/dio.dart' as m_file show FormData, MultipartFile;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../widgets/custom_toast.dart';
@@ -28,6 +34,7 @@ class AthleteSettingsController extends GetxController {
   final athletePhoneNumberController = TextEditingController();
   final athleteDateofbirthController = TextEditingController();
   final isEditProfileLoading = false.obs;
+  final isSubmittedBrandsLoading = false.obs;
   final isUserDetailsLoading = false.obs;
   final isArchivedContentLoading = false.obs;
   final isAthletePreferencesLoading = false.obs;
@@ -41,6 +48,7 @@ class AthleteSettingsController extends GetxController {
   final currentPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final submitedBrandsController = TextEditingController();
   RxBool studioPushNotifications = false.obs;
   RxBool cheersAndComments = false.obs;
   RxBool fanTracking = false.obs;
@@ -73,8 +81,8 @@ class AthleteSettingsController extends GetxController {
     if (isAthlete) {
       getLoggedInUser();
 
-      archivedScrollController = ScrollController();
-      archivedScrollController.addListener(paginationListener);
+      archivedScrollController = ScrollController()
+        ..addListener(paginationListener);
     } else {
       selectedGender.value = normalizeGender(fanGenderController.text);
       getFanLoggedInUser();
@@ -82,6 +90,10 @@ class AthleteSettingsController extends GetxController {
       fanEmailController.addListener(_emailFieldLogic);
       fanPhoneNumberController.addListener(_phoneFieldLogic);
     }
+    messageController.addListener(_updateSubmitQueryButtonState);
+    currentPasswordController.addListener(updateChangepasswordButtonState);
+    newPasswordController.addListener(updateChangepasswordButtonState);
+    confirmPasswordController.addListener(updateChangepasswordButtonState);
   }
 
   String normalizeGender(String value) {
@@ -101,6 +113,12 @@ class AthleteSettingsController extends GetxController {
     final normalized = normalizeGender(v ?? '');
     selectedGender.value = normalized;
     fanGenderController.text = normalized; // keep textcontroller in sync
+  }
+
+  void updateSelectedCountry(String? v) {
+    // final normalized = normalizeGender(v ?? '');
+    selectedCountry.value = v ?? '';
+    fanCountryController.text = v ?? ''; // keep textcontroller in sync
   }
 
   void toggleEditAndOpenDropdown() {
@@ -192,6 +210,22 @@ class AthleteSettingsController extends GetxController {
     }
   }
 
+  Future<void> postAthleteSubmitedBrands() async {
+    final result = await apiProvider.post(
+        ApiEndpoints.submittedBrandsForAthlete, {"name": aboutItems},
+        isLoading: isSubmittedBrandsLoading);
+
+    if (result.success) {
+      AppLogger.d("update profile details ${result.data}");
+      Get.back();
+      CustomToast.show("Brands submitted successfully");
+      submitedBrandsController.clear();
+    } else {
+      AppLogger.d(result.error);
+      CustomToast.show(result.error);
+    }
+  }
+
   Future<void> getUserProfileDetails() async {
     final result = await apiProvider.get(ApiEndpoints.getUserProfileDetails,
         isLoading: isEditProfileLoading);
@@ -228,6 +262,9 @@ class AthleteSettingsController extends GetxController {
     MediaPickerController mediaPickerController = Get.isRegistered()
         ? Get.find<MediaPickerController>()
         : Get.put(MediaPickerController());
+    AtheleteLandingController landingController = Get.isRegistered()
+        ? Get.find<AtheleteLandingController>()
+        : Get.put(AtheleteLandingController());
 
     final picked = mediaPickerController.selectedImages.first;
 
@@ -238,8 +275,8 @@ class AthleteSettingsController extends GetxController {
       return;
     }
 
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
+    final formData = m_file.FormData.fromMap({
+      'file': await m_file.MultipartFile.fromFile(
         filePath,
         filename: picked.name,
       ),
@@ -250,22 +287,59 @@ class AthleteSettingsController extends GetxController {
         isLoading: isEditProfileLoading);
 
     if (result.success) {
-      AppLogger.d("update profile picture ${result.data}");
+      AppLogger.d("update athlete profile picture ${result.data}");
+      final newUrl = result.data['data']?['profilePicture'];
+
+      if (newUrl == null) {
+        AppLogger.e("Profile picture URL not found in response.");
+        return;
+      }
+
+      final old = landingController.homeSectionResponse.value;
+
+      landingController.homeSectionResponse.value = old?.copyWith(
+        data: old.data.copyWith(
+          profilePicture: newUrl,
+        ),
+      );
+      landingController.profilePicture.value = newUrl;
+
+      landingController.homeSectionResponse.refresh();
+
+      CustomToast.show("Profile picture updated successfully");
     } else {
       AppLogger.d(result.error);
     }
   }
 
   Future<bool> deleteAthleteProfilePicture() async {
+    AtheleteLandingController landingController = Get.isRegistered()
+        ? Get.find<AtheleteLandingController>()
+        : Get.put(AtheleteLandingController());
     final result = await apiProvider.delete(
         ApiEndpoints.deleteAthleteProfilePicture,
         isLoading: isEditProfileLoading);
 
     if (result.success) {
       AppLogger.d("delete profile picture ${result.data}");
+
+      final old = landingController.homeSectionResponse.value;
+
+      landingController.homeSectionResponse.value = old?.copyWith(
+        data: old.data.copyWith(
+          profilePicture: "",
+        ),
+      );
+      landingController.profilePicture.value = "";
+
+      landingController.homeSectionResponse.refresh();
+
+      CustomToast.show("Profile picture deleted successfully");
+
       return result.success;
     } else {
       AppLogger.d(result.error);
+      CustomToast.show(result.error);
       return false;
     }
   }
@@ -285,6 +359,7 @@ class AthleteSettingsController extends GetxController {
       athleteEmailController.text = email;
       athletePhoneNumberController.text = phoneNumber;
       athleteDateofbirthController.text = formatDate(dateOfBirth);
+      athleteDobText.value = formatDate(dateOfBirth);
     } else {
       AppLogger.d(result.error);
     }
@@ -470,6 +545,7 @@ class AthleteSettingsController extends GetxController {
     if (result.success) {
       AppLogger.d("query details ${result.data}");
       Get.back();
+      messageController.clear();
       CustomToast.show("Query submitted successfully");
     } else {
       AppLogger.d(result.error);
@@ -560,7 +636,7 @@ class AthleteSettingsController extends GetxController {
   }
 
   void _updateSubmitQueryButtonState() {
-    isQueryValid.value = messageController.text.isNotEmpty;
+    isQueryValid.value = messageController.text.isEmpty;
   }
 
   void addItem() {
@@ -578,10 +654,29 @@ class AthleteSettingsController extends GetxController {
   }
 
   final changeNameController = TextEditingController();
+  final changeUserNameController = TextEditingController();
   final changeBioController = TextEditingController();
 
   void toggleStudioPushNotifications(bool value) {
     studioPushNotifications.value = value;
+    if (isAthlete) {
+      updateAthletePreferences();
+    } else {
+      updateFanPreferences();
+    }
+  }
+
+  void togglePushNotifications(bool value) {
+    fanPushNotifications.value = value;
+    if (isAthlete) {
+      updateAthletePreferences();
+    } else {
+      updateFanPreferences();
+    }
+  }
+
+  void toggleCommentNotifications(bool value) {
+    fanCommentResponse.value = value;
     if (isAthlete) {
       updateAthletePreferences();
     } else {
@@ -607,12 +702,18 @@ class AthleteSettingsController extends GetxController {
     }
   }
 
-  void selectLanguage(String lang) {
+  Future<void> selectLanguage(String lang) async {
     selectedLang.value = lang;
     if (isAthlete) {
-      updateAthletePreferences();
+      await updateAthletePreferences();
+      await LocaleService.changeLocale(lang);
+
+      Get.updateLocale(LocaleService.currentLocale);
     } else {
-      updateFanPreferences();
+      await updateFanPreferences();
+      await LocaleService.changeLocale(lang);
+
+      Get.updateLocale(LocaleService.currentLocale);
     }
   }
 
@@ -684,7 +785,7 @@ class AthleteSettingsController extends GetxController {
   };
 
   final messageController = TextEditingController();
-  RxBool isQueryValid = false.obs;
+  RxBool isQueryValid = true.obs;
   final formKeyForAthleteQuery = GlobalKey<FormState>();
   final RxBool isSubmitting = false.obs;
 
@@ -695,11 +796,15 @@ class AthleteSettingsController extends GetxController {
   @override
   void onClose() {
     messageController.dispose();
+    currentPasswordController.removeListener(updateChangepasswordButtonState);
     newPasswordController.removeListener(updateChangepasswordButtonState);
     confirmPasswordController.removeListener(updateChangepasswordButtonState);
     messageController.removeListener(_updateSubmitQueryButtonState);
     newPasswordController.dispose();
     confirmPasswordController.dispose();
+    if (!isAthlete) {
+      _mobileOtpTimer?.cancel();
+    }
     super.onClose();
   }
 
@@ -708,9 +813,11 @@ class AthleteSettingsController extends GetxController {
     if (isAthlete) {
       await Hive.box<AthleteUser>('athlete_user').clear();
       await Hive.box('auth_token').clear();
+      Get.deleteAll(force: true);
     } else {
       await Hive.box<FanUserModel>('fan_user').clear();
       await Hive.box('auth_token').clear();
+      Get.deleteAll(force: true);
     }
   }
 
@@ -728,6 +835,9 @@ class AthleteSettingsController extends GetxController {
       if (result.success) {
         AppLogger.d(result.data);
         CustomToast.show("Successfully Saved Details");
+        currentPasswordController.clear();
+        newPasswordController.clear();
+        confirmPasswordController.clear();
         Get.back();
       } else {
         AppLogger.d('Error: ${result.message}');
@@ -748,6 +858,8 @@ class AthleteSettingsController extends GetxController {
   final fanEmailController = TextEditingController();
   final fanPhoneNumberController = TextEditingController();
   final fanDateofbirthController = TextEditingController();
+  var dobText = "".obs;
+  var athleteDobText = "".obs;
   final emailOtpController = TextEditingController();
   final phoneOtpController = TextEditingController();
 
@@ -783,6 +895,12 @@ class AthleteSettingsController extends GetxController {
   }
 
   Future<bool> deleteFanProfilePicture() async {
+    FanLandingController fanLandingController = Get.isRegistered()
+        ? Get.find<FanLandingController>()
+        : Get.put(FanLandingController());
+    AthleteSettingsController athleteSettingsController = Get.isRegistered()
+        ? Get.find<AthleteSettingsController>()
+        : Get.put(AthleteSettingsController());
     final result = await apiProvider.delete(
         ApiEndpoints.deleteFanProfilePicture,
         data: {"userId": fanUser.value?.id},
@@ -790,10 +908,48 @@ class AthleteSettingsController extends GetxController {
 
     if (result.success) {
       AppLogger.d("delete profile picture ${result.data}");
+      // fanLandingController.userDetails.value =
+      //     fanLandingController.userDetails.value?.copyWith(
+      //   data: fanLandingController.userDetails.value?.data?.copyWith(
+      //     user: fanLandingController.userDetails.value?.data?.user?.copyWith(
+      //       profilePicture: null,
+      //     ),
+      //   ),
+      // );
+      fanLandingController.userDetails.value?.data?.user?.profilePicture = null;
+      athleteSettingsController.userDetails.value?.data?.user?.profilePicture =
+          null;
+      athleteSettingsController.userDetails.refresh();
+      fanLandingController.userDetails.refresh();
+
       return result.success;
     } else {
       AppLogger.d(result.error);
       return false;
+    }
+  }
+
+  Future<void> getFanPreferences() async {
+    final result = await apiProvider.get(ApiEndpoints.getFanPreferences,
+        query: {"userId": fanUser.value?.id},
+        isLoading: isAthletePreferencesLoading);
+
+    AppLogger.d("the fan preferences result is: ${result.data}");
+
+    if (result.success) {
+      AppLogger.d("get fan preferences ${result.data}");
+      final Map<String, dynamic> data = result.data["data"] ?? {};
+
+      final bool resFanPushNotifications = data["pushNotifications"] ?? "";
+      final bool resFanCommentResponse = data["commentRespond"] ?? "";
+      final prefLang =
+          (data["preferredLanguage"] ?? "").toString().toUpperCase();
+
+      fanPushNotifications.value = resFanPushNotifications;
+      fanCommentResponse.value = resFanCommentResponse;
+      selectedLang.value = prefLang == "ENGLISH" ? "en" : "es";
+    } else {
+      AppLogger.d(result.error);
     }
   }
 
@@ -811,6 +967,9 @@ class AthleteSettingsController extends GetxController {
       if (result.success) {
         AppLogger.d(result.data);
         CustomToast.show("Successfully Saved Details");
+        currentPasswordController.clear();
+        newPasswordController.clear();
+        confirmPasswordController.clear();
         Get.back();
       } else {
         AppLogger.d('Error: ${result.message}');
@@ -824,32 +983,45 @@ class AthleteSettingsController extends GetxController {
     });
   }
 
-  final genderDropdownKey = GlobalKey();
   final selectedGender = ''.obs;
-  void openGenderDropdownMenu() {
-    final key = genderDropdownKey;
+  final GlobalKey genderDropdownKey = GlobalKey();
 
-    if (key?.currentContext != null) {
-      GestureBinding.instance.handlePointerEvent(
-        PointerDownEvent(
-          position: (key!.currentContext!.findRenderObject() as RenderBox)
-              .localToGlobal(Offset.zero),
-        ),
-      );
+  final selectedCountry = ''.obs;
+  final GlobalKey countryDropdownKey = GlobalKey();
+
+  void openGenderDropdownMenu() {
+    final context = genderDropdownKey.currentContext;
+    if (context != null) {
+      final gesture = context.findAncestorWidgetOfExactType<GestureDetector>();
+      gesture?.onTap?.call(); // <- opens the dropdown
+    }
+  }
+
+  void openCountryDropdownMenu() {
+    final context = countryDropdownKey.currentContext;
+    if (context != null) {
+      final gesture = context.findAncestorWidgetOfExactType<GestureDetector>();
+      gesture?.onTap?.call(); // <- opens the dropdown
     }
   }
 
   Future<void> updateFanUserDetails() async {
     AppLogger.d(
         "the request body is ${fanUser.value?.id} ${fanAgeController.text} ${fanGenderController.text} ${fanCountryController.text} ${fanDateofbirthController.text}");
+
+    String gender = fanGenderController.text == "MALE"
+        ? "Male"
+        : fanGenderController.text == "FEMALE"
+            ? "Female"
+            : "Prefer not to say";
     final result = await apiProvider.put(
       ApiEndpoints.userFanDetails,
       {
         "userId": fanUser.value?.id,
         "age": int.parse(fanAgeController.text),
-        "gender": "Male",
-        "country": "India",
-        "dateOfBirth": "1997-09-23"
+        "gender": gender,
+        "country": fanCountryController.text,
+        "dateOfBirth": formatDOBToApi(fanDateofbirthController.text),
       },
       isLoading: fanDetailsLoading,
     );
@@ -859,6 +1031,19 @@ class AthleteSettingsController extends GetxController {
       CustomToast.show("Successfully Saved Details");
     } else {
       AppLogger.d('Error: ${result.message}');
+    }
+  }
+
+  String formatDOBToApi(String dob) {
+    try {
+      final parts = dob.split("/"); // ["23","09","1997"]
+      final day = parts[0];
+      final month = parts[1];
+      final year = parts[2];
+
+      return "$year-$month-$day";
+    } catch (e) {
+      return dob;
     }
   }
 
@@ -896,38 +1081,173 @@ class AthleteSettingsController extends GetxController {
     }
   }
 
-  Future<void> postSendOTPToMobile() async {
-    final result = await apiProvider.post(
-      ApiEndpoints.sendOTPOnMobile,
-      {"userId": fanUser.value?.id, "mobile": fanPhoneNumberController.text},
-      isLoading: isLoading,
-    );
+  // Future<void> postSendOTPToMobile() async {
+  //   final result = await apiProvider.post(
+  //     ApiEndpoints.sendOTPOnMobile,
+  //     {"userId": fanUser.value?.id, "mobile": fanPhoneNumberController.text},
+  //     isLoading: isLoading,
+  //   );
 
-    if (result.success) {
-      AppLogger.d(result.data);
-      showOtpButtonForRow4.value = true;
-    } else {
-      AppLogger.d('Error: ${result.message}');
+  //   if (result.success) {
+  //     AppLogger.d(result.data);
+  //     showOtpButtonForRow4.value = true;
+  //   } else {
+  //     AppLogger.d('Error: ${result.message}');
+  //   }
+  // }
+
+  // Future<void> postVerifyMobileOTP() async {
+  //   final result = await apiProvider.post(
+  //     ApiEndpoints.verifyOTPOnMobile,
+  //     {
+  //       "userId": fanUser.value?.id,
+  //       "mobile": fanPhoneNumberController.text,
+  //       "otp": phoneOtpController.text
+  //     },
+  //     isLoading: isLoading,
+  //   );
+
+  //   if (result.success) {
+  //     AppLogger.d(result.data);
+  //     showOtpButtonForRow5.value = true;
+  //   } else {
+  //     AppLogger.d('Error: ${result.message}');
+  //   }
+  // }
+
+  final isMobileVerified = false.obs;
+  final mobileOtpTimer = 0.obs;
+  Timer? _mobileOtpTimer;
+
+  void startMobileOtpTimer() {
+    mobileOtpTimer.value = 60; // 60 seconds countdown
+    _mobileOtpTimer?.cancel();
+
+    _mobileOtpTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mobileOtpTimer.value > 0) {
+        mobileOtpTimer.value--;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> postSendOTPToMobile() async {
+    // Validate phone number before sending
+    if (fanPhoneNumberController.text.isEmpty) {
+      CustomToast.show(
+        "Please enter phone number".tr,
+      );
+      return;
+    }
+
+    final phoneValidation = validatePhone(fanPhoneNumberController.text);
+    if (phoneValidation != null) {
+      CustomToast.show(
+        phoneValidation.toString(),
+      );
+      return;
+    }
+
+    try {
+      final result = await apiProvider.post(
+        ApiEndpoints.sendOTPOnMobile,
+        {
+          "userId": fanUser.value?.id,
+          "mobile": fanPhoneNumberController.text,
+        },
+        isLoading: isLoading,
+      );
+
+      if (result.success) {
+        AppLogger.d(result.data);
+
+        // Update UI state
+        showMobileOtpField.value = true;
+        showOtpMobileButton.value = false;
+
+        // Start timer
+        startMobileOtpTimer();
+
+        CustomToast.show(
+          result.data['message'] ?? "OTP sent successfully to your mobile".tr,
+        );
+      } else {
+        AppLogger.e('Error: ${result.message}');
+        CustomToast.show(
+          result.message ?? "Failed to send OTP. Please try again.".tr,
+        );
+      }
+    } catch (e) {
+      AppLogger.e('Exception in postSendOTPToMobile: $e');
+      CustomToast.show(
+        "An error occurred. Please try again.".tr,
+      );
     }
   }
 
   Future<void> postVerifyMobileOTP() async {
-    final result = await apiProvider.post(
-      ApiEndpoints.verifyOTPOnMobile,
-      {
-        "userId": fanUser.value?.id,
-        "mobile": fanPhoneNumberController.text,
-        "otp": phoneOtpController.text
-      },
-      isLoading: isLoading,
-    );
-
-    if (result.success) {
-      AppLogger.d(result.data);
-      showOtpButtonForRow5.value = true;
-    } else {
-      AppLogger.d('Error: ${result.message}');
+    // Validate OTP before verifying
+    if (phoneOtpController.text.isEmpty) {
+      CustomToast.show(
+        "Please enter OTP".tr,
+      );
+      return;
     }
+
+    if (phoneOtpController.text.length < 4) {
+      CustomToast.show(
+        "Please enter valid OTP".tr,
+      );
+      return;
+    }
+
+    try {
+      final result = await apiProvider.post(
+        ApiEndpoints.verifyOTPOnMobile,
+        {
+          "userId": fanUser.value?.id,
+          "mobile": fanPhoneNumberController.text,
+          "otp": phoneOtpController.text,
+        },
+        isLoading: isLoading,
+      );
+
+      if (result.success) {
+        AppLogger.d(result.data);
+
+        // Update UI state
+        isMobileVerified.value = true;
+        showMobileOtpField.value = false;
+        _mobileOtpTimer?.cancel();
+
+        CustomToast.show(
+          result.data['message'] ?? "Mobile number verified successfully".tr,
+        );
+
+        // Clear OTP field
+        phoneOtpController.clear();
+      } else {
+        AppLogger.e('Error: ${result.message}');
+        CustomToast.show(
+          result.message ?? "Invalid OTP. Please try again.".tr,
+        );
+      }
+    } catch (e) {
+      AppLogger.e('Exception in postVerifyMobileOTP: $e');
+      CustomToast.show(
+        "An error occurred. Please try again.".tr,
+      );
+    }
+  }
+
+  void resetMobileVerification() {
+    showOtpMobileButton.value = true;
+    showMobileOtpField.value = false;
+    isMobileVerified.value = false;
+    mobileOtpTimer.value = 0;
+    _mobileOtpTimer?.cancel();
+    phoneOtpController.clear();
   }
 
   Future<void> getFanDetails() async {
@@ -940,23 +1260,126 @@ class AthleteSettingsController extends GetxController {
     if (result.success) {
       userDetails.value = UserDetailsResponse.fromJson(result.data);
       final user = userDetails.value?.data?.user;
-      changeNameController.text =
+      changeNameController.text = user?.name == null ? '' : user?.name ?? '';
+      changeUserNameController.text =
           user?.username == null ? '' : user?.username ?? '';
       fanAgeController.text =
           user?.age == null ? '' : user?.age.toString() ?? '';
       fanGenderController.text = user?.gender == null ? '' : user?.gender ?? '';
+      selectedGender.value = user?.gender == null
+          ? ''
+          : user?.gender == "MALE"
+              ? "Male"
+              : user?.gender == "FEMALE"
+                  ? "Female"
+                  : user?.gender == "PREFER_NOT_TO_SAY"
+                      ? "Prefer not to say"
+                      : '';
       fanCountryController.text =
           user?.country == null ? '' : user?.country ?? '';
+      selectedCountry.value = user?.country == null ? '' : user?.country ?? '';
       fanEmailController.text = user?.email == null ? '' : user?.email ?? '';
       fanPhoneNumberController.text =
           user?.mobile == null ? '' : user?.mobile ?? '';
-      fanDateofbirthController.text =
-          user?.dateOfBirth == null ? '' : user?.dateOfBirth ?? '';
+      // Convert API date format to display format (DD/MM/YYYY)
+      if (user?.dateOfBirth != null && user!.dateOfBirth!.isNotEmpty) {
+        final parsedDate = parseDateFromAPI(user.dateOfBirth!);
+        final formattedDate = formatDateForDOB(parsedDate);
+        fanDateofbirthController.text = formattedDate;
+        dobText.value = formattedDate;
+        print("✅ Final Displayed Date: ${fanDateofbirthController.text}");
+      } else {
+        fanDateofbirthController.text = '';
+        print("⚠️ Date of Birth is null or empty");
+      }
+
       userEmail = user?.email;
       userMobile = user?.mobile;
     } else if (result.error != null) {
       AppLogger.d(result.error);
     }
+  }
+
+  DateTime parseDateFromAPI(String dateStr) {
+    try {
+      if (dateStr.isEmpty) return DateTime(2000, 1, 1);
+
+      print("📅 API Date Received: $dateStr");
+
+      // Try ISO format first (yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)
+      final isoDate = DateTime.tryParse(dateStr);
+      if (isoDate != null) {
+        print("📅 Parsed as ISO: $isoDate");
+        return isoDate;
+      }
+
+      // Try DD/MM/YYYY format
+      if (dateStr.contains('/')) {
+        final parts = dateStr.split('/');
+        if (parts.length == 3) {
+          final date = DateTime(
+            int.parse(parts[2]), // year
+            int.parse(parts[1]), // month
+            int.parse(parts[0]), // day
+          );
+          print("📅 Parsed as DD/MM/YYYY: $date");
+          return date;
+        }
+      }
+
+      // Try DD-MM-YYYY format
+      if (dateStr.contains('-') && dateStr.split('-')[0].length <= 2) {
+        final parts = dateStr.split('-');
+        if (parts.length == 3) {
+          final date = DateTime(
+            int.parse(parts[2]), // year
+            int.parse(parts[1]), // month
+            int.parse(parts[0]), // day
+          );
+          print("📅 Parsed as DD-MM-YYYY: $date");
+          return date;
+        }
+      }
+
+      return DateTime(2000, 1, 1);
+    } catch (e) {
+      print("❌ Date parsing error: $e");
+      return DateTime(2000, 1, 1);
+    }
+  }
+
+// Parse date from display format (DD/MM/YYYY) back to DateTime
+  DateTime parseDateFromDOB(String dateStr) {
+    try {
+      if (dateStr.isEmpty) return DateTime(2000, 1, 1);
+
+      // Handle DD/MM/YYYY format (display format)
+      if (dateStr.contains('/')) {
+        final parts = dateStr.split('/');
+        if (parts.length == 3) {
+          return DateTime(
+            int.parse(parts[2]), // year
+            int.parse(parts[1]), // month
+            int.parse(parts[0]), // day
+          );
+        }
+      }
+
+      // Fallback to tryParse for other formats
+      return DateTime.tryParse(dateStr) ?? DateTime(2000, 1, 1);
+    } catch (e) {
+      return DateTime(2000, 1, 1);
+    }
+  }
+
+// Format DateTime to DD/MM/YYYY for display
+  String formatDateForDOB(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+  }
+
+// Format DateTime to yyyy-MM-dd for API
+  String formatDateForAPI(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
   Future<bool> updateFanUserProfileDetails() async {
@@ -965,7 +1388,7 @@ class AthleteSettingsController extends GetxController {
         {
           "userId": fanUser.value?.id ?? "",
           "name": changeNameController.text,
-          "username": changeNameController.text
+          "username": changeUserNameController.text
         },
         isLoading: isEditProfileLoading);
 
@@ -982,6 +1405,9 @@ class AthleteSettingsController extends GetxController {
     MediaPickerController mediaPickerController = Get.isRegistered()
         ? Get.find<MediaPickerController>()
         : Get.put(MediaPickerController());
+    FanLandingController fanLandingController = Get.isRegistered()
+        ? Get.find<FanLandingController>()
+        : Get.put(FanLandingController());
 
     final picked = mediaPickerController.selectedImages.first;
 
@@ -992,8 +1418,8 @@ class AthleteSettingsController extends GetxController {
       return;
     }
 
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
+    final formData = m_file.FormData.fromMap({
+      'file': await m_file.MultipartFile.fromFile(
         filePath,
         filename: picked.name,
       ),
@@ -1005,10 +1431,28 @@ class AthleteSettingsController extends GetxController {
       isLoading: isEditProfileLoading,
     );
 
+    AppLogger.d("updated profile picture ${result.data}");
+
     if (result.success) {
-      AppLogger.d("update profile picture ${result.data}");
-    } else {
-      AppLogger.d(result.error);
+      final newUrl = result.data['data']?['user']?['profilePicture'];
+
+      if (newUrl == null) {
+        AppLogger.e("Profile picture URL not found in response.");
+        return;
+      }
+
+      fanLandingController.userDetails.value =
+          fanLandingController.userDetails.value?.copyWith(
+        data: fanLandingController.userDetails.value?.data?.copyWith(
+          user: fanLandingController.userDetails.value?.data?.user?.copyWith(
+            profilePicture: newUrl,
+          ),
+        ),
+      );
+
+      fanLandingController.userDetails.refresh();
+
+      AppLogger.d("Profile picture updated: $newUrl");
     }
   }
 
@@ -1025,6 +1469,7 @@ class AthleteSettingsController extends GetxController {
     if (result.success) {
       AppLogger.d("query details ${result.data}");
       Get.back();
+      messageController.clear();
       CustomToast.show("Query submitted successfully");
     } else {
       AppLogger.d(result.error);
@@ -1035,30 +1480,34 @@ class AthleteSettingsController extends GetxController {
     AppLogger.d("the selected lang is ${selectedLang.value}");
 
     final result = await apiProvider.put(
-        ApiEndpoints.updateFanPreferences,
-        {
-          "userId": fanUser.value?.id,
-          "pushNotifications": fanPushNotifications.value,
-          "commentRespond": fanCommentResponse.value,
-          "preferredLanguage":
-              selectedLang.value == 'en' ? 'ENGLISH' : 'SPANISH'
-        },
-        isLoading: isAthletePreferencesLoading);
+      ApiEndpoints.updateFanPreferences,
+      {
+        "userId": fanUser.value?.id,
+        "pushNotifications": fanPushNotifications.value,
+        "commentRespond": fanCommentResponse.value,
+        "preferredLanguage": selectedLang.value == 'en' ? 'ENGLISH' : 'SPANISH'
+      },
+      isLoading: isAthletePreferencesLoading,
+    );
 
     if (result.success) {
       AppLogger.d("update profile details ${result.data}");
-      final Map<String, dynamic> data = result.data["data"] ?? {};
 
-      final bool resStudioPushNotifications =
-          data["studioPushNotifications"] ?? "";
-      final bool resCheersAndComments = data["cheersAndComments"] ?? "";
-      final bool resFanTracking = data["fanTracking"] ?? "";
-      final prefLang =
-          (data["preferredLanguage"] ?? "").toString().toUpperCase();
+      // FIX: Read the "preferences" map
+      final Map<String, dynamic> prefs =
+          result.data["data"]["preferences"] ?? {};
 
-      studioPushNotifications.value = resStudioPushNotifications;
-      cheersAndComments.value = resCheersAndComments;
-      fanTracking.value = resFanTracking;
+      // FIX: Use safe casting
+      final bool resFanPushNotifications =
+          (prefs["pushNotifications"]) ?? false;
+
+      final bool resFanCommentResponse = (prefs["commentRespond"]) ?? false;
+
+      final String prefLang =
+          (prefs["preferredLanguage"] ?? "").toString().toUpperCase();
+
+      fanPushNotifications.value = resFanPushNotifications;
+      fanCommentResponse.value = resFanCommentResponse;
       selectedLang.value = prefLang == "ENGLISH" ? "en" : "es";
     } else {
       AppLogger.d(result.error);

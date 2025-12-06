@@ -33,12 +33,12 @@ class AthleteFanview with _$AthleteFanview {
   const factory AthleteFanview({
     required String id,
     required String name,
-    @JsonKey(name: "profilePicture") required String profilePicture,
-    required String bio,
-    required String country,
-    required String sports,
-    required String league,
-    required String ranking,
+    @JsonKey(name: "profilePicture") String? profilePicture,
+    required String? bio,
+    required String? country,
+    required String? sports,
+    required String? league,
+    required String? ranking,
   }) = _AthleteFanview;
 
   factory AthleteFanview.fromJson(Map<String, dynamic> json) =>

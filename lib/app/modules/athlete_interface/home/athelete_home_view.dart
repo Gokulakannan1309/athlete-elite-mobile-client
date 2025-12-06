@@ -5,6 +5,7 @@ import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/draft_channel/draft_model_details.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/private_community/private_community_post_list_response.dart';
 import 'package:athlete_elite/app/data/models/content_studio/content_studio_response.dart';
+import 'package:athlete_elite/app/data/models/fan_interface/response_model/story_view/latest_story_response.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_picker_controller.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_type_enum.dart';
@@ -26,7 +27,7 @@ import '../../../routes/navigation_helper.dart';
 import '../../../widgets/AppText.dart';
 import 'athelete_home_controller.dart';
 
-class AtheleteHomeView extends GetView<AtheleteHomeController> {
+class AtheleteHomeView extends GetWidget<AtheleteHomeController> {
   final bool isAthlete;
   const AtheleteHomeView({super.key, required this.isAthlete});
 
@@ -35,6 +36,33 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
 
   MediaPickerController get mediaPickerController =>
       Get.isRegistered() ? Get.find() : Get.put(MediaPickerController());
+
+  String detectMediaType(String url) {
+    final ext = url.toLowerCase();
+    if (ext.endsWith(".mp4") || ext.endsWith(".mov") || ext.contains("video")) {
+      return "video";
+    }
+    return "image";
+  }
+
+  List<StoryItem> convertToStoryItems(List<AthleteStory> stories) {
+    return stories.map((e) {
+      final fixedUrl = fixCorruptedUrl(e.mediaUrl);
+
+      return StoryItem(
+        id: e.id,
+        mediaUrl: fixedUrl,
+        mediaType: e.mediaType ?? detectMediaType(fixedUrl),
+        thumbnailUrl: e.thumbnailUrl,
+        duration: e.duration,
+        createdAt: e.createdAt,
+        publishedAt: e.publishedAt,
+        expiresAt: e.publishedAt, // or your own expiration logic
+        isViewed: false,
+        caption: e.caption,
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,15 +111,31 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                         GestureDetector(
                           onTap: () async {
                             await controller.getAllAthleteStories();
-                            
-                           if(controller.getAthleteStory.isNotEmpty){
-                             NavigationHelper.toNamed(
+
+                            if (controller.athleteStories.isNotEmpty) {
+                              final storyItems = convertToStoryItems(
+                                controller.athleteStories.toList(),
+                              );
+
+                              NavigationHelper.toNamed(
                                 AppRoutes.fanToViewStoriesScreen,
-                                arguments: {'isAthlete': isAthlete,
+                                arguments: {
+                                  'isAthlete': isAthlete,
+                                  'initialIndex': 0,
+                                  'athleteName': landingController
+                                          .athleteUser.value?.name ??
+                                      "",
+                                  'athleteProfile': landingController
+                                          .homeSectionResponse
+                                          .value
+                                          ?.data
+                                          .profilePicture ??
+                                      "",
+                                  'stories': storyItems,
                                 },
                                 transition: Transition.rightToLeft,
                               );
-                           }
+                            }
                           },
                           child: Obx(() {
                             return Stack(
@@ -111,11 +155,17 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                                         ? shimmerBox(
                                             w: 110.w, h: 110.w, radius: 30)
                                         : landingController
-                                                    .homeSectionResponse
-                                                    .value
-                                                    ?.data
-                                                    .profilePicture !=
-                                                null
+                                                        .homeSectionResponse
+                                                        .value
+                                                        ?.data
+                                                        .profilePicture !=
+                                                    null &&
+                                                landingController
+                                                        .homeSectionResponse
+                                                        .value
+                                                        ?.data
+                                                        .profilePicture !=
+                                                    ""
                                             ? landingController
                                                     .profilePicture.value
                                                     .startsWith("http")
@@ -182,7 +232,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                             ),
                             child: Center(
                               child: AppText(
-                                "Settings",
+                                "Settings".tr,
                                 color: AppColors.black,
                                 fontSize: 16.sp,
                                 textAlign: TextAlign.center,
@@ -201,6 +251,11 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            mediaPickerController.selectedMixed.clear();
+                            landingController.captionForNewPost.clear();
+                            mediaPickerController.clearVideos();
+                            mediaPickerController.selectedImages.clear();
+                            mediaPickerController.selectedVideos.clear();
                             mediaPickerController.pickMixedMedia(true,
                                 allowMultiple: true);
                           },
@@ -232,6 +287,11 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            mediaPickerController.selectedMixed.clear();
+                            landingController.captionForNewPost.clear();
+                            mediaPickerController.clearVideos();
+                            mediaPickerController.selectedImages.clear();
+                            mediaPickerController.selectedVideos.clear();
                             mediaPickerController.pickMixedMedia(true,
                                 isSendToStudio: true, allowMultiple: true);
                           },
@@ -246,7 +306,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                             ),
                             child: Center(
                               child: Text(
-                                "Send To Studio",
+                                "Send To Studio".tr,
                                 style: TextStyle(
                                   color: AppColors.white,
                                   fontSize: 20.sp,
@@ -376,7 +436,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
       if (controller.draftCategories.isEmpty) {
         return Center(
           child: AppText(
-            "No draft posts found",
+            "No draft posts found".tr,
             color: Colors.white54,
             fontSize: 14.sp,
           ),
@@ -385,54 +445,75 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
 
       return ListView(
         controller: controller.draftScrollController,
-        children: controller.draftCategories.map((categoryItem) {
-          final categoryName = categoryItem.categoryName?.isNotEmpty == true
-              ? categoryItem.categoryName!
-              : "Uncategorized";
+        children: controller.draftCategories.asMap().entries.expand((entry) {
+          final categoryItem = entry.value;
 
-          final channels = categoryItem.channels;
+          // Group channels by type
+          Map<String, List<DraftChannel>> groupedByType = {};
+          for (var channel in categoryItem.channels) {
+            final type = channel.type?.toUpperCase() ?? "CHANNEL";
+            if (!groupedByType.containsKey(type)) {
+              groupedByType[type] = [];
+            }
+            groupedByType[type]!.add(channel);
+          }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // CATEGORY NAME LABEL
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                child: Text(
-                  categoryName.toUpperCase(),
-                  style: TextStyle(
-                    color: AppColors.lightWhite,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: GoogleFonts.barlowSemiCondensed().fontFamily,
+          // Create a widget for each type group
+          return groupedByType.entries.map((typeGroup) {
+            final type = typeGroup.key;
+            final channels = typeGroup.value;
+
+            // Determine category name based on type and categoryName
+            final categoryName = (categoryItem.categoryName != null &&
+                    categoryItem.categoryName!.isNotEmpty)
+                ? categoryItem.categoryName!
+                : type == "STORY"
+                    ? "Stories"
+                    : "Uncategorized";
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                  child: Text(
+                    categoryName.toUpperCase(),
+                    style: TextStyle(
+                      color: AppColors.lightWhite,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: GoogleFonts.barlowSemiCondensed().fontFamily,
+                    ),
                   ),
                 ),
-              ),
 
-              // GRID OF CHANNELS
-              GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: channels.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10.w,
-                  mainAxisSpacing: 12.h,
-                  childAspectRatio: 0.90,
+                // GRID OF CHANNELS
+                GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: channels.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10.w,
+                    mainAxisSpacing: 12.h,
+                    childAspectRatio: 0.90,
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = channels[index];
+                    final thumbnailUrl =
+                        item.media.first.thumbnailUrl ?? item.media.first.url;
+
+                    // Pass the type-specific channels list
+                    return draftCard(thumbnailUrl, item, index, channels);
+                  },
                 ),
-                itemBuilder: (context, index) {
-                  final item = channels[index];
-                  final thumbnailUrl =
-                      item.media.first.thumbnailUrl ?? item.media.first.url;
 
-                  return draftCard(thumbnailUrl, item, index, channels);
-                },
-              ),
-
-              SizedBox(height: 20.h),
-            ],
-          );
+                SizedBox(height: 20.h),
+              ],
+            );
+          }).toList();
         }).toList(),
       );
     });
@@ -448,7 +529,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
           controller.uploadBrands.isEmpty) {
         return Center(
             child: AppText(
-          "No uploads found",
+          "No uploads found".tr,
           color: Colors.white54,
           fontSize: 14.sp,
         ));
@@ -584,7 +665,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       children: [
         /// ---- My Content Studio ----
-        AppText("My Content Studio",
+        AppText("My Content Studio".tr,
             fontSize: 16.sp,
             fontWeight: FontWeight.w400,
             color: Color(0xFFE2E2E2)),
@@ -615,7 +696,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: AppText(
-                    "SENT TO CONTENT STUDIO",
+                    "SENT TO CONTENT STUDIO".tr.toUpperCase(),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
                     color: Colors.black,
@@ -967,6 +1048,19 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
 
   Widget notificationsection() {
     return Obx(() {
+      if (controller.isAthleteNotificationsLoading.value) {
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
+          itemCount: 8, // shimmer count
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: shimmerBox(h: 60.h, w: double.infinity, radius: 10),
+            );
+          },
+        );
+      }
+
       final list = controller.notifications;
 
       if (list.isEmpty) {
@@ -983,6 +1077,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
         itemCount: list.length,
         itemBuilder: (context, index) {
           final item = list[index];
+
           return GestureDetector(
             onTap: item.onTap,
             child: Container(
@@ -997,14 +1092,24 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                   vertical: 5.h,
                 ),
                 leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.r),
-                  child: Image.asset(
-                    item.iconPath,
-                    height: 40.h,
-                    width: 40.h,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Image.network(
+                      fixCorruptedUrl(item.iconPath),
+                      width: 40.w,
+                      height: 40.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.notifications,
+                        color: Colors.white,
+                        size: 30.sp,
+                      ),
+                      loadingBuilder: (context, child, loadingProgress) =>
+                          shimmerBox(
+                        w: 40.w,
+                        h: 40.h,
+                        radius: 8,
+                      ),
+                    )),
                 title: Text(
                   item.message,
                   style: GoogleFonts.poppins(
@@ -1048,11 +1153,19 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                               'isAthlete': isAthlete,
                               'reels': previewList,
                               'startIndex': index,
+                              'comesFrom': 'draft_section',
                             },
                             transition: Transition.rightToLeft,
                           );
                         },
-                        child: Image.file(File(thumbnail), fit: BoxFit.cover)),
+                        child: item.mediaUrl!.endsWith(".mp4") ||
+                                item.mediaUrl!.endsWith(".mov")
+                            ? Image.file(File(thumbnail), fit: BoxFit.cover)
+                            : Image.network(
+                                fixCorruptedUrl(item.mediaUrl),
+                                fit: BoxFit.cover,
+                              ),
+                      ),
               ),
             ),
             Positioned(
@@ -1183,14 +1296,18 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                             'isAthlete': isAthlete,
                             'reels': previewList,
                             'startIndex': index,
+                            'comesFrom': 'upload_section',
                           },
                           transition: Transition.rightToLeft,
                         );
                       },
-                      child: Image.file(
-                        File(thumb),
-                        fit: BoxFit.cover,
-                      ),
+                      child: item.mediaUrl!.endsWith(".mp4") ||
+                              item.mediaUrl!.endsWith(".mov")
+                          ? Image.file(File(thumb), fit: BoxFit.cover)
+                          : Image.network(
+                              fixCorruptedUrl(item.mediaUrl),
+                              fit: BoxFit.cover,
+                            ),
                     ),
             ),
           );
@@ -1485,7 +1602,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
             child: posts.isEmpty
                 ? Center(
                     child: AppText(
-                      "No Thoughts",
+                      "No Thoughts.".tr,
                       color: Colors.white54,
                       fontSize: 14.sp,
                     ),
@@ -1539,7 +1656,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color(0xFF1A1A1A),
-                        hintText: 'Start typing here...',
+                        hintText: 'Start typing here...'.tr,
                         hintStyle: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w400,
@@ -1559,13 +1676,11 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                   Obx(() {
                     if (landingController
                         .sendPrivateCommunityPostLoading.value) {
-                      return Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 1,
+                      return SizedBox(
+                        height: 20.h,
+                        width: 20.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
                           color: AppColors.lightRed,
                         ),
                       );
@@ -1576,11 +1691,11 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                             .addYourThoughtsController.text.isNotEmpty) {
                           controller.createNewPrivateCommunityThought();
                         } else {
-                          CustomToast.show("Please enter your thoughts");
+                          CustomToast.show("Please enter your thoughts".tr);
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all(12),
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                         ),
@@ -1666,7 +1781,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
           controller.scheduleItems.isEmpty) {
         return Center(
           child: AppText(
-            "No scheduled posts found",
+            "No scheduled posts found".tr,
             color: Colors.white54,
             fontSize: 14.sp,
           ),
@@ -1700,25 +1815,33 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                             'isAthlete': isAthlete,
                             'reels': controller.scheduleItems,
                             'startIndex': index,
+                            'comesFrom': "scheduled",
                           },
                           transition: Transition.rightToLeft,
                         );
                       },
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: snap.connectionState == ConnectionState.waiting
-                            ? shimmerBox(
-                                w: 50.w,
-                                h: 50.w,
-                                radius: 8,
-                              )
-                            : Image.file(
-                                File(thumb ?? ""),
-                                width: 50.w,
-                                height: 50.w,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
+                          borderRadius: BorderRadius.circular(8),
+                          child: snap.connectionState == ConnectionState.waiting
+                              ? shimmerBox(
+                                  w: 50.w,
+                                  h: 50.w,
+                                  radius: 8,
+                                )
+                              : item.mediaUrl.endsWith(".mp4") ||
+                                      item.mediaUrl.endsWith(".mov")
+                                  ? Image.file(
+                                      File(thumb ?? ""),
+                                      width: 50.w,
+                                      height: 50.w,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.network(
+                                      fixCorruptedUrl(item.mediaUrl) ?? "",
+                                      width: 50.w,
+                                      height: 50.w,
+                                      fit: BoxFit.cover,
+                                    )),
                     ),
 
                     SizedBox(width: 10.w),
@@ -1732,6 +1855,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
                               'isAthlete': isAthlete,
                               'reels': controller.scheduleItems,
                               'startIndex': index,
+                              'comesFrom': "scheduled",
                             },
                             transition: Transition.rightToLeft,
                           );
@@ -1877,7 +2001,7 @@ class AtheleteHomeView extends GetView<AtheleteHomeController> {
       if (items.isEmpty) {
         return Center(
             child: AppText(
-          "No uploads found",
+          "No uploads found".tr,
           color: Colors.white54,
           fontSize: 14.sp,
         ));

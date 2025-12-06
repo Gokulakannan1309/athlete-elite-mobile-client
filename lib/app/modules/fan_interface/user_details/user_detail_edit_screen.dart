@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../widgets/common_button.dart';
 
-class UserDetailEditScreen extends GetView<AthleteSettingsController> {
+class UserDetailEditScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const UserDetailEditScreen({super.key, required this.isAthlete});
 
@@ -37,7 +38,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                   ),
                   Center(
                     child: Text(
-                      'EDIT DETAILS',
+                      'EDIT DETAILS'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -57,7 +58,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                   children: [
                     CommonRedTextField(
                       controller: controller.fanAgeController,
-                      label: "Age",
+                      label: "Age".tr,
                       prfixIcon:
                           Image.asset("assets/icons/age.png", height: 26.sp),
                       suffixIcon: null,
@@ -65,9 +66,8 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                     ),
                     SizedBox(height: 10.h),
                     CommonRedTextField(
-                      controller:
-                          controller.fanGenderController,
-                      label: "Gender",
+                      controller: controller.fanGenderController,
+                      label: "Gender".tr,
                       prfixIcon:
                           Image.asset("assets/icons/gender.png", height: 26.sp),
                       suffixIcon: null,
@@ -76,7 +76,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                     SizedBox(height: 10.h),
                     CommonRedTextField(
                       controller: controller.fanCountryController,
-                      label: "Country",
+                      label: "Country".tr,
                       prfixIcon:
                           Image.asset("assets/icons/flag.png", height: 26.sp),
                       suffixIcon: null,
@@ -88,7 +88,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Expanded(
                           child: CommonRedTextField(
                             controller: controller.fanEmailController,
-                            label: "Email",
+                            label: "Email".tr,
                             prfixIcon: Image.asset("assets/icons/mail.png",
                                 height: 26.sp),
                             suffixIcon: null,
@@ -101,7 +101,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Visibility(
                           visible: showOtpButtonForRow5.value,
                           child: CommonButton(
-                            text: "Send OTP",
+                            text: "Send OTP".tr,
                             onPressed: () {
                               // Handle OTP logic
                               showOtpButtonForRow5.value = false;
@@ -118,9 +118,8 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                       children: [
                         Expanded(
                           child: CommonRedTextField(
-                            controller:
-                                controller.fanPhoneNumberController,
-                            label: "Phone",
+                            controller: controller.fanPhoneNumberController,
+                            label: "Phone".tr,
                             prfixIcon: Image.asset("assets/icons/phone.png",
                                 height: 26.sp),
                             suffixIcon: null,
@@ -133,7 +132,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Visibility(
                           visible: showOtpButtonForRow5.value,
                           child: CommonButton(
-                            text: "Send OTP",
+                            text: "Send OTP".tr,
                             onPressed: () {
                               // Handle OTP logic
                               showOtpButtonForRow5.value = false;
@@ -148,7 +147,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                     SizedBox(height: 10.h),
                     CommonRedTextField(
                       controller: controller.fanDateofbirthController,
-                      label: "Date of Birth",
+                      label: "Date of Birth".tr,
                       prfixIcon: Image.asset("assets/icons/calender.png",
                           height: 26.sp),
                       suffixIcon: null,
@@ -169,7 +168,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Expanded(
                           child: CommonRedTextField(
                             controller: controller.athleteEmailController,
-                            label: "Email",
+                            label: "Email".tr,
                             prfixIcon: Image.asset("assets/icons/mail.png",
                                 height: 26.sp),
                             suffixIcon: null,
@@ -182,7 +181,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Visibility(
                           visible: showOtpButtonForRow4.value,
                           child: CommonButton(
-                            text: "Send OTP",
+                            text: "Send OTP".tr,
                             onPressed: () {
                               // Handle OTP logic
                               showOtpButtonForRow4.value = false;
@@ -200,7 +199,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Expanded(
                           child: CommonRedTextField(
                             controller: controller.athletePhoneNumberController,
-                            label: "Phone",
+                            label: "Phone".tr,
                             prfixIcon: Image.asset("assets/icons/phone.png",
                                 height: 26.sp),
                             suffixIcon: null,
@@ -213,7 +212,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                         Visibility(
                           visible: showOtpButtonForRow4.value,
                           child: CommonButton(
-                            text: "Send OTP",
+                            text: "Send OTP".tr,
                             onPressed: () {
                               // Handle OTP logic
                               showOtpButtonForRow4.value = false;
@@ -226,14 +225,52 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                       ],
                     ),
                     SizedBox(height: 10.h),
-                    CommonRedTextField(
-                      controller: controller.athleteDateofbirthController,
-                      label: "Calendar",
-                      prfixIcon: Image.asset("assets/icons/calender.png",
-                          height: 26.sp),
-                      suffixIcon: null,
-                      onSuffixIconTap: null,
-                    ),
+                    Obx(() {
+                      return GestureDetector(
+                        onTap: () {
+                          controller.tempSelectedDate = controller
+                                  .parseDateFromDOB(controller.dobText.value) ??
+                              DateTime.now();
+
+                          showCenteredCalendar(
+                            context,
+                            controller.tempSelectedDate,
+                            (selected) {
+                              controller.tempSelectedDate = selected;
+                              controller.athleteDateofbirthController.text =
+                                  controller.formatDateForDOB(selected);
+                              controller.dobText.value =
+                                  controller.formatDateForDOB(selected);
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: AppColors.screenBackgroundColor,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.lightRed),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset("assets/icons/calender.png",
+                                  height: 24, color: Colors.white),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  controller.dobText.value.isEmpty
+                                      ? "Select Date of Birth"
+                                      : controller.dobText.value,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -242,13 +279,13 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
               Spacer(),
               Obx(
                 () => CommonButton(
-                  text: 'Save Changes',
+                  text: 'Save Changes'.tr,
                   color: AppColors.lightRed,
                   disabledColor: AppColors.lightRed,
                   onPressed: controller.isUserDetailsLoading.value
                       ? null
                       : () async {
-                        if(isAthlete){
+                          if (isAthlete) {
                             await controller.updateUserDetails().then((value) {
                               if (value) {
                                 Get.back();
@@ -256,7 +293,7 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
                                     "User details updated successfully.");
                               }
                             });
-                        }
+                          }
                         },
                   isLoading: controller.isUserDetailsLoading.value,
                 ),
@@ -267,5 +304,212 @@ class UserDetailEditScreen extends GetView<AthleteSettingsController> {
         ),
       ),
     );
+  }
+
+  void showCenteredCalendar(
+    BuildContext context,
+    DateTime initialDate,
+    ValueChanged<DateTime> onDateSelected,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        DateTime focusedDay = initialDate;
+        DateTime selectedDay = initialDate;
+
+        List<int> years = [for (int y = 1900; y <= DateTime.now().year; y++) y];
+
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Title: Month + Year + arrows
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.chevron_left,
+                                color: Color(0xFFd9ff00)),
+                            onPressed: () {
+                              setState(() {
+                                focusedDay = DateTime(
+                                    focusedDay.year, focusedDay.month - 1, 1);
+                              });
+                            },
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                _monthName(focusedDay.month),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 8),
+
+                              // Year dropdown
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white24),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: DropdownButton<int>(
+                                  dropdownColor: Colors.black,
+                                  value: focusedDay.year,
+                                  underline: const SizedBox(),
+                                  icon: const Icon(Icons.arrow_drop_down,
+                                      color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
+                                  items: years.reversed.map((year) {
+                                    return DropdownMenuItem(
+                                      value: year,
+                                      child: Text(year.toString(),
+                                          style: const TextStyle(
+                                              color: Colors.white)),
+                                    );
+                                  }).toList(),
+                                  onChanged: (newYear) {
+                                    setState(() {
+                                      focusedDay = DateTime(
+                                          newYear!, focusedDay.month, 1);
+                                    });
+                                  },
+                                  menuMaxHeight: 100.h,
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right,
+                                color: Color(0xFFd9ff00)),
+                            onPressed: () {
+                              setState(() {
+                                focusedDay = DateTime(
+                                    focusedDay.year, focusedDay.month + 1, 1);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Calendar Grid
+                      TableCalendar(
+                        firstDay: DateTime(1900, 1, 1),
+                        lastDay: DateTime.now(),
+                        focusedDay: focusedDay,
+                        calendarFormat: CalendarFormat.month,
+                        headerVisible: false,
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                        selectedDayPredicate: (day) =>
+                            day.year == selectedDay.year &&
+                            day.month == selectedDay.month &&
+                            day.day == selectedDay.day,
+                        onDaySelected: (day, _) {
+                          setState(() {
+                            selectedDay = day;
+                            focusedDay = day;
+                          });
+                        },
+                        onPageChanged: (newFocus) {
+                          setState(() => focusedDay = newFocus);
+                        },
+                        calendarStyle: const CalendarStyle(
+                          defaultTextStyle: TextStyle(color: Colors.white),
+                          weekendTextStyle: TextStyle(color: Colors.white),
+                          todayDecoration: BoxDecoration(
+                            color: Color(0xFFd9ff00),
+                            shape: BoxShape.circle,
+                          ),
+                          selectedDecoration: BoxDecoration(
+                            color: Color(0xFFd9ff00),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        daysOfWeekStyle: const DaysOfWeekStyle(
+                          weekdayStyle: TextStyle(color: Colors.grey),
+                          weekendStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Done Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFd9ff00),
+                            foregroundColor: Colors.black,
+                          ),
+                          onPressed: () {
+                            onDateSelected(selectedDay);
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Done"),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _monthName(int month) {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    return months[month - 1];
+  }
+
+  String monthName(int month) {
+    const names = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return names[month - 1];
   }
 }

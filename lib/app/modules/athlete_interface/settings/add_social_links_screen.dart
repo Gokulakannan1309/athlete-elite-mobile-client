@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../constants/app_colors.dart';
 import '../../../widgets/common_back_button.dart';
 
-class AddSocialLinksScreen extends GetView<AthleteSettingsController> {
+class AddSocialLinksScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const AddSocialLinksScreen({super.key, required this.isAthlete});
 
@@ -31,7 +31,7 @@ class AddSocialLinksScreen extends GetView<AthleteSettingsController> {
                   ),
                   Center(
                     child: Text(
-                      'ADD SOCIAL LINKS',
+                      'ADD SOCIAL LINKS'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontFamily: GoogleFonts.anton().fontFamily,
@@ -54,7 +54,7 @@ class AddSocialLinksScreen extends GetView<AthleteSettingsController> {
                       Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Enter URL To connect Social Apps',
+                          'Enter URL To connect Social Apps'.tr,
                           style: TextStyle(
                             color: AppColors.white,
                             fontSize: 16.sp,
@@ -89,7 +89,7 @@ class AddSocialLinksScreen extends GetView<AthleteSettingsController> {
                 padding: EdgeInsets.all(12.w),
                 child: Obx(
                   () => CommonButton(
-                    text: 'Add Links',
+                    text: 'Add Links'.tr,
                     color: AppColors.lightRed,
                     disabledColor: AppColors.lightRed,
                     onPressed: controller.isSaving.value

@@ -2,6 +2,7 @@ import 'package:athlete_elite/app/constants/api_endpoints.dart';
 import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/fan_user_model.dart';
 import 'package:athlete_elite/app/data/providers/api_provider.dart';
+import 'package:athlete_elite/app/modules/fan_interface/landing/fan_landing_controller.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
@@ -112,7 +113,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "LOG IN",
+                            "Log In".tr.toUpperCase(),
                             style: TextStyle(
                               fontFamily:
                                   GoogleFonts.barlowSemiCondensed().fontFamily,
@@ -124,14 +125,14 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                           ),
                           SizedBox(height: 25.h),
                           AppText(
-                            "Welcome to Fan..!!",
+                            "welcome Fan",
                             color: AppColors.white,
                             fontSize: 16.sp,
                           ),
                           SizedBox(height: 17.h),
                           CommonTextField(
                             controller: emailOrUsernameOrPhoneController,
-                            label: "Username, Email or Phone no",
+                            label: "Username, Email or Phone no.".tr,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return '*Please Enter Username, Email or Phone no.';
@@ -142,11 +143,11 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                           SizedBox(height: 25.h),
                           CommonTextField(
                             controller: passwordController,
-                            label: "Enter Password",
+                            label: "Enter Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please Enter Password.';
+                                return '*Please Enter Password.'.tr;
                               }
                               return null;
                             },
@@ -163,7 +164,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                                 );
                               },
                               child: AppText(
-                                "Forgot Password?",
+                                "Forgot Password ?".tr,
                                 color: Colors.white70,
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
@@ -182,7 +183,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
               ),
               Obx(
                 () => CommonButton(
-                  text: "Sign In",
+                  text: "Sign In".tr,
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       final result = await apiProvider.post(
@@ -218,7 +219,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                         final token = data['access_token'];
                         await Get.find<ApiProvider>().setAccessToken(token);
                         await getFcmToken();
-
+                        Get.put(FanLandingController());
                         NavigationHelper.offAllNamed(
                           AppRoutes.fanLandingView,
                           arguments: {'isAthlete': false},
@@ -271,7 +272,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                             ),
                             SizedBox(width: 12.w),
                             Text(
-                              'Sign in with Google',
+                              'Sign In with Google'.tr,
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 color: AppColors.primaryColor,
@@ -287,7 +288,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppText(
-                    "Don't have an account? ",
+                    "Don’t have an Account? ".tr,
                     color: AppColors.white,
                     fontSize: 12.sp,
                   ),
@@ -300,7 +301,7 @@ class _OnboardScreenViewState extends State<OnboardScreenView> {
                       );
                     },
                     child: AppText(
-                      "Sign Up",
+                      'Sign Up'.tr,
                       color: AppColors.primaryColor,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,

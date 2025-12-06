@@ -79,6 +79,7 @@ _$BrandContentItemImpl _$$BrandContentItemImplFromJson(
           ? null
           : CategoryInfo.fromJson(json['category'] as Map<String, dynamic>),
       likesCount: (json['likesCount'] as num).toInt(),
+      isLiked: json['isLiked'] as bool,
       commentsCount: (json['commentsCount'] as num).toInt(),
     );
 
@@ -96,6 +97,7 @@ Map<String, dynamic> _$$BrandContentItemImplToJson(
       'sportsAthlete': instance.sportsAthlete,
       'category': instance.category,
       'likesCount': instance.likesCount,
+      'isLiked': instance.isLiked,
       'commentsCount': instance.commentsCount,
     };
 

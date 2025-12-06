@@ -16,7 +16,7 @@ import '../../../../widgets/AppText.dart';
 import '../../../../widgets/common_back_button.dart';
 import '../../signup/fan_signup_controller.dart';
 
-class ExploreCategories extends GetView<FanLandingController> {
+class ExploreCategories extends GetWidget<FanLandingController> {
   final bool isAthlete;
   final String categoryName;
   const ExploreCategories(
@@ -70,7 +70,7 @@ class ExploreCategories extends GetView<FanLandingController> {
       if (controller.allChannelCategory.isEmpty) {
         return Center(
           child: AppText(
-            "No content available",
+            "No content available".tr,
             color: AppColors.white,
             fontSize: 16.sp,
           ),
@@ -181,6 +181,7 @@ class ExploreCategories extends GetView<FanLandingController> {
       scheduledAt: "",
       publishedAt: item.publishedAt,
       likesCount: item.likesCount,
+      isLiked: item.isLiked,
       commentsCount: item.commentsCount,
       createdAt: "",
       updatedAt: "",

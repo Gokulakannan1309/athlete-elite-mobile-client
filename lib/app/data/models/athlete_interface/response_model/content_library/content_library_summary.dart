@@ -67,6 +67,7 @@ class PreviewItem with _$PreviewItem {
 
     // Counts
     required int likesCount,
+    bool? isLiked,
     required int commentsCount,
 
     // Timestamps

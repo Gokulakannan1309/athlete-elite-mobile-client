@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:athlete_elite/app/constants/api_endpoints.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/fan_user_model.dart';
-import 'package:athlete_elite/app/data/models/fan_interface/response_model/fan_all_athletes_list/athletes_response.dart';
+import 'package:athlete_elite/app/data/models/fan_interface/response_model/track_all_athlete_by_fan_view/athletes_response_fan_view.dart';
 import 'package:athlete_elite/app/data/providers/api_provider.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
 import 'package:athlete_elite/app/routes/navigation_helper.dart';
@@ -35,7 +32,8 @@ class FanSignupController extends GetxController {
     selectedLanguage.value = lang;
   }
 
-  RxList<Athlete> athletes = <Athlete>[].obs;
+  RxList<AthleteFanView> allAthletes = <AthleteFanView>[].obs;
+  var selectedAthleteIds = <String>[].obs;
 
   var isLoadingMoreAthletes = false.obs;
   var hasMoreAllAthletes = true.obs;
@@ -55,6 +53,7 @@ class FanSignupController extends GetxController {
   final isGSSOLoading = false.obs;
   final isButtonDisabled = true.obs;
   final isAboutMeButtonDisabled = true.obs;
+  final trackMultipleAthletesLoading = false.obs;
 
   @override
   void onInit() {
@@ -65,8 +64,6 @@ class FanSignupController extends GetxController {
     selectedLanguage.listen((_) => _aboutMeButtonState());
 
     startOtpTimer();
-
-    getAllAthleteList();
     allAthletesScrollController = ScrollController();
     allAthletesScrollController.addListener(paginationListenerForAllAthletes);
   }
@@ -155,7 +152,7 @@ class FanSignupController extends GetxController {
   Future<void> getAllAthleteList({bool isRefresh = true}) async {
     if (isRefresh) {
       getAllAthletePage.value = 1;
-      athletes.clear();
+      allAthletes.clear();
       hasMoreAllAthletes.value = true;
     }
 
@@ -169,15 +166,41 @@ class FanSignupController extends GetxController {
     );
 
     if (result.success) {
-      final data = AthletesResponse.fromJson(result.data);
+      final data = AthletesResponseFanView.fromJson(result.data);
 
-      athletes.addAll(data.data.athletes);
+      allAthletes.addAll(data.data.formatted);
 
-      AppLogger.d("athletes length: ${athletes}");
-
-      if (data.data.pagination.page >= data.data.pagination.totalPages) {
-        hasMoreAllAthletes.value = false;
+      if (data.data.pagination.currentPage >= data.data.pagination.totalPages) {
+        hasMoreAllAthletes(false);
       }
+    }
+  }
+
+  Future<void> trackMultipleAthletes() async {
+    final userBox = Hive.box<FanUserModel>('fan_user');
+    await userBox.get('current_user');
+    final result = await apiProvider.post(
+      ApiEndpoints.trackMultipleAthleteProfiles,
+      {
+        'userId': userBox.values.single.id,
+        'athleteIds': selectedAthleteIds.toList(),
+      },
+      isLoading: trackMultipleAthletesLoading,
+    );
+
+    if (result.success) {
+      AppLogger.d(result.data);
+      CustomToast.show("Successfully Tracked Selected Athletes");
+    } else {
+      AppLogger.d('Error: ${result.message}');
+    }
+  }
+
+  void toggleSelect(String id) {
+    if (selectedAthleteIds.contains(id)) {
+      selectedAthleteIds.remove(id);
+    } else {
+      selectedAthleteIds.add(id);
     }
   }
 
@@ -223,25 +246,25 @@ class FanSignupController extends GetxController {
     }
   }
 
-  Future<void> onSignupAboutMe(bool isAthlete, String userId) async {
+  Future<void> onSignupAboutMe(
+      bool isAthlete, String userId, String accessToken) async {
     AppLogger.d("the user id is $userId");
-
-    final body = {
-      "userId": userId,
-      "firstName": firstnameController.text,
-      "lastName": lastnameController.text,
-      "username": usernameController.text,
-      "age": int.tryParse(ageController.text) ?? 0,
-      "gender": selectedGender.value,
-      "country": selectedCountry.value,
-      "language": selectedLanguage.value,
-    };
-
-    AppLogger.d('Request body: ${jsonEncode(body)}');
-
+    AppLogger.d("the access token is $accessToken");
+    AppLogger.d(
+        "the first name is ${firstnameController.text}, last name is ${lastnameController.text}, username is ${usernameController.text}, age is ${ageController.text}, gender is ${selectedGender.value}, country is ${selectedCountry.value}, language is ${selectedLanguage.value}");
+    apiProvider.dio.options.headers["Authorization"] = "Bearer $accessToken";
     final result = await apiProvider.post(
       ApiEndpoints.fanFirstTimeAboutMe,
-      body,
+      {
+        "userId": userId,
+        "firstName": firstnameController.text,
+        "lastName": lastnameController.text,
+        "username": usernameController.text,
+        "age": int.tryParse(ageController.text) ?? 0,
+        "gender": selectedGender.value,
+        "country": selectedCountry.value,
+        "language": selectedLanguage.value,
+      },
       isLoading: isLoading,
     );
 
@@ -264,15 +287,12 @@ class FanSignupController extends GetxController {
       await userBox.put('current_user', user);
 
       final tokenBox = await Hive.openBox('auth_token');
-      await tokenBox.put('access_token', data['access_token']);
-      final token = data['access_token'];
-      await Get.find<ApiProvider>().setAccessToken(token);
-
-      // final profileBox = await Hive.openBox('profile_flags');
-      // await profileBox.put(
-      //     'requiresProfilePicture', data['requiresProfilePicture']);
+      await tokenBox.put('access_token', accessToken);
+      final token = accessToken;
+      await Get.find<ApiProvider>().setAccessToken(accessToken);
 
       CustomToast.show("Successfully Saved Details");
+      getAllAthleteList();
 
       NavigationHelper.toNamed(
         AppRoutes.trackAthleteSelectScreen,

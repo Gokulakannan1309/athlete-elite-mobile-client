@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -104,9 +105,8 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
     final outputPath =
         '${dir.path}/filtered_top_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    final combinedFilters = widget.selectedFilters
-        .map((f) => widget.filters[f])
-        .join(',');
+    final combinedFilters =
+        widget.selectedFilters.map((f) => widget.filters[f]).join(',');
 
     final cmd =
         '-i "${sourceFile.path}" -vf "$combinedFilters" -q:v 2 -y "$outputPath"';
@@ -154,10 +154,10 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            'Filter Preview',
+            'Filter Preview'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -214,7 +214,6 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                   );
                 },
               ),
-
               if (isGeneratingTopImage)
                 Positioned.fill(
                   child: Container(
@@ -227,7 +226,6 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                     ),
                   ),
                 ),
-
               if (widget.selectedFilters.isNotEmpty)
                 Positioned(
                   top: 16,
@@ -272,11 +270,10 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
             ],
           ),
         ),
-
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            'Select Filters',
+            'Select Filters'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -286,13 +283,12 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
           ),
         ),
         const SizedBox(height: 12),
-
         SizedBox(
           height: 130,
           child: widget.filters.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'No filters available',
+                    'No filters available'.tr,
                     style: TextStyle(color: Colors.white54),
                   ),
                 )
@@ -346,13 +342,13 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                                             fit: BoxFit.cover,
                                             errorBuilder: (_, __, ___) =>
                                                 Container(
-                                                  color: Colors.grey[800],
-                                                  child: const Icon(
-                                                    Icons.error_outline,
-                                                    color: Colors.white54,
-                                                    size: 24,
-                                                  ),
-                                                ),
+                                              color: Colors.grey[800],
+                                              child: const Icon(
+                                                Icons.error_outline,
+                                                color: Colors.white54,
+                                                size: 24,
+                                              ),
+                                            ),
                                           )
                                         : Container(
                                             color: Colors.grey[800],
@@ -362,13 +358,12 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                                                 height: 20,
                                                 child:
                                                     CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color: Colors.white54,
-                                                    ),
+                                                  strokeWidth: 2,
+                                                  color: Colors.white54,
+                                                ),
                                               ),
                                             ),
                                           ),
-
                                     if (isSelected)
                                       Container(
                                         decoration: BoxDecoration(
@@ -386,17 +381,14 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 6),
-
                             Text(
                               filterName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: isSelected
-                                    ? Colors.blue
-                                    : Colors.white70,
+                                color:
+                                    isSelected ? Colors.blue : Colors.white70,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.normal,
@@ -411,9 +403,7 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                   },
                 ),
         ),
-
         const SizedBox(height: 16),
-
         if (widget.selectedFilters.isNotEmpty)
           Center(
             child: TextButton.icon(
@@ -424,8 +414,8 @@ class _ImageFilterEditorState extends State<ImageFilterEditors> {
                 await _updateTopImage();
               },
               icon: const Icon(Icons.clear_all, color: Colors.redAccent),
-              label: const Text(
-                'Clear All Filters',
+              label: Text(
+                'Clear All Filters'.tr,
                 style: TextStyle(color: Colors.redAccent),
               ),
             ),
@@ -630,9 +620,8 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
       final outputPath =
           '${dir.path}/filtered_top_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-      final combinedFilters = widget.selectedFilters
-          .map((f) => widget.filters[f])
-          .join(',');
+      final combinedFilters =
+          widget.selectedFilters.map((f) => widget.filters[f]).join(',');
 
       final cmd =
           '-i "${sourceFile.path}" -vf "$combinedFilters,format=yuv420p" -c:v libx264 -preset ultrafast -crf 23 -an -movflags +faststart -y "$outputPath"';
@@ -699,8 +688,7 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child:
-                      topVideoController != null &&
+                  child: topVideoController != null &&
                           topVideoController!.value.isInitialized &&
                           !_isDisposed
                       ? AspectRatio(
@@ -717,7 +705,6 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                         ),
                 ),
               ),
-
               if (isGeneratingTopVideo)
                 Positioned.fill(
                   child: Container(
@@ -726,14 +713,14 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                       color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CircularProgressIndicator(color: Colors.white),
                           SizedBox(height: 12),
                           Text(
-                            'Applying filters...',
+                            'Applying filters...'.tr,
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
@@ -744,7 +731,6 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                     ),
                   ),
                 ),
-
               if (widget.selectedFilters.isNotEmpty)
                 Positioned(
                   top: 16,
@@ -789,11 +775,10 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
             ],
           ),
         ),
-
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            'Select Filters',
+            'Select Filters'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -802,13 +787,12 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
           ),
         ),
         const SizedBox(height: 12),
-
         SizedBox(
           height: 130,
           child: widget.filters.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'No filters available',
+                    'No filters available'.tr,
                     style: TextStyle(color: Colors.white54),
                   ),
                 )
@@ -860,20 +844,15 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                                   children: [
                                     if (thumbnailController != null &&
                                         thumbnailController
-                                            .value
-                                            .isInitialized &&
+                                            .value.isInitialized &&
                                         !_isDisposed)
                                       FittedBox(
                                         fit: BoxFit.cover,
                                         child: SizedBox(
                                           width: thumbnailController
-                                              .value
-                                              .size
-                                              .width,
+                                              .value.size.width,
                                           height: thumbnailController
-                                              .value
-                                              .size
-                                              .height,
+                                              .value.size.height,
                                           child: VideoPlayer(
                                             thumbnailController,
                                           ),
@@ -893,7 +872,6 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                                           ),
                                         ),
                                       ),
-
                                     if (isSelected)
                                       Container(
                                         decoration: BoxDecoration(
@@ -911,17 +889,14 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 6),
-
                             Text(
                               filterName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: isSelected
-                                    ? Colors.blue
-                                    : Colors.white70,
+                                color:
+                                    isSelected ? Colors.blue : Colors.white70,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.normal,
@@ -936,9 +911,7 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                   },
                 ),
         ),
-
         const SizedBox(height: 16),
-
         if (widget.selectedFilters.isNotEmpty)
           Center(
             child: TextButton.icon(
@@ -949,8 +922,8 @@ class _VideoFilterEditorState extends State<VideoFilterEditor> {
                 await _updateTopVideo();
               },
               icon: const Icon(Icons.clear_all, color: Colors.redAccent),
-              label: const Text(
-                'Clear All Filters',
+              label: Text(
+                'Clear All Filters'.tr,
                 style: TextStyle(color: Colors.redAccent),
               ),
             ),

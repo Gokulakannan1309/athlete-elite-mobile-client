@@ -67,7 +67,7 @@ class _SplashViewState extends State<SplashView> {
             // ),
             const SizedBox(height: 20),
             const Text(
-              'Athlete Elite',
+              'Atlete Elite',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,

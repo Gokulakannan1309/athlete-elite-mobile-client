@@ -13,7 +13,7 @@ import '../../../routes/navigation_helper.dart';
 import '../../../widgets/common_button.dart';
 import 'preffered_language_controller.dart';
 
-class PrefferedLanguageView extends GetView<PrefferedLanguageController> {
+class PrefferedLanguageView extends GetWidget<PrefferedLanguageController> {
   final bool isAthlete;
   final String userId;
   const PrefferedLanguageView(
@@ -40,7 +40,7 @@ class PrefferedLanguageView extends GetView<PrefferedLanguageController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppText(
-                      "SELECT PREFERRED LANGUAGE",
+                      "SELECT PREFERRED LANGUAGE".tr.toUpperCase(),
                       fontFamily: FontFamily.titleTextFont,
                       color: AppColors.primaryColor,
                       fontSize: 20.sp,
@@ -75,7 +75,7 @@ class PrefferedLanguageView extends GetView<PrefferedLanguageController> {
               ),
               Obx(
                 () => CommonButton(
-                  text: "Next",
+                  text: "Next".tr,
                   onPressed: () {
                     controller.onLanguagePreferenceRequest(userId);
                   },

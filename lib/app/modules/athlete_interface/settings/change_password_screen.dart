@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../widgets/common_back_button.dart';
 
-class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
+class AthleteChangePasswordScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const AthleteChangePasswordScreen({super.key, required this.isAthlete});
 
@@ -37,7 +37,7 @@ class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
                     ),
                     Center(
                       child: Text(
-                        'CHANGE PASSWORD'.toUpperCase(),
+                        'CHANGE PASSWORD'.tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: GoogleFonts.anton().fontFamily,
@@ -54,22 +54,23 @@ class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
                     controller: controller.currentPasswordController,
                     borderRadius: BorderRadius.circular(12),
                     color: AppColors.lightRed,
-                    label: "Current Password"),
+                    label: "Current Password".tr),
                 SizedBox(height: 13.h),
                 CommonTextField(
                   controller: controller.newPasswordController,
                   borderRadius: BorderRadius.circular(12),
                   color: AppColors.lightRed,
-                  label: "New Password",
+                  label: "New Password".tr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '*Password is required.';
+                      return '*Password is required.'.tr;
                     }
                     final passwordRegex = RegExp(
                       r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{8,}$',
                     );
                     if (!passwordRegex.hasMatch(value)) {
-                      return '*Password must be at least 8 characters with one uppercase letter and one special character.';
+                      return '*Password must be at least 8 characters with one uppercase letter and one special character.'
+                          .tr;
                     }
                     return null;
                   },
@@ -79,13 +80,13 @@ class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
                   controller: controller.confirmPasswordController,
                   borderRadius: BorderRadius.circular(12),
                   color: AppColors.lightRed,
-                  label: "Confirm Password",
+                  label: "Confirm Password".tr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '*Please confirm your password.';
+                      return '*Please confirm your password.'.tr;
                     }
                     if (value != controller.newPasswordController.text) {
-                      return '*Passwords do not match.';
+                      return '*Passwords do not match.'.tr;
                     }
                     return null;
                   },
@@ -102,7 +103,7 @@ class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
                       );
                     },
                     child: AppText(
-                      "Forgot Password?",
+                      "Forgot Password ?".tr,
                       color: Colors.white70,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
@@ -116,7 +117,7 @@ class AthleteChangePasswordScreen extends GetView<AthleteSettingsController> {
                 Spacer(),
                 Obx(
                   () => CommonButton(
-                    text: "Save Password",
+                    text: "Save Password".tr,
                     onPressed: () {
                       if (isAthlete) {
                         controller.onChangePassword();

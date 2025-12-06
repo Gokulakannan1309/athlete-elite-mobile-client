@@ -8,10 +8,11 @@ import 'package:athlete_elite/app/widgets/common_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../constants/font_family.dart';
 import '../../../routes/navigation_helper.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends GetWidget<LoginController> {
   final bool isAthlete;
   const LoginView({super.key, required this.isAthlete});
 
@@ -33,17 +34,20 @@ class LoginView extends GetView<LoginController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          AppText(
-                            "LOG IN",
-                            fontFamily: FontFamily.titleTextFont,
-                            color: AppColors.primaryColor,
-                            fontSize: 26.sp,
-                            letterSpacing: 1.8,
-                            fontWeight: FontWeight.bold,
+                          Text(
+                            "Log In".tr.toUpperCase(),
+                            style: TextStyle(
+                              fontFamily:
+                                  GoogleFonts.barlowSemiCondensed().fontFamily,
+                              color: AppColors.primaryColor,
+                              fontSize: 22.sp,
+                              letterSpacing: 1.8,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           SizedBox(height: 25.h),
                           AppText(
-                            "Welcome to Athlete",
+                            "welcome Atlete".tr,
                             color: AppColors.white,
                             fontSize: 16.sp,
                           ),
@@ -51,10 +55,11 @@ class LoginView extends GetView<LoginController> {
                           CommonTextField(
                             controller:
                                 controller.emailOrUsernameOrPhoneController,
-                            label: "Username, Email or Phone no",
+                            label: "Username, Email or Phone no.".tr,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please Enter Username, Email or Phone no.';
+                                return '*Please Enter Username, Email or Phone no.'
+                                    .tr;
                               }
                               return null;
                             },
@@ -62,11 +67,11 @@ class LoginView extends GetView<LoginController> {
                           SizedBox(height: 25.h),
                           CommonTextField(
                             controller: controller.passwordController,
-                            label: "Enter Password",
+                            label: "Enter Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please Enter Password.';
+                                return '*Please Enter Password.'.tr;
                               }
                               return null;
                             },
@@ -83,7 +88,7 @@ class LoginView extends GetView<LoginController> {
                                 );
                               },
                               child: AppText(
-                                "Forgot Password?",
+                                "Forgot Password ?".tr,
                                 color: Colors.white70,
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
@@ -102,7 +107,7 @@ class LoginView extends GetView<LoginController> {
               ),
               Obx(() {
                 return CommonButton(
-                  text: "Log In",
+                  text: "Log In".tr,
                   onPressed: () async {
                     controller.login(isAthlete);
                   },
@@ -112,28 +117,37 @@ class LoginView extends GetView<LoginController> {
                 );
               }),
               SizedBox(height: 15.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppText(
-                    "By logging you agree ",
-                    color: AppColors.white,
-                    fontSize: 12.sp,
-                  ),
-                  AppText(
-                    "Term & Conditions",
-                    color: AppColors.primaryColor,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  AppText(" and ", color: AppColors.white, fontSize: 12.sp),
-                  AppText(
-                    "Privacy Policy",
-                    color: AppColors.primaryColor,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ],
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 450.w),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 2.w,
+                  runSpacing: 2.h,
+                  children: [
+                    AppText(
+                      "By logging you agree ".tr,
+                      color: AppColors.white,
+                      fontSize: 12.sp,
+                    ),
+                    AppText(
+                      "Term and Conditions".tr,
+                      color: AppColors.primaryColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    AppText(
+                      " and ".tr,
+                      color: AppColors.white,
+                      fontSize: 12.sp,
+                    ),
+                    AppText(
+                      "Privacy Policy".tr,
+                      color: AppColors.primaryColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 10.h),
             ],

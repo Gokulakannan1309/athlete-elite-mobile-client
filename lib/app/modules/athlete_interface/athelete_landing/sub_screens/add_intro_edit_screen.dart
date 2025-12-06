@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:athlete_elite/app/constants/app_colors.dart';
-import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/sub_screens/add_intro_screen.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_picker_controller.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
@@ -15,14 +14,13 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../routes/app_routes.dart';
 import '../../../../routes/navigation_helper.dart';
 import '../../../../widgets/common_text_field.dart';
 import '../athelete_landing_controller.dart';
 
-class AddIntroEditScreen extends GetView<AtheleteLandingController> {
+class AddIntroEditScreen extends GetWidget<AtheleteLandingController> {
   final bool isAthlete;
   const AddIntroEditScreen({super.key, required this.isAthlete});
 
@@ -53,7 +51,7 @@ class AddIntroEditScreen extends GetView<AtheleteLandingController> {
                         ),
                         Center(
                           child: Text(
-                            "Manage Content".toUpperCase(),
+                            "Manage Content".tr.toUpperCase(),
                             style: TextStyle(
                               fontSize: 24.sp,
                               fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -95,7 +93,7 @@ class AddIntroEditScreen extends GetView<AtheleteLandingController> {
                         Expanded(
                           child: CommonTextField(
                             controller: controller.aboutMeController,
-                            label: "About me",
+                            label: "About me".tr,
                             inputType: TextInputType.text,
                           ),
                         ),
@@ -206,7 +204,7 @@ class AddIntroEditScreen extends GetView<AtheleteLandingController> {
                                 children: [
                                   Icon(Icons.file_upload_outlined,
                                       size: 45.sp, color: Colors.black),
-                                  AppText("Upload Intro Video",
+                                  AppText("Upload Intro Video".tr,
                                       color: Colors.black, fontSize: 16.sp),
                                 ],
                               )
@@ -286,7 +284,7 @@ class AddIntroEditScreen extends GetView<AtheleteLandingController> {
               right: 20.w,
               child: Obx(
                 () => CommonButton(
-                  text: "Save Change",
+                  text: "Save Change".tr,
                   onPressed: () {
                     controller.updateAthleteAboutMe().then((value) {
                       if (controller.introVideoPath.value.isNotEmpty) {

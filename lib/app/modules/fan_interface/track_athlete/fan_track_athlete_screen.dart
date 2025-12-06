@@ -14,9 +14,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../widgets/common_back_button.dart';
 
-class FanTrackAthleteScreen extends GetView<FanLandingController> {
+class FanTrackAthleteScreen extends GetWidget<FanLandingController> {
   final bool isAthlete;
-  const FanTrackAthleteScreen({super.key, required this.isAthlete});
+  final bool isSearchPage;
+  const FanTrackAthleteScreen(
+      {super.key, required this.isAthlete, this.isSearchPage = false});
 
   bool isAtBottom(ScrollNotification scroll) {
     return scroll.metrics.pixels >= (scroll.metrics.maxScrollExtent - 50);
@@ -25,6 +27,14 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      onWillPop: () {
+        if (controller.athleteSearchQuery.text.isNotEmpty) {
+          controller.athleteSearchQuery.clear();
+          controller.searchQuery.value = '';
+          return Future.value(false);
+        }
+        return Future.value(true);
+      },
       backgroundColor: AppColors.screenBackgroundColor,
       body: SafeArea(
         child: Padding(
@@ -40,7 +50,7 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
                   ),
                   Center(
                     child: Text(
-                      'ATHLETES',
+                      'ATHLETES'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontFamily:
@@ -66,7 +76,7 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: 'Search',
+                      hintText: 'Search'.tr,
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.r),
@@ -87,9 +97,12 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
 
   Widget buildGridSection() {
     return Obx(() {
-      final list = controller.searchedAthletes;
+      final list = controller.searchQuery.value.isEmpty && !isSearchPage
+          ? controller.trackedAthletes
+          : controller.searchedAthletes;
 
-      final isLoading = controller.getAllSearchedAthletesLoading.value;
+      final isLoading = controller.getTrackedAllAthletesByFanLoading.value ||
+          controller.getAllSearchedAthletesLoading.value;
 
       if (isLoading && list.isEmpty) {
         return buildShimmerGrid();
@@ -98,10 +111,20 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
       if (list.isEmpty && controller.athleteSearchQuery.text.isNotEmpty) {
         return Center(
           child: AppText(
-            "No athletes found",
-            color: AppColors.white,
+            "No athletes found".tr,
+            color: AppColors.lightWhite,
             fontSize: 16.sp,
           ),
+        );
+      }
+
+      if (list.isEmpty && !isSearchPage) {
+        return Center(
+          child: AppText(
+            "No athletes tracked".tr,
+            color: AppColors.lightWhite,
+            fontSize: 16.sp,
+          )
         );
       }
 
@@ -127,7 +150,7 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
 
   Widget buildShimmerGrid() {
     return GridView.builder(
-      itemCount: 6,
+      itemCount: 12,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 22.w,
@@ -159,12 +182,9 @@ class FanTrackAthleteScreen extends GetView<FanLandingController> {
                 .getAthleteProfileViewFavMoment(athlete.id.toString());
             athleteProfileViewController
                 .getAthleteProfileViewCategories(athlete.id.toString());
-            athleteProfileViewController.getAthleteProfileViewCategoriesById(
-                athlete.id.toString(), "10bd40a6-97e0-4d1d-9aea-7e19e67b406f");
+
             athleteProfileViewController
                 .getAthleteProfileViewBrands(athlete.id.toString());
-            athleteProfileViewController.getAthleteProfileViewBrandsById(
-                athlete.id.toString(), "efaf9a61-0ceb-45be-9917-053cb7be8968");
 
             athleteProfileViewController
                 .getAthleteSocialLinksForFanView(athlete.id.toString());

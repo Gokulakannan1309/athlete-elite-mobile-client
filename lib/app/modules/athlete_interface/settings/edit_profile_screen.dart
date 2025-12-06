@@ -19,7 +19,7 @@ import '../../../widgets/common_back_button.dart';
 import '../../../widgets/common_button.dart';
 import 'settings_controller.dart';
 
-class EditProfileScreen extends GetView<AthleteSettingsController> {
+class EditProfileScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const EditProfileScreen({super.key, required this.isAthlete});
 
@@ -46,7 +46,7 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
                   ),
                   Center(
                     child: Text(
-                      'Edit Profile'.toUpperCase(),
+                      'Edit Profile'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontFamily: GoogleFonts.anton().fontFamily,
@@ -72,6 +72,8 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
                 }
 
                 if (!athlete) {
+                  AppLogger.d("profile pic ${controller.userDetails.value?.data?.user?.profilePicture}");
+                  AppLogger.d("Before Asigned profile pic $profilePic");
                   profilePic = fixCorruptedUrl(controller
                           .userDetails.value?.data?.user?.profilePicture ??
                       '');
@@ -83,7 +85,8 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
 
                 AppLogger.d("profile pic $profilePic");
 
-                final hasNetworkPic = profilePic.isNotEmpty ?? false;
+                final hasNetworkPic =
+                    (profilePic != null && profilePic.isNotEmpty);
 
                 return buildProfileWidget(
                   hasLocalFile: hasLocalFile,
@@ -106,19 +109,24 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
                   mediaPickerController: mediaPickerController,
                 );
               }),
-              SizedBox(height: 10.h),
               AppText(
                 controller.athleteUser.value?.name ?? "",
                 fontSize: 18.sp,
                 color: AppColors.white,
               ),
+              if (!isAthlete)
+                AppText(
+                  controller.fanUser.value?.name ?? "",
+                  fontSize: 18.sp,
+                  color: AppColors.white,
+                ),
               SizedBox(height: 20.h),
               TextField(
                 controller: controller.changeNameController,
                 style: TextStyle(color: AppColors.white, fontSize: 16.sp),
                 decoration: InputDecoration(
-                  hintText: 'Change Name',
-                  labelText: 'Change Name',
+                  hintText: 'Change Name'.tr,
+                  labelText: 'Change Name'.tr,
                   labelStyle: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
@@ -155,8 +163,8 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
                   minLines: 4,
                   style: TextStyle(color: AppColors.white, fontSize: 16.sp),
                   decoration: InputDecoration(
-                    hintText: 'Change bio',
-                    labelText: 'Change bio',
+                    hintText: 'Change bio'.tr,
+                    labelText: 'Change bio'.tr,
                     labelStyle: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
@@ -187,7 +195,7 @@ class EditProfileScreen extends GetView<AthleteSettingsController> {
               const Spacer(),
               Obx(() {
                 return CommonButton(
-                  text: 'Save Changes',
+                  text: 'Save Changes'.tr,
                   color: AppColors.lightRed,
                   disabledColor: AppColors.lightRed,
                   onPressed: controller.isEditProfileLoading.value

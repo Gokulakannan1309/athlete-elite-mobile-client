@@ -3,10 +3,13 @@
 import 'dart:io';
 
 import 'package:athlete_elite/app/constants/app_colors.dart';
-import 'package:athlete_elite/app/data/models/athlete_interface/response_model/content_library/content_library_summary.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/infinite_content_response/infinite_content_response.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/latest_channel/latest_channel_response.dart';
+import 'package:athlete_elite/app/data/models/fan_interface/response_model/notification_model/fan_notification_response_model.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/story_view/latest_story_response.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/sub_screens/add_intro_edit_screen.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/home/athelete_home_controller.dart';
+import 'package:athlete_elite/app/modules/fan_interface/athlete_profile/athlete_profile_view_controller.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
 import 'package:athlete_elite/app/widgets/common_reusable_widgets.dart';
@@ -20,7 +23,7 @@ import '../../../routes/navigation_helper.dart';
 import '../../../widgets/AppText.dart';
 import 'fan_landing_controller.dart';
 
-class FanLandingView extends GetView<FanLandingController> {
+class FanLandingView extends GetWidget<FanLandingController> {
   final bool isAthlete;
   const FanLandingView({super.key, required this.isAthlete});
 
@@ -53,7 +56,10 @@ class FanLandingView extends GetView<FanLandingController> {
                                 onTap: () {
                                   NavigationHelper.toNamed(
                                     AppRoutes.fanTrackAthleteScreen,
-                                    arguments: {'isAthlete': isAthlete},
+                                    arguments: {
+                                      'isAthlete': isAthlete,
+                                      'isSearchPage': true
+                                    },
                                     transition: Transition.rightToLeft,
                                   );
                                 },
@@ -94,17 +100,21 @@ class FanLandingView extends GetView<FanLandingController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppText(
-                                controller.fanUser.value?.name ?? '',
-                                underlineOffset: 0.2,
-                                fontSize: 18.sp,
-                                useCustomUnderline: true,
-                                fontWeight: FontWeight.bold,
-                                textDecoration: TextDecoration.underline,
+                              Text(
+                                controller.fanUser.value?.userName ?? '',
+                                style: GoogleFonts.anton(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.lightWhite,
+                                  letterSpacing: 2.0,
+                                ),
                               ),
                               SizedBox(height: 5.h),
-                              AppText(controller.fanUser.value?.userName ?? '',
-                                  fontSize: 16.sp),
+                              AppText(
+                                controller.fanUser.value?.name ?? '',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ],
                           ),
                         ),
@@ -112,6 +122,8 @@ class FanLandingView extends GetView<FanLandingController> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                              color: AppColors.lightRed, width: 1.6.w),
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -176,7 +188,7 @@ class FanLandingView extends GetView<FanLandingController> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Obx(() {
                                 final trackedAthletes = controller.userDetails
@@ -184,17 +196,21 @@ class FanLandingView extends GetView<FanLandingController> {
                                     0;
 
                                 return InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     NavigationHelper.toNamed(
                                       AppRoutes.fanTrackAthleteScreen,
-                                      arguments: {'isAthlete': isAthlete},
+                                      arguments: {
+                                        'isAthlete': isAthlete,
+                                        'isSearchPage': false
+                                      },
                                       transition: Transition.rightToLeft,
                                     );
+                                    controller.getTrackedAllAthletesByFan();
                                   },
                                   child: AppText(
                                     trackedAthletes.toString(),
                                     underlineOffset: 0.2,
-                                    fontSize: 22.sp,
+                                    fontSize: 20.sp,
                                     useCustomUnderline: true,
                                     fontWeight: FontWeight.w600,
                                     textDecoration: TextDecoration.underline,
@@ -203,8 +219,8 @@ class FanLandingView extends GetView<FanLandingController> {
                               }),
                               SizedBox(height: 5.h),
                               AppText(
-                                "Fans",
-                                fontSize: 20.sp,
+                                "Athletes".tr,
+                                fontSize: 12.sp,
                               ),
                             ],
                           ),
@@ -302,7 +318,7 @@ class FanLandingView extends GetView<FanLandingController> {
             children: [
               Obx(() {
                 if (controller.sportVisionListIsLoading.value) {
-                  return shimmerBox(w: 350.w, h: 250.h, radius: 0);
+                  return shimmerBox(w: double.infinity, h: 150.h, radius: 16.r);
                 }
 
                 if (controller.sportVisionList.isEmpty) {
@@ -321,7 +337,7 @@ class FanLandingView extends GetView<FanLandingController> {
                       Container(
                         width: 350.w,
                         decoration: BoxDecoration(
-                          color: AppColors.black.withOpacity(0.2),
+                          color: AppColors.lightGray.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16.r),
                           boxShadow: [
                             BoxShadow(
@@ -335,6 +351,10 @@ class FanLandingView extends GetView<FanLandingController> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16.r),
+                                topRight: Radius.circular(16.r),
+                              ),
                               child: mediaType == "IMAGE"
                                   ? _buildImage(mediaData)
                                   : _buildVideoThumbnail(mediaData),
@@ -368,7 +388,7 @@ class FanLandingView extends GetView<FanLandingController> {
               SizedBox(height: 15.h),
 
               Text(
-                "THE ATHLETES",
+                "THE ATHLETES".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: AppColors.lightGray.withOpacity(0.6),
@@ -380,16 +400,24 @@ class FanLandingView extends GetView<FanLandingController> {
 
               Obx(() {
                 if (controller.sportAllTrackAthletesIsLoading.value) {
-                  return Row(
-                    children: List.generate(
-                      6,
-                      (i) => shimmerBox(w: 100.w, h: 124.74.h, radius: 10.r),
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        6,
+                        (i) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child:
+                              shimmerBox(w: 100.w, h: 124.74.h, radius: 10.r),
+                        ),
+                      ),
                     ),
                   );
                 }
 
                 if (controller.sportAllTrackAthletes.isEmpty) {
-                  return AppText("No athletes found", color: AppColors.white);
+                  return AppText("No athletes found".tr,
+                      color: AppColors.white);
                 }
 
                 return SingleChildScrollView(
@@ -400,12 +428,61 @@ class FanLandingView extends GetView<FanLandingController> {
                       (index) {
                         final athlete = controller.sportAllTrackAthletes[index];
 
+                        AppLogger.d("athlete id is the $athlete");
+
                         final name = athlete["name"] ?? "Unknown";
                         final imageUrl = athlete["profilePicture"] ?? "";
+                        final athleteId = athlete["id"] ?? "";
 
                         return Row(
                           children: [
-                            athleteCard(imageUrl, name, 120.w, 150.h),
+                            GestureDetector(
+                                onTap: () {
+                                  AppLogger.d(
+                                      "the id of the person: $athleteId");
+                                  AthleteProfileViewController
+                                      athleteProfileViewController =
+                                      Get.isRegistered()
+                                          ? Get.find<
+                                              AthleteProfileViewController>()
+                                          : Get.put(
+                                              AthleteProfileViewController());
+                                  NavigationHelper.toNamed(
+                                    AppRoutes.athleteProfileViewForFan,
+                                    arguments: {'isAthlete': isAthlete},
+                                  );
+                                  controller
+                                      .getAthlete(athleteId.toString())
+                                      .then((value) {
+                                    if (value) {
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewIntro(
+                                              athleteId.toString());
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewFavMoment(
+                                              athleteId.toString());
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewCategories(
+                                              athleteId.toString());
+
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewBrands(
+                                              athleteId.toString());
+
+                                      athleteProfileViewController
+                                          .getAthleteSocialLinksForFanView(
+                                              athleteId.toString());
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewContentLibrary(
+                                              athleteId.toString());
+                                      athleteProfileViewController
+                                          .getAthleteProfileViewCommunityPost(
+                                              athleteId.toString());
+                                    }
+                                  });
+                                },
+                                child:
+                                    athleteCard(imageUrl, name, 120.w, 150.h)),
                             if (index !=
                                 controller.sportAllTrackAthletes.length - 1)
                               SizedBox(width: 10.w),
@@ -420,7 +497,7 @@ class FanLandingView extends GetView<FanLandingController> {
               SizedBox(height: 25.h),
 
               Text(
-                "THE CATEGORIES",
+                "THE CATEGORIES".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: AppColors.lightGray.withOpacity(0.6),
@@ -442,7 +519,10 @@ class FanLandingView extends GetView<FanLandingController> {
                           onTap: () {
                             NavigationHelper.toNamed(
                               AppRoutes.exploreCategories,
-                              arguments: {'isAthlete': isAthlete},
+                              arguments: {
+                                'isAthlete': isAthlete,
+                                'categoryName': category.name
+                              },
                               transition: Transition.rightToLeft,
                             );
                           },
@@ -458,7 +538,7 @@ class FanLandingView extends GetView<FanLandingController> {
               SizedBox(height: 25.h),
 
               Text(
-                "THE BRANDS",
+                "THE BRANDS".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: AppColors.lightGray.withOpacity(0.6),
@@ -480,7 +560,10 @@ class FanLandingView extends GetView<FanLandingController> {
                           onTap: () {
                             NavigationHelper.toNamed(
                               AppRoutes.exploreCategories,
-                              arguments: {'isAthlete': isAthlete},
+                              arguments: {
+                                'isAthlete': isAthlete,
+                                'categoryName': brands.name
+                              },
                               transition: Transition.rightToLeft,
                             );
                           },
@@ -517,16 +600,16 @@ class FanLandingView extends GetView<FanLandingController> {
       future: controller.getThumbnail(url),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return shimmerBox(w: 350.w, h: 150.h, radius: 16);
+          return shimmerBox(w: 350.w, h: 150.h, radius: 16.r);
         }
 
         final thumb = snapshot.data!;
         return GestureDetector(
           onTap: () {
-            // NavigationHelper.toNamed(
-            //   AppRoutes.fullScreenVideo,
-            //   arguments: {"url": url},
-            // );
+            if (url.contains("http") && url.endsWith(".mp4")) {
+              Get.to(
+                  () => FullScreenVideoPlayer(videoUrl: fixCorruptedUrl(url)));
+            }
           },
           child: Stack(
             children: [
@@ -608,7 +691,29 @@ class FanLandingView extends GetView<FanLandingController> {
       type: item.mediaType ?? "",
       isArchived: false, publishedAt: '',
       likesCount: item.likesCount ?? 0,
+      isLiked: item.isLiked ?? false,
       commentsCount: item.commentsCount ?? 0,
+      createdAt: '', updatedAt: '', media: [],
+    );
+  }
+
+  PreviewItemForFan latestNotificationToPreview(FanNotificationItem item) {
+    return PreviewItemForFan(
+      id: item.id,
+      title: item.channel?.title ?? "",
+      caption: item.channel?.title ?? "",
+      mediaUrl: fixCorruptedUrl(item.channel?.mediaUrl ?? ""),
+      thumbnailUrl: null, // we generate ourselves
+      categoryId: "",
+      categoryName: "",
+      brandId: "",
+      brandName: "",
+      status: "active",
+      type: "",
+      isArchived: false, publishedAt: '',
+      likesCount: 0,
+      isLiked: false,
+      commentsCount: 0,
       createdAt: '', updatedAt: '', media: [],
     );
   }
@@ -696,11 +801,11 @@ class FanLandingView extends GetView<FanLandingController> {
                 separatorBuilder: (context, index) => SizedBox(width: 14.w),
                 itemBuilder: (context, index) {
                   final channel = storyChannels[index];
-                  final firstStory = channel.stories.first;
+                  final story = channel.stories[index];
 
                   return FutureBuilder(
                     future: controller
-                        .getThumbnail(fixCorruptedUrl(firstStory.mediaUrl)),
+                        .getThumbnail(fixCorruptedUrl(story.mediaUrl)),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return shimmerBox(
@@ -711,10 +816,13 @@ class FanLandingView extends GetView<FanLandingController> {
                       }
 
                       return InkWell(
-                        onTap: () {
+                        onTap: () async {
+                          Get.lazyPut<AtheleteHomeController>(
+                              () => AtheleteHomeController());
                           NavigationHelper.toNamed(
                             AppRoutes.fanToViewStoriesScreen,
                             arguments: {
+                              'isAthlete': isAthlete,
                               'initialIndex': index,
                               'athleteName': channel.athlete.name,
                               'athleteProfile': channel.athlete.profilePicture,
@@ -746,7 +854,7 @@ class FanLandingView extends GetView<FanLandingController> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: firstStory.isViewed
+                              color: story.isViewed
                                   ? Colors.grey
                                   : AppColors.lightRed,
                               width: 2.5.w,
@@ -766,7 +874,7 @@ class FanLandingView extends GetView<FanLandingController> {
           ),
           SizedBox(height: 25.h),
           AppText(
-            "YOUR LATEST",
+            "YOUR LATEST".tr.toUpperCase(),
             fontSize: 14.sp,
             color: Color(0xFFE2E2E2).withOpacity(0.6),
             fontWeight: FontWeight.w400,
@@ -790,7 +898,7 @@ class FanLandingView extends GetView<FanLandingController> {
             if (items.isEmpty) {
               return Center(
                   child: AppText(
-                "No latest content found",
+                "No latest content found".tr,
                 color: Color(0xFFE2E2E2).withOpacity(0.6),
                 fontWeight: FontWeight.w400,
               ));
@@ -857,7 +965,7 @@ class FanLandingView extends GetView<FanLandingController> {
           }),
           SizedBox(height: 25.h),
           AppText(
-            "YOUR CATEGORIES",
+            "YOUR CATEGORIES".tr.toUpperCase(),
             fontSize: 14.sp,
             color: Color(0xFFE2E2E2).withOpacity(0.6),
             fontWeight: FontWeight.w400,
@@ -885,7 +993,7 @@ class FanLandingView extends GetView<FanLandingController> {
             if (items.isEmpty) {
               return Center(
                   child: AppText(
-                "No Category content found",
+                "No Category content found".tr,
                 color: Color(0xFFE2E2E2).withOpacity(0.6),
                 fontWeight: FontWeight.w400,
               ));
@@ -942,6 +1050,7 @@ class FanLandingView extends GetView<FanLandingController> {
       scheduledAt: "" ?? "",
       publishedAt: item.publishedAt ?? "",
       likesCount: item.likesCount ?? 0,
+      isLiked: item.isLiked ?? false,
       commentsCount: item.commentsCount ?? 0,
       createdAt: "" ?? "",
       updatedAt: "" ?? "",
@@ -952,55 +1061,123 @@ class FanLandingView extends GetView<FanLandingController> {
   Widget buildNotificationTab() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.w),
-      child: Obx(
-        () => ListView.separated(
+      child: Obx(() {
+        if (controller.isFanNotificationsLoading.value) {
+          return ListView.separated(
+            itemCount: 6,
+            separatorBuilder: (_, __) => SizedBox(height: 10.h),
+            itemBuilder: (_, __) => notificationShimmerItem(),
+          );
+        }
+
+        if (controller.notifications.isEmpty &&
+            !controller.isFanNotificationsLoading.value) {
+          return Center(
+            child: AppText(
+              "No Notification found".tr,
+              color: Color(0xFFE2E2E2).withOpacity(0.6),
+              fontWeight: FontWeight.w400,
+            ),
+          );
+        }
+
+        return ListView.separated(
           itemCount: controller.notifications.length,
           separatorBuilder: (_, __) => SizedBox(height: 10.h),
           itemBuilder: (context, index) {
             final item = controller.notifications[index];
-            return Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1D1D1D),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 24.r,
-                    backgroundImage: AssetImage(item.profileImage),
-                  ),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.username,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          item.message,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 12.sp,
-                            height: 1.3,
-                          ),
-                        ),
-                      ],
+            return GestureDetector(
+              onTap: () async {
+                AppLogger.d("Tapped notification item: ${item.type}");
+                if (item.type == "CHANNEL_PUBLISHED") {
+                  await controller.markAllNotificationsAsRead(item.id);
+                  final preview = latestNotificationToPreview(item);
+
+                  NavigationHelper.toNamed(
+                    AppRoutes.athleteVideoReelViewForFan,
+                    arguments: {
+                      'isAthlete': isAthlete,
+                      'reels': [preview],
+                      'startIndex': 0,
+                    },
+                    transition: Transition.rightToLeft,
+                  );
+                } else {}
+              },
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1D1D1D),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 24.r,
+                      backgroundImage:
+                          NetworkImage(item.athlete?.profilePicture ?? ""),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.athlete?.name ?? "",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            item.message,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 12.sp,
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
-        ),
+        );
+      }),
+    );
+  }
+
+  Widget notificationShimmerItem() {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1D1D1D),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          shimmerBox(w: 48.w, h: 48.w, radius: 24.r), // circle avatar
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerBox(w: 120.w, h: 14.h, radius: 6),
+                SizedBox(height: 8.h),
+                shimmerBox(w: double.infinity, h: 12.h, radius: 6),
+                SizedBox(height: 6.h),
+                shimmerBox(w: 200.w, h: 12.h, radius: 6),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

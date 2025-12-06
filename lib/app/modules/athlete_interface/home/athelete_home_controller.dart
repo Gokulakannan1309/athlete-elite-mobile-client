@@ -1,16 +1,21 @@
 import 'package:athlete_elite/app/constants/api_endpoints.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/content_library/content_library_summary.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/draft_channel/draft_model_details.dart';
+import 'package:athlete_elite/app/data/models/athlete_interface/response_model/notification_model/athlete_notification_response.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/schedule/schedule_model.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/upload_channel/upload_channel_response.dart'
     hide PreviewItem;
 import 'package:athlete_elite/app/data/models/content_studio/content_studio_response.dart';
+import 'package:athlete_elite/app/data/models/fan_interface/response_model/story_view/latest_story_response.dart';
 import 'package:athlete_elite/app/data/providers/api_provider.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart';
+import 'package:athlete_elite/app/modules/fan_interface/landing/story_view/story_viewer_screen.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_picker_controller.dart';
+import 'package:athlete_elite/app/modules/media_upload/media_type_enum.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
 import 'package:athlete_elite/app/routes/navigation_helper.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
+import 'package:athlete_elite/app/widgets/common_reusable_widgets.dart';
 import 'package:athlete_elite/app/widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_instance/get_instance.dart';
@@ -30,6 +35,9 @@ class AtheleteHomeController extends GetxController {
   var selectedInnerTab = 0.obs;
   Rxn<ContentStudioResponse> contentStudioResponse =
       Rxn<ContentStudioResponse>();
+
+  var isNewUploadFilterApplied = false.obs;
+  RxList<SelectedMedia> newUploadedFilterMediaList = <SelectedMedia>[].obs;
 
   final Map<String, String> thumbnailCache = {};
 
@@ -54,7 +62,14 @@ class AtheleteHomeController extends GetxController {
 
   RxList<DraftCategoryItem> draftCategories = <DraftCategoryItem>[].obs;
   RxMap<String, String> generatedDraftThumbnails = <String, String>{}.obs;
-  Map<String, dynamic> getAthleteStory = <String, dynamic>{}.obs;
+  RxList<AthleteStory> athleteStories = <AthleteStory>[].obs;
+  RxList<NotificationItemForAthlete> notifications =
+      <NotificationItemForAthlete>[].obs;
+  final isAthleteNotificationsLoading = false.obs;
+
+  RxInt storyViewsCount = 0.obs;
+
+  RxList<StoryViewer> storyViewers = <StoryViewer>[].obs;
 
   Future<String> generateDraftVideoThumbnail(String url) async {
     if (generatedDraftThumbnails.containsKey(url)) {
@@ -131,9 +146,13 @@ class AtheleteHomeController extends GetxController {
   var schedulePage = 1.obs;
   var scheduleLimit = 10.obs;
 
-  var notifications = <NotificationItemForAthlete>[].obs;
   var myContent = <ContentItems>[].obs;
   var sentContent = <ContentItems>[].obs;
+
+  final athleteNotificationsPage = 1.obs;
+  final hasMoreAthleteNotifications = true.obs;
+  late ScrollController athleteNotificationsScrollController;
+  final isLoadingMoreAthleteNotifications = false.obs;
 
   @override
   void onInit() {
@@ -156,6 +175,9 @@ class AtheleteHomeController extends GetxController {
         if (tab == 3) {
           getAthleteAllContentStudio();
         }
+        if (tab == 1) {
+          onGetAllAthleteNotifications();
+        }
       });
       draftScrollController = ScrollController();
       draftScrollController.addListener(paginationListener);
@@ -173,7 +195,9 @@ class AtheleteHomeController extends GetxController {
       scheduleScrollController = ScrollController();
       scheduleScrollController.addListener(schedulePaginationListener);
 
-      loadNotifications();
+      athleteNotificationsScrollController = ScrollController();
+      athleteNotificationsScrollController
+          .addListener(paginationListenerForAllAthleteNotifications);
     }
   }
 
@@ -208,7 +232,7 @@ class AtheleteHomeController extends GetxController {
       isLoading: isDraftChannelLoading,
       query: {
         'search': draftChannelSearch.text.trim(),
-        'type': 'CHANNEL',
+        'type': 'ALL',
         'page': draftPage.value.toString(),
         'limit': draftLimit.value.toString(),
       },
@@ -283,6 +307,7 @@ class AtheleteHomeController extends GetxController {
       scheduledAt: item.scheduledAt,
       publishedAt: item.publishedAt ?? "",
       likesCount: item.likesCount ?? 0,
+      isLiked: item.isLiked ?? false,
       commentsCount: item.commentsCount ?? 0,
       createdAt: item.createdAt ?? "",
       updatedAt: item.updatedAt ?? "",
@@ -555,37 +580,84 @@ class AtheleteHomeController extends GetxController {
     isUploadsLoading.value = false;
   }
 
-  void loadNotifications() {
-    notifications.assignAll([
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "Summary of Cheers on Post 1",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "Summary of Comments on Post 1",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "Your New Content Studio Drops are ready!",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "You have 225 New Fans this week",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "New Feature Available - check out …",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "@ Noval Djokovic has joined Atlete",
-      ),
-      NotificationItemForAthlete(
-        iconPath: "assets/images/profile.png",
-        message: "Your New Content Studio Drops are ready!",
-      ),
-    ]);
+  Future<void> markAllNotificationAsRead() async {
+    final result = await apiProvider
+        .patch(ApiEndpoints.markAllAthleteNotificationsAsRead, {});
+
+    if (result.success) {
+      AppLogger.d("Notification marked as read: ${result.data}");
+      await onGetAllAthleteNotifications();
+    } else {
+      AppLogger.e("Failed to mark notification as read: ${result.error}");
+    }
+  }
+
+  Future<void> markNotificationAsRead(String notificationId) async {
+    final result = await apiProvider.patch(
+        '${ApiEndpoints.markAthleteNotificationAsRead}$notificationId/read',
+        {});
+
+    if (result.success) {
+      AppLogger.d("Notification marked as read: $notificationId");
+      CustomToast.show("Notification marked as read");
+      await onGetAllAthleteNotifications();
+    } else {
+      AppLogger.e("Failed to mark notification as read: ${result.error}");
+    }
+  }
+
+  Future<void> onGetAllAthleteNotifications({bool isRefresh = true}) async {
+    try {
+      if (isRefresh) {
+        athleteNotificationsPage.value = 1;
+        notifications.clear();
+        hasMoreAthleteNotifications.value = true;
+      }
+      final result = await apiProvider.get(
+        ApiEndpoints.getAthleteNotifications,
+        query: {
+          'page': athleteNotificationsPage.value.toString(),
+          'limit': '10',
+        },
+        isLoading: isAthleteNotificationsLoading,
+      );
+
+      AppLogger.d("Athlete Notifications: ${result.data}");
+
+      if (result.success) {
+        final data = AthleteNotificationData.fromJson(result.data['data']);
+
+        notifications.assignAll(
+          data.items
+              .map((item) => NotificationItemForAthlete.fromApi(item, this))
+              .toList(),
+        );
+        if (data.meta.page >= data.meta.totalPages) {
+          hasMoreAthleteNotifications.value = false;
+        }
+      }
+    } catch (e) {
+      AppLogger.e("Notification Error: $e");
+    }
+  }
+
+  void paginationListenerForAllAthleteNotifications() {
+    if (athleteNotificationsScrollController.position.pixels >=
+            athleteNotificationsScrollController.position.maxScrollExtent -
+                200 &&
+        !isLoadingMoreAthleteNotifications.value &&
+        hasMoreAthleteNotifications.value) {
+      loadMoreAllAthleteNotifications();
+    }
+  }
+
+  Future<void> loadMoreAllAthleteNotifications() async {
+    if (isLoadingMoreAthleteNotifications.value) return;
+
+    isLoadingMoreAthleteNotifications.value = true;
+    athleteNotificationsPage.value += 1;
+    await onGetAllAthleteNotifications(isRefresh: false);
+    isLoadingMoreAthleteNotifications.value = false;
   }
 
   void changeOuterTab(int index) {
@@ -786,7 +858,7 @@ class AtheleteHomeController extends GetxController {
     final Map<String, dynamic> body = {
       "action": actionType,
       "caption": landingController.captionForNewPost.text,
-      "category": landingController.selectedCategoryIds,
+      "categoryId": landingController.selectedCategoryIds,
       "files": await MultipartFile.fromFile(
         filePath,
         filename: picked.name,
@@ -797,10 +869,12 @@ class AtheleteHomeController extends GetxController {
       body["scheduledAt"] = scheduledAt;
     }
     if (landingController.selectedBrandIds.isNotEmpty) {
-      body["brand"] = landingController.selectedBrandIds;
+      body["brandId"] = landingController.selectedBrandIds;
     }
 
     final formData = FormData.fromMap(body);
+
+    AppLogger.d("formData for direct upload: ${body.toString()}");
 
     final result = await apiProvider.post(
       ApiEndpoints.postNewChannelViaDirectUpload,
@@ -818,6 +892,18 @@ class AtheleteHomeController extends GetxController {
         transition: Transition.rightToLeft,
       );
       mediaPickerController.selectedMixed.clear();
+      landingController.captionForNewPost.clear();
+      mediaPickerController.clearVideos();
+      mediaPickerController.selectedImages.clear();
+      mediaPickerController.selectedVideos.clear();
+      if (scheduledAt != null) {
+        landingController.selectedDate = DateTime.now().obs;
+        landingController.selectedHour = 0.obs;
+        mediaPickerController.selectedMixed.clear();
+        mediaPickerController.clearVideos();
+        mediaPickerController.selectedImages.clear();
+        mediaPickerController.selectedVideos.clear();
+      }
       return true;
     }
 
@@ -878,6 +964,12 @@ class AtheleteHomeController extends GetxController {
     );
     if (result.success) {
       AppLogger.d("The result of new story is: ${result.data}");
+      landingController.captionForNewPost.clear();
+      mediaPickerController.selectedMixed.clear();
+      landingController.captionForNewPost.clear();
+      mediaPickerController.clearVideos();
+      mediaPickerController.selectedImages.clear();
+      mediaPickerController.selectedVideos.clear();
       return result.success;
     } else {
       AppLogger.d(result.error);
@@ -892,6 +984,8 @@ class AtheleteHomeController extends GetxController {
     );
     if (result.success) {
       AppLogger.d("The result of delete story is: ${result.data}");
+      Get.back();
+      await getAllAthleteStories();
       // getAllAthleteStories();
     } else {
       AppLogger.d(result.error);
@@ -903,25 +997,15 @@ class AtheleteHomeController extends GetxController {
         await apiProvider.get(ApiEndpoints.getUploadedStoryViewForAthlete);
 
     if (result.success) {
-      // OUTER VALUE
       final outer = result.data["data"];
+      AppLogger.d("Fetched Stories Data: ${result.data}");
+      final List list = outer["stories"] ?? [];
 
-      // stories list
-      final List<Map<String, dynamic>> stories =
-          List<Map<String, dynamic>>.from(outer["stories"] ?? []);
+      final parsedStories =
+          list.map((json) => AthleteStory.fromJson(json)).toList();
 
-      // total count
-      final int count = outer["count"] ?? 0;
-
-      // store final structure
-      final Map<String, dynamic> storyChannel = {
-        "stories": stories,
-        "count": count,
-      };
-
-      getAthleteStory = storyChannel;
-
-      AppLogger.d(storyChannel);
+      athleteStories.assignAll(parsedStories);
+      AppLogger.d("Fetched Stories: ${athleteStories}");
     } else {
       AppLogger.d(result.error);
     }
@@ -931,12 +1015,69 @@ class AtheleteHomeController extends GetxController {
     final result = await apiProvider.get(
       "${ApiEndpoints.getAthleteStoryViews}$storyId/views",
     );
+
     if (result.success) {
-      final List list = result.data["data"];
-      // stories.assignAll(list.map((e) => Story.fromJson(e)).toList());
+      AppLogger.d("Fetched Story Views Data: ${result.data}");
+
+      final response = StoryViewResponse.fromJson(result.data);
+
+      // Now you have:
+      // response.storyId
+      // response.viewsCount
+      // response.views (List<StoryViewer>)
+
+      storyViewsCount.value = response.viewsCount;
+      storyViewers.assignAll(response.views);
     } else {
       AppLogger.d(result.error);
     }
+  }
+}
+
+class StoryViewer {
+  final String userId;
+  final String? name;
+  final String? profilePic;
+  final String? viewedAt;
+
+  StoryViewer({
+    required this.userId,
+    this.name,
+    this.profilePic,
+    this.viewedAt,
+  });
+
+  factory StoryViewer.fromJson(Map<String, dynamic> json) {
+    return StoryViewer(
+      userId: json['userId'] ?? "",
+      name: json['name'],
+      profilePic: json['profilePic'],
+      viewedAt: json['viewedAt'],
+    );
+  }
+}
+
+class StoryViewResponse {
+  final String storyId;
+  final int viewsCount;
+  final List<StoryViewer> views;
+
+  StoryViewResponse({
+    required this.storyId,
+    required this.viewsCount,
+    required this.views,
+  });
+
+  factory StoryViewResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+
+    return StoryViewResponse(
+      storyId: data['storyId'] ?? "",
+      viewsCount: (data['viewsCount'] ?? 0).toInt(),
+      views: (data['views'] as List? ?? [])
+          .map((e) => StoryViewer.fromJson(e))
+          .toList(),
+    );
   }
 }
 
@@ -945,14 +1086,152 @@ class ContentItems {
   ContentItems({required this.imagePath});
 }
 
+class AthleteStory {
+  final String id;
+  final String? caption;
+  final String? mediaType;
+  final String mediaUrl;
+  final String? thumbnailUrl;
+  final int duration;
+  final int likesCount;
+  final int commentsCount;
+  final String createdAt;
+  final String updatedAt;
+  final String publishedAt;
+  final List<StoryMedia> media;
+
+  AthleteStory({
+    required this.id,
+    this.caption,
+    this.mediaType,
+    required this.mediaUrl,
+    this.thumbnailUrl,
+    this.duration = 0,
+    this.likesCount = 0,
+    this.commentsCount = 0,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.publishedAt,
+    required this.media,
+  });
+
+  factory AthleteStory.fromJson(Map<String, dynamic> json) {
+    return AthleteStory(
+      id: json["id"] ?? "",
+      caption: json["caption"],
+      mediaType: json["mediaType"],
+      mediaUrl: json["mediaUrl"] ?? "",
+      thumbnailUrl: json["thumbnailUrl"],
+      duration:
+          (json["duration"] ?? 0) is num ? (json["duration"] ?? 0).toInt() : 0,
+      likesCount: (json["likesCount"] ?? 0).toInt(),
+      commentsCount: (json["commentsCount"] ?? 0).toInt(),
+      createdAt: json["createdAt"] ?? "",
+      updatedAt: json["updatedAt"] ?? "",
+      publishedAt: json["publishedAt"] ?? "",
+      media: (json["media"] as List<dynamic>? ?? [])
+          .map((e) => StoryMedia.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class StoryMedia {
+  final String id;
+  final String url;
+  final String? thumbnailUrl;
+  final int duration;
+  final int sortOrder;
+  final String createdAt;
+  final String updatedAt;
+
+  StoryMedia({
+    required this.id,
+    required this.url,
+    this.thumbnailUrl,
+    this.duration = 0,
+    this.sortOrder = 0,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory StoryMedia.fromJson(Map<String, dynamic> json) {
+    return StoryMedia(
+      id: json["id"] ?? "",
+      url: json["url"] ?? "",
+      thumbnailUrl: json["thumbnailUrl"],
+      duration:
+          (json["duration"] ?? 0) is num ? (json["duration"] ?? 0).toInt() : 0,
+      sortOrder: (json["sortOrder"] ?? 0).toInt(),
+      createdAt: json["createdAt"] ?? "",
+      updatedAt: json["updatedAt"] ?? "",
+    );
+  }
+}
+
 class NotificationItemForAthlete {
-  final String iconPath;
   final String message;
-  final void Function()? onTap;
+  final String iconPath;
+  final VoidCallback? onTap;
 
   NotificationItemForAthlete({
-    required this.iconPath,
     required this.message,
+    required this.iconPath,
     this.onTap,
   });
+
+  factory NotificationItemForAthlete.fromApi(
+      NotificationItem item, AtheleteHomeController controller) {
+    return NotificationItemForAthlete(
+      message: item.message ?? "",
+      iconPath: item.actor.profilePicture ?? "",
+      onTap: () {
+        controller.markNotificationAsRead(item.id);
+        // final previewList = modelToNotificationPreview(item);
+
+        // NavigationHelper.toNamed(
+        //   AppRoutes.athleteVideoReelView,
+        //   arguments: {
+        //     'isAthlete': true,
+        //     'reels': previewList,
+        //     'startIndex': 0,
+        //   },
+        //   transition: Transition.rightToLeft,
+        // );
+      },
+    );
+  }
+
+  // static PreviewItem modelToNotificationPreview(NotificationItem item) {
+  //   return PreviewItem(
+  //     id: item.id,
+  //     title: item.channel.title ?? "",
+  //     caption: item.channel.title ?? "",
+  //     mediaUrl: item.channel. ?? "",
+  //     thumbnailUrl: item.thumbnailUrl,
+  //     categoryId: "" ?? "",
+  //     status: item.status ?? "",
+  //     type: item.type ?? "",
+  //     isArchived: item.isArchived ?? false,
+  //     scheduledAt: item.scheduledAt,
+  //     publishedAt: item.publishedAt ?? "",
+  //     likesCount: item.likesCount ?? 0,
+  //     isLiked: item.isLiked ?? false,
+  //     commentsCount: item.commentsCount ?? 0,
+  //     createdAt: item.createdAt ?? "",
+  //     updatedAt: item.updatedAt ?? "",
+  //     media: [],
+  //   );
+  // }
+
+  static String _getIconFromType(String type) {
+    switch (type) {
+      case "CHANNEL_COMMENT":
+        return "assets/icons/comment.png";
+      case "CHANNEL_LIKE":
+        return "assets/icons/like.png";
+      default:
+        return "assets/icons/notification.png";
+    }
+  }
 }

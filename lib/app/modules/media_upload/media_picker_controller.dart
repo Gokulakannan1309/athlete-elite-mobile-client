@@ -447,25 +447,25 @@ class MediaPickerController extends GetxController {
                                       ),
                                     ),
                                     // Video indicator
-                                    if (['mp4', 'mov', 'avi'].contains(
-                                        media.extension?.toLowerCase() ?? ""))
-                                      Positioned(
-                                        bottom: 6,
-                                        left: 6,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: const Icon(
-                                            Icons.play_circle_outline,
-                                            color: Colors.white,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ),
+                                    // if (['mp4', 'mov', 'avi'].contains(
+                                    //     media.extension?.toLowerCase() ?? ""))
+                                    //   Positioned(
+                                    //     bottom: 6,
+                                    //     left: 6,
+                                    //     child: Container(
+                                    //       padding: const EdgeInsets.all(4),
+                                    //       decoration: BoxDecoration(
+                                    //         color: Colors.black54,
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(4),
+                                    //       ),
+                                    //       child: const Icon(
+                                    //         Icons.play_circle_outline,
+                                    //         color: Colors.white,
+                                    //         size: 20,
+                                    //       ),
+                                    //     ),
+                                    //   ),
                                     Positioned(
                                       top: 6,
                                       right: 6,
@@ -497,41 +497,57 @@ class MediaPickerController extends GetxController {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Visibility(
-                            visible: ischannel ?? false,
-                            child: CommonButton(
-                              text: "Channel",
-                              onPressed: () => handleUpload('channel'),
-                              color: AppColors.screenBackgroundColor,
-                              textColor: AppColors.white,
-                              width: double.infinity,
-                              height: 45.h,
-                              fontSize: 14.sp,
-                            ),
-                          ),
+                              visible: ischannel ?? false,
+                              child: MaterialButton(
+                                onPressed: () => handleUpload('channel'),
+                                color: AppColors.screenBackgroundColor,
+                                textColor: AppColors.white,
+                                height: 45.h,
+                                minWidth: double.infinity,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: const BorderSide(
+                                      color: AppColors.lightRed, width: 2),
+                                ),
+                                child: Text(
+                                  "Channel",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              )),
                           Visibility(
-                            visible: isUpload ?? false,
-                            child: CommonButton(
-                              text: "Upload",
-                               onPressed: () => handleUpload('upload'),
-                              color: AppColors.screenBackgroundColor,
-                              textColor: AppColors.white,
-                              width: double.infinity,
-                              height: 45.h,
-                              fontSize: 14.sp,
-                            ),
-                          ),
+                              visible: isUpload ?? false,
+                              child: MaterialButton(
+                                  onPressed: () => handleUpload('upload'),
+                                  color: AppColors.screenBackgroundColor,
+                                  textColor: AppColors.white,
+                                  height: 45.h,
+                                  minWidth: double.infinity,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ))),
                           SizedBox(height: 12.h),
                           Visibility(
                             visible: isStory ?? false,
-                            child: CommonButton(
-                              text: "Story",
+                            child: MaterialButton(
                               onPressed: () => handleUpload('story'),
                               color: AppColors.screenBackgroundColor,
-                              width: double.infinity,
                               textColor: AppColors.white,
                               height: 45.h,
-                              fontSize: 14.sp,
-                            ),
+                              minWidth: double.infinity,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: const BorderSide(
+                                    color: AppColors.primaryColor, width: 2),
+                              ),
+                              child: Text(
+                                "Story",
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            )
                           ),
                         ],
                       ),

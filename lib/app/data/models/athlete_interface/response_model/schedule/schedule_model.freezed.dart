@@ -450,6 +450,7 @@ mixin _$ScheduleItem {
   String? get scheduledAt => throw _privateConstructorUsedError;
   String? get publishedAt => throw _privateConstructorUsedError;
   int? get likesCount => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
   int? get commentsCount => throw _privateConstructorUsedError;
   String? get createdAt => throw _privateConstructorUsedError;
   String? get updatedAt => throw _privateConstructorUsedError;
@@ -485,6 +486,7 @@ abstract class $ScheduleItemCopyWith<$Res> {
       String? scheduledAt,
       String? publishedAt,
       int? likesCount,
+      bool? isLiked,
       int? commentsCount,
       String? createdAt,
       String? updatedAt,
@@ -519,6 +521,7 @@ class _$ScheduleItemCopyWithImpl<$Res, $Val extends ScheduleItem>
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
     Object? likesCount = freezed,
+    Object? isLiked = freezed,
     Object? commentsCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -577,6 +580,10 @@ class _$ScheduleItemCopyWithImpl<$Res, $Val extends ScheduleItem>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -619,6 +626,7 @@ abstract class _$$ScheduleItemImplCopyWith<$Res>
       String? scheduledAt,
       String? publishedAt,
       int? likesCount,
+      bool? isLiked,
       int? commentsCount,
       String? createdAt,
       String? updatedAt,
@@ -651,6 +659,7 @@ class __$$ScheduleItemImplCopyWithImpl<$Res>
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
     Object? likesCount = freezed,
+    Object? isLiked = freezed,
     Object? commentsCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -709,6 +718,10 @@ class __$$ScheduleItemImplCopyWithImpl<$Res>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -746,6 +759,7 @@ class _$ScheduleItemImpl implements _ScheduleItem {
       this.scheduledAt,
       this.publishedAt,
       this.likesCount,
+      this.isLiked,
       this.commentsCount,
       this.createdAt,
       this.updatedAt,
@@ -782,6 +796,8 @@ class _$ScheduleItemImpl implements _ScheduleItem {
   @override
   final int? likesCount;
   @override
+  final bool? isLiked;
+  @override
   final int? commentsCount;
   @override
   final String? createdAt;
@@ -797,7 +813,7 @@ class _$ScheduleItemImpl implements _ScheduleItem {
 
   @override
   String toString() {
-    return 'ScheduleItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, category: $category, brand: $brand, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
+    return 'ScheduleItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, category: $category, brand: $brand, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
   }
 
   @override
@@ -825,6 +841,7 @@ class _$ScheduleItemImpl implements _ScheduleItem {
                 other.publishedAt == publishedAt) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -851,6 +868,7 @@ class _$ScheduleItemImpl implements _ScheduleItem {
       scheduledAt,
       publishedAt,
       likesCount,
+      isLiked,
       commentsCount,
       createdAt,
       updatedAt,
@@ -887,6 +905,7 @@ abstract class _ScheduleItem implements ScheduleItem {
       final String? scheduledAt,
       final String? publishedAt,
       final int? likesCount,
+      final bool? isLiked,
       final int? commentsCount,
       final String? createdAt,
       final String? updatedAt,
@@ -921,6 +940,8 @@ abstract class _ScheduleItem implements ScheduleItem {
   String? get publishedAt;
   @override
   int? get likesCount;
+  @override
+  bool? get isLiked;
   @override
   int? get commentsCount;
   @override

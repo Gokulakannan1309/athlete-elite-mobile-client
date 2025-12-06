@@ -69,7 +69,7 @@ class LoginController extends GetxController {
         await Get.find<ApiProvider>().setAccessToken(token);
         await getFcmToken();
 
-        NavigationHelper.toNamed(
+        NavigationHelper.offAllNamed(
           AppRoutes.atheleteLandingScreen,
           arguments: {'isAthlete': isAthlete},
           transition: Transition.rightToLeft,
@@ -106,8 +106,8 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    emailOrUsernameOrPhoneController.removeListener(_updateButtonState);
-    passwordController.removeListener(_updateButtonState);
+    // emailOrUsernameOrPhoneController.removeListener(_updateButtonState);
+    // passwordController.removeListener(_updateButtonState);
     // emailOrUsernameOrPhoneController.dispose();
     // passwordController.dispose();
     super.onClose();

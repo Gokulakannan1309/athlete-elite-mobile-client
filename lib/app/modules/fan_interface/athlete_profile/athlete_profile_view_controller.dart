@@ -627,6 +627,7 @@ class AthleteProfileViewController extends GetxController {
     }
   }
 
+  List<String> quickEmojis = ['❤️', '👍', '😂', '😮', '😢', '🔥', '👏'];
   Future<void> toggleReaction(
     String postId,
     String emoji,
@@ -644,6 +645,4 @@ class AthleteProfileViewController extends GetxController {
           fanLandingController.athleteFanview.value?.data.athlete.id ?? "");
     }
   }
-
-  List<String> quickEmojis = ['❤️', '👍', '😂', '😮', '😢', '🔥', '👏'];
 }

@@ -19,11 +19,12 @@ class HomeSectionResponse with _$HomeSectionResponse {
 @freezed
 class HomeData with _$HomeData {
   const factory HomeData({
-    required String profilePicture,
+    String? profilePicture,
+    String? bio,
     required int fansCount,
     required String heading,
     IntroData? intro,
-    required List<String> aboutMe,
+    List<String>? aboutMe,
     required List<FavSportsMoment> favSportsMoments,
     FindAthlete? findAthlete,
   }) = _HomeData;
@@ -35,24 +36,25 @@ class HomeData with _$HomeData {
 @freezed
 class IntroData with _$IntroData {
   const factory IntroData({
-    required String id,
-    required String title,
+    String? id,
+    String? title,
     String? caption,
-    required String mediaUrl,
+    String? mediaUrl,
     String? thumbnailUrl,
-    required String categoryId,
+    String? categoryId,
     String? categoryName,
     String? brandId,
     String? brandName,
-    required String status,
-    required String type,
-    required bool isArchived,
+    String? status,
+    String? type,
+    bool? isArchived,
     String? scheduledAt,
     String? publishedAt,
-    required int likesCount,
-    required int commentsCount,
-    required String createdAt,
-    required String updatedAt,
+    int? likesCount,
+    bool? isLiked,
+    int? commentsCount,
+    String? createdAt,
+    String? updatedAt,
     required List<MediaItem> media,
   }) = _IntroData;
 
@@ -63,24 +65,25 @@ class IntroData with _$IntroData {
 @freezed
 class FavSportsMoment with _$FavSportsMoment {
   const factory FavSportsMoment({
-    required String id,
-    required String title,
+    String? id,
+    String? title,
     String? caption,
-    required String mediaUrl,
+    String? mediaUrl,
     String? thumbnailUrl,
-    required String categoryId,
+    String? categoryId,
     String? categoryName,
     String? brandId,
     String? brandName,
-    required String status,
-    required String type,
-    required bool isArchived,
+    String? status,
+    String? type,
+    bool? isArchived,
     String? scheduledAt,
     String? publishedAt,
-    required int likesCount,
-    required int commentsCount,
-    required String createdAt,
-    required String updatedAt,
+    int? likesCount,
+    bool? isLiked,
+    int? commentsCount,
+    String? createdAt,
+    String? updatedAt,
     required List<MediaItem> media,
   }) = _FavSportsMoment;
 

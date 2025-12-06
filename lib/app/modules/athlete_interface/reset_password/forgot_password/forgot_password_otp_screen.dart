@@ -15,7 +15,7 @@ import '../../../../widgets/common_text_field.dart';
 import '../../../../widgets/custom_toast.dart';
 import '../reset_password_controller.dart';
 
-class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
+class ForgotPasswordOTPScreen extends GetWidget<ResetPasswordController> {
   final bool isAthlete;
   final String userId;
   const ForgotPasswordOTPScreen(
@@ -47,7 +47,7 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppText(
-                            "OTP DETAILS",
+                            "OTP DETAILS".tr.toUpperCase(),
                             fontFamily: FontFamily.titleTextFont,
                             color: AppColors.primaryColor,
                             fontSize: 24.sp,
@@ -57,11 +57,13 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                           SizedBox(height: 35.h),
                           CommonTextField(
                             controller: controller.forgotPasswordOtpController,
-                            label: "Enter OTP",
+                            label: "Enter OTP".tr,
                             inputType: TextInputType.number,
                             validator: (value) {
-                              if (value == null || value.isEmpty || value.length < 6) {
-                                return '*Please Enter correct OTP';
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.length < 6) {
+                                return '*Please Enter correct OTP.'.tr;
                               }
                               return null;
                             },
@@ -71,7 +73,7 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                             () => Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                AppText("Didn’t get the OTP? "),
+                                AppText("Didn’t get the OTP? ".tr),
                                 if (controller.secondsRemaining.value > 0)
                                   AppText(
                                     "Resend OTP in 00:${controller.secondsRemaining.value.toString().padLeft(2, '0')}",
@@ -83,7 +85,7 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                                       controller.resendOtpTimer();
                                     },
                                     child: AppText(
-                                      "Resend OTP",
+                                      "Resend OTP".tr,
                                       color: AppColors.primaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -97,10 +99,9 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                   ),
                 ),
               ),
-
               Obx(
                 () => CommonButton(
-                  text: "Verify OTP",
+                  text: "Verify OTP".tr,
                   onPressed: () {
                     if (controller.forgotpasswordOtpformKey.currentState!
                         .validate()) {
@@ -115,16 +116,15 @@ class ForgotPasswordOTPScreen extends GetView<ResetPasswordController> {
                           RegExp(r'^[0-9]{10}$').hasMatch(input);
 
                       if (isEmail || isPhone) {
-                        controller.onForgotPasswordOTPVerify(
-                            isAthlete, userId);
+                        controller.onForgotPasswordOTPVerify(isAthlete, userId);
                       } else {
                         CustomToast.show(
-                          "Please enter a valid Email or Phone number.",
+                          "Please enter a valid Email or Phone number.".tr,
                         );
                       }
                     } else {
                       CustomToast.show(
-                        "Please enter Email, or Phone number.",
+                        "Please enter Email, or Phone number.".tr,
                       );
                     }
                   },

@@ -13,12 +13,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../routes/app_routes.dart';
 import '../../../../routes/navigation_helper.dart';
 
-class AddIntroScreen extends GetView<AtheleteLandingController> {
+class AddIntroScreen extends GetWidget<AtheleteLandingController> {
   final bool isAthlete;
   const AddIntroScreen({super.key, required this.isAthlete});
 
@@ -38,7 +37,7 @@ class AddIntroScreen extends GetView<AtheleteLandingController> {
                   children: [
                     CommonBackButton(),
                     Text(
-                      "Add your intro".toUpperCase(),
+                      "Add your intro".tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -103,6 +102,11 @@ class AddIntroScreen extends GetView<AtheleteLandingController> {
                 bool hasBackendVideo =
                     controller.backendIntroUrl.value.isNotEmpty;
 
+                  AppLogger.d("hasBackendVideo: $hasBackendVideo");
+                  AppLogger.d("backendUrl: $backendUrl");
+                  AppLogger.d("pickedThumb: $pickedThumb");
+                  AppLogger.d("intro: $intro");
+
                 if (!hasBackendVideo) {
                   return InkWell(
                     onTap: () {
@@ -129,7 +133,7 @@ class AddIntroScreen extends GetView<AtheleteLandingController> {
                           children: [
                             Icon(Icons.file_upload_outlined,
                                 size: 45.sp, color: Colors.black),
-                            AppText("Upload Intro Video",
+                            AppText("Upload Intro Video".tr,
                                 color: Colors.black, fontSize: 16.sp),
                           ],
                         )
@@ -184,7 +188,7 @@ class AddIntroScreen extends GetView<AtheleteLandingController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppText("About me", fontSize: 16.sp),
+                        AppText("About me".tr, fontSize: 16.sp),
                         SizedBox(height: 10.h),
                         ListView.builder(
                           shrinkWrap: true,

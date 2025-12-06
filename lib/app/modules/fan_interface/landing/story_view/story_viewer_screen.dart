@@ -1,7 +1,8 @@
-import 'dart:io';
+import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/data/models/fan_interface/response_model/story_view/latest_story_response.dart';
-import 'package:athlete_elite/app/modules/athlete_interface/home/athelete_add_story/add_story_screen.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/home/athelete_home_controller.dart';
 import 'package:athlete_elite/app/modules/fan_interface/landing/fan_landing_controller.dart';
+import 'package:athlete_elite/app/widgets/common_back_button.dart';
 import 'package:athlete_elite/app/widgets/common_button.dart';
 import 'package:athlete_elite/app/widgets/custom_dialogbox.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryViewerScreen extends StatefulWidget {
+  final bool isAthlete;
   final List<StoryItem> stories;
   final int initialIndex;
 
@@ -16,6 +18,7 @@ class StoryViewerScreen extends StatefulWidget {
     super.key,
     required this.stories,
     required this.initialIndex,
+    required this.isAthlete,
   });
 
   @override
@@ -29,8 +32,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
 
   VideoPlayerController? videoController;
   AnimationController? progressController;
-
-  final fanController = Get.find<FanLandingController>();
 
   bool isPaused = false; // ⭐ ADDED
 
@@ -71,7 +72,8 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
       });
 
     if (story.mediaType == "video") {
-      videoController = VideoPlayerController.network(story.mediaUrl,
+      videoController = VideoPlayerController.network(
+        story.mediaUrl,
         httpHeaders: {
           'User-Agent':
               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -84,7 +86,15 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
       videoController!.play();
       setState(() {});
 
-      fanController.updateStoryViewedStatus(story.id ?? "");
+      if (!widget.isAthlete) {
+        final fanController = Get.isRegistered()
+            ? Get.find<FanLandingController>()
+            : Get.put(FanLandingController());
+        fanController.updateStoryViewedStatus(story.id ?? "");
+      } else {
+        final athleteController = Get.find<AtheleteHomeController>();
+        await athleteController.getAthleteStoryView(story.id ?? "");
+      }
 
       progressController!.duration =
           videoController!.value.duration == Duration.zero
@@ -99,7 +109,6 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
     setState(() {});
   }
 
-  // ⭐ ADDED — PAUSE / RESUME HANDLERS
   void _pauseStory() {
     if (isPaused) return;
     isPaused = true;
@@ -243,7 +252,69 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
                       );
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: CommonBackButton())
+                ],
+              ),
+            ),
+
+            Visibility(
+              visible: widget.isAthlete,
+              child: Positioned(
+                bottom: 90,
+                left: 20,
+                child: Row(
+                  children: [
+                    CommonButton(
+                      text:
+                          "${Get.find<AtheleteHomeController>().storyViewsCount.value} Views",
+                      onPressed: () => _showViewsList(
+                          context, Get.find<AtheleteHomeController>()),
+                      icon: "eye_open",
+                      iconColor: Colors.black,
+                      color: Colors.white,
+                      fontSize: 13,
+                      width: 135,
+                    ),
+                    const SizedBox(width: 10),
+                    CommonButton(
+                      text: "Delete".tr,
+                      onPressed: () {
+                        CustomDialogbox.showConfirmation(
+                          title: "Are you sure?",
+                          cancelText: "Cancel",
+                          confirmText: "Delete Story".tr,
+                          onConfirm: () {
+                            Get.find<AtheleteHomeController>()
+                                .deleteStoryByAthlete(story.id ?? "");
+                          },
+                          onCancel: () {},
+                        );
+                      },
+                      icon: "delete",
+                      iconColor: Colors.white,
+                      color: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 13,
+                      width: 120,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ---------------------------
+            // CAPTION
+            // ---------------------------
+            Positioned(
+              bottom: 40,
+              left: 20,
+              right: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Row(
                     children: [
                       CircleAvatar(
@@ -263,65 +334,18 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
                       )
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            Positioned(
-              bottom: 90,
-              left: 20,
-              child: Row(
-                children: [
-                  CommonButton(
-                    text: "20 Views",
-                  
-                    onPressed: () => _showViewsList(context),
-                    icon: "eye_open",
-                    iconColor: Colors.black,
-                    color: Colors.white,
-                    fontSize: 13,
-                    width: 135,
-                  ),
-                  const SizedBox(width: 10),
-                  CommonButton(
-                    text: "Delete",
-                    onPressed: () {
-                      CustomDialogbox.showConfirmation(
-                        title: "Are you sure?",
-                        cancelText: "Cancel",
-                        confirmText: "Delete Story",
-                        onConfirm: () {
-                          // homeController.deleteStoryByAthlete("");
-                        },
-                        onCancel: () {},
-                      );
-                    },
-                    icon: "delete",
-                    iconColor: Colors.white,
-                    color: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 13,
-                    width: 120,
+                  const SizedBox(height: 12),
+                  Text(
+                    story.caption ?? "",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                    maxLines: 3,
+                    
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
-              ),
-            ),
-
-            // ---------------------------
-            // CAPTION
-            // ---------------------------
-            Positioned(
-              bottom: 40,
-              left: 20,
-              right: 20,
-              child: Text(
-                story.caption ?? "",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -330,14 +354,106 @@ class _StoryViewerScreenState extends State<StoryViewerScreen>
     );
   }
 
-    void _showViewsList(BuildContext context) {
-    final viewers = List.generate(
-      8,
-      (index) => ViewerModel(name: "Jhon Doe", imageUrl: null),
+  void _showViewsList(BuildContext context, AtheleteHomeController controller) {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 3.0,
+        minWidth: MediaQuery.of(context).size.width,
+        maxWidth: MediaQuery.of(context).size.width,
+      ),
+      backgroundColor: AppColors.screenBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Obx(() {
+          final viewers = controller.storyViewers;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Center(
+                  child: Text(
+                    "View By".tr,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // If no views → show empty message
+                if (viewers.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.remove_red_eye_outlined,
+                            size: 40, color: Colors.grey),
+                        SizedBox(height: 10),
+                        Text(
+                          "No views yet".tr,
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  // Show dynamic viewers list
+                  SizedBox(
+                    height: 300,
+                    child: ListView.builder(
+                      itemCount: viewers.length,
+                      itemBuilder: (context, index) {
+                        final v = viewers[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Row(
+                            children: [
+                              // Profile Image
+                              CircleAvatar(
+                                radius: 22,
+                                backgroundImage: (v.profilePic != null &&
+                                        v.profilePic!.isNotEmpty)
+                                    ? NetworkImage(v.profilePic!)
+                                    : null,
+                                child: (v.profilePic == null ||
+                                        v.profilePic!.isEmpty)
+                                    ? const Icon(Icons.person)
+                                    : null,
+                              ),
+
+                              const SizedBox(width: 12),
+
+                              // Name
+                              Expanded(
+                                child: Text(
+                                  v.name ?? "Unknown",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          );
+        });
+      },
     );
-
-    ViewsListDialog.show(context: context, title: "View By", viewers: viewers);
   }
-
-  
 }

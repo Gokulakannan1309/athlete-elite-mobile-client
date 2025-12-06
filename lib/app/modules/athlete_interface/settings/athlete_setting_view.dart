@@ -14,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../widgets/common_back_button.dart';
 
-class AthleteSettingView extends GetView<AthleteSettingsController> {
+class AthleteSettingView extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const AthleteSettingView({super.key, required this.isAthlete});
 
@@ -36,7 +36,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
                   ),
                   Center(
                     child: Text(
-                      'SETTINGS'.toUpperCase(),
+                      'SETTINGS'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 28.sp,
                         fontFamily: GoogleFonts.anton().fontFamily,
@@ -50,7 +50,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 30.h),
               CommonButton(
-                text: "Edit Profile",
+                text: "Edit Profile".tr,
                 onPressed: () {
                   NavigationHelper.toNamed(
                     AppRoutes.editProfileScreen,
@@ -74,7 +74,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 10.h),
               CommonButton(
-                text: "User Details",
+                text: "User Details".tr,
                 onPressed: () {
                   NavigationHelper.toNamed(
                     AppRoutes.athleteUserDetailsScreen,
@@ -100,7 +100,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               Visibility(
                 visible: isAthlete,
                 child: CommonButton(
-                  text: "Archived Content",
+                  text: "Archived Content".tr,
                   onPressed: () async {
                     NavigationHelper.toNamed(
                       AppRoutes.archeivedPostScreen,
@@ -110,7 +110,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
                     await controller.getAthleteArchivedContent();
                   },
                   color: AppColors.lightRed,
-                  icon: "reschedule",
+                  icon: "archived",
                   iconColor: AppColors.white,
                   isOutlined: true,
                   textColor: AppColors.white,
@@ -121,7 +121,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 10.h),
               CommonButton(
-                text: "Preferences",
+                text: "Preferences".tr,
                 onPressed: () async {
                   if (isAthlete) {
                     NavigationHelper.toNamed(
@@ -136,6 +136,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
                       arguments: {'isAthlete': isAthlete},
                       transition: Transition.rightToLeft,
                     );
+                    await controller.getFanPreferences();
                   }
                 },
                 color: AppColors.lightRed,
@@ -149,7 +150,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 10.h),
               CommonButton(
-                text: "Change Password",
+                text: "Change Password".tr,
                 onPressed: () {
                   NavigationHelper.toNamed(
                     AppRoutes.athleteChangePasswordScreen,
@@ -168,7 +169,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 10.h),
               CommonButton(
-                text: "Privacy Policy",
+                text: "Privacy Policy".tr,
                 onPressed: () {},
                 color: AppColors.lightRed,
                 icon: "privacy",
@@ -181,7 +182,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               SizedBox(height: 10.h),
               CommonButton(
-                text: "Help & Support",
+                text: "Help & Support".tr,
                 onPressed: () {
                   NavigationHelper.toNamed(
                     AppRoutes.helpAndSupportScreen,
@@ -202,7 +203,7 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               Visibility(
                 visible: isAthlete,
                 child: CommonButton(
-                  text: "Add Social Links",
+                  text: "Add Social Links".tr,
                   onPressed: () {
                     NavigationHelper.toNamed(
                       AppRoutes.addSocialLinksScreen,
@@ -223,12 +224,12 @@ class AthleteSettingView extends GetView<AthleteSettingsController> {
               ),
               Spacer(),
               CommonButton(
-                text: "Log Out",
+                text: "Log Out".tr,
                 onPressed: () {
                   CustomDialogbox.showConfirmation(
-                    title: "Are you sure you want to logout?",
-                    cancelText: "Cancel",
-                    confirmText: "Log Out",
+                    title: "Are you sure you want to logout?".tr,
+                    cancelText: "Cancel".tr,
+                    confirmText: "Log Out".tr,
                     onConfirm: () {
                       AthleteSettingsController controller =
                           Get.isRegistered<AthleteSettingsController>()

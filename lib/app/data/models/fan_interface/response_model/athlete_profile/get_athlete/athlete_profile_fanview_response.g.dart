@@ -45,12 +45,12 @@ _$AthleteFanviewImpl _$$AthleteFanviewImplFromJson(Map<String, dynamic> json) =>
     _$AthleteFanviewImpl(
       id: json['id'] as String,
       name: json['name'] as String,
-      profilePicture: json['profilePicture'] as String,
-      bio: json['bio'] as String,
-      country: json['country'] as String,
-      sports: json['sports'] as String,
-      league: json['league'] as String,
-      ranking: json['ranking'] as String,
+      profilePicture: json['profilePicture'] as String?,
+      bio: json['bio'] as String?,
+      country: json['country'] as String?,
+      sports: json['sports'] as String?,
+      league: json['league'] as String?,
+      ranking: json['ranking'] as String?,
     );
 
 Map<String, dynamic> _$$AthleteFanviewImplToJson(

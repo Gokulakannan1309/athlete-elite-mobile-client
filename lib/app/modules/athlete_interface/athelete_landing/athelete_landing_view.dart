@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/content_library/content_category_model.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/private_community/private_community_post_list_response.dart';
-import 'package:athlete_elite/app/data/providers/api_provider.dart';
-import 'package:athlete_elite/app/modules/athlete_interface/home/video_reel_view/video_reel_screen.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/settings/settings_controller.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_picker_controller.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
@@ -25,7 +23,7 @@ import 'athelete_landing_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
-class AtheleteLandingView extends GetView<AtheleteLandingController> {
+class AtheleteLandingView extends GetWidget<AtheleteLandingController> {
   final bool isAthlete;
   const AtheleteLandingView({super.key, required this.isAthlete});
 
@@ -117,8 +115,14 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
                                       ? shimmerBox(
                                           w: 110.w, h: 110.w, radius: 30)
                                       : controller.homeSectionResponse.value
-                                                  ?.data.profilePicture !=
-                                              null
+                                                      ?.data.profilePicture !=
+                                                  null &&
+                                              controller
+                                                      .homeSectionResponse
+                                                      .value
+                                                      ?.data
+                                                      .profilePicture !=
+                                                  ""
                                           ? controller.profilePicture.value
                                                   .startsWith("http")
                                               ? Image.network(
@@ -166,76 +170,64 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
                           );
                         }),
                       ),
-                      SizedBox(width: 10.w,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              controller.getAllAthleteFansList().then((value) {
-                                if (value) {
-                                  NavigationHelper.toNamed(
-                                    AppRoutes.atheleteFanListScreen,
-                                    arguments: {'isAthlete': isAthlete},
-                                    transition: Transition.rightToLeft,
-                                  );
-                                }
-                              }).onError((error, stackTrace) {
-                                AppLogger.d(
-                                    "the error is $error and stack trace is $stackTrace");
-                              });
-                            },
-                            child: Visibility(
-                              visible: !controller.isHomeIntroLoading.value,
-                              child: AppText(
-                                controller.athleteFanCount.value,
-                                underlineOffset: 0.2,
-                                fontSize: 16.sp,
-                                useCustomUnderline: true,
-                                textDecoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 5.h),
-                          AppText("Fans", fontSize: 14.sp),
-                        ],
+                      SizedBox(
+                        width: 10.w,
                       ),
+                      Obx(() {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                controller
+                                    .getAllAthleteFansList()
+                                    .then((value) {
+                                  if (value) {
+                                    NavigationHelper.toNamed(
+                                      AppRoutes.atheleteFanListScreen,
+                                      arguments: {'isAthlete': isAthlete},
+                                      transition: Transition.rightToLeft,
+                                    );
+                                  }
+                                }).onError((error, stackTrace) {
+                                  AppLogger.d(
+                                    "the error is $error and stack trace is $stackTrace",
+                                  );
+                                });
+                              },
+                              child: controller.isHomeIntroLoading.value
+                                  ? SizedBox(
+                                      height: 20.h,
+                                      width: 20.w,
+                                      child: CircularProgressIndicator(
+                                          color: AppColors.primaryColor,
+                                          strokeWidth: 2),
+                                    )
+                                  : AppText(
+                                      controller.athleteFanCount.value,
+                                      underlineOffset: 0.2,
+                                      fontSize: 16.sp,
+                                      useCustomUnderline: true,
+                                      textDecoration: TextDecoration.underline,
+                                    ),
+                            ),
+                            SizedBox(height: 5.h),
+                            AppText("Fans".tr, fontSize: 14.sp),
+                          ],
+                        );
+                      })
                     ],
                   ),
                   SizedBox(height: 12.h),
                   Column(
                     children: [
-                      AppText(
-                        "I've been entertaining since I was a kid.",
-                        textAlign: TextAlign.center,
-                        fontSize: 12.sp,
-                        color: AppColors.white.withOpacity(0.8),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AppText(
-                            "Track me @ My show - ",
-                            textAlign: TextAlign.center,
-                            fontSize: 12.sp,
-                            color: AppColors.white.withOpacity(0.8),
-                          ),
-                          AppText(
-                            "Good Trouble",
-                            textDecoration: TextDecoration.underline,
-                            useCustomUnderline: true,
-                            underlineOffset: 0.2,
-                            textAlign: TextAlign.center,
-                            fontSize: 12.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                        ],
-                      ),
-                      AppText(
-                        "NK Foundation",
-                        textAlign: TextAlign.center,
-                        fontSize: 12.sp,
-                        color: AppColors.white.withOpacity(0.8),
+                      Obx(
+                        () => AppText(
+                          controller.athleteBio.value ?? "",
+                          textAlign: TextAlign.center,
+                          fontSize: 12.sp,
+                          color: AppColors.white.withOpacity(0.8),
+                        ),
                       ),
                     ],
                   ),
@@ -348,7 +340,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
           }),
           SizedBox(height: 25.h),
           Text(
-            "TOP CATEGORIES",
+            "TOP CATEGORIES".tr.toUpperCase(),
             style: TextStyle(
               fontSize: 16.sp,
               color: AppColors.lightGray.withOpacity(0.6),
@@ -393,7 +385,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
           }),
           SizedBox(height: 25.h),
           Text(
-            "THE BRANDS",
+            "THE BRANDS".tr.toUpperCase(),
             style: TextStyle(
               fontSize: 16.sp,
               color: AppColors.lightGray.withOpacity(0.6),
@@ -591,7 +583,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
           !controller.isHomeContentLibraryLoading.value) {
         return Center(
           child: Text(
-            "No Content Found",
+            "No Content Found".tr,
             style: TextStyle(
               fontSize: 16.sp,
               color: AppColors.lightGray.withOpacity(0.6),
@@ -619,8 +611,8 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
       final posts = controller.privateCommunityPostList.value?.data.items ?? [];
       if (posts.isEmpty) {
         return Center(
-            child:
-                AppText("No Thoughts", color: Colors.white54, fontSize: 14.sp));
+            child: AppText("No Thoughts".tr,
+                color: Colors.white54, fontSize: 14.sp));
       }
 
       return ListView.builder(
@@ -700,7 +692,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
 
   Widget _buildPostCard(PrivateCommunityPost item) {
     return GestureDetector(
-      onLongPress: () => _showWhatsAppEmojiSelector(Get.context!, item.id),
+      // onLongPress: () => _showWhatsAppEmojiSelector(Get.context!, item.id),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(10),
@@ -835,7 +827,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Choose Reaction',
+                    'Choose Reaction'.tr,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -923,6 +915,7 @@ class AtheleteLandingView extends GetView<AtheleteLandingController> {
                           'reels': reels,
                           'startIndex': index,
                           'categoryIndex': categoryIndex,
+                          'comesFrom': "athlete_landing_content_library",
                         },
                         transition: Transition.rightToLeft,
                       );

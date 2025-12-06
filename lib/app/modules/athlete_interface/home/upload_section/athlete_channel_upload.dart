@@ -2,6 +2,7 @@ import 'package:athlete_elite/app/constants/filters.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/content_library/content_library_summary.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/filter_screen/image_filter/image_filter_editor.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/sub_screens/athlete_content_tag_screen.dart';
 import 'package:athlete_elite/app/modules/athlete_interface/home/athelete_home_controller.dart';
 import 'package:athlete_elite/app/modules/media_upload/media_type_enum.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
@@ -26,12 +27,14 @@ class AthleteChannelUpload extends StatefulWidget {
   final String sheetType;
   final MediaType mediaType;
   final RxList<SelectedMedia> selectedMedia;
+  final RxBool isFilterApplied;
   const AthleteChannelUpload({
     super.key,
     required this.sheetType,
     required this.isAthlete,
     required this.mediaType,
     required this.selectedMedia,
+    required this.isFilterApplied,
   });
 
   @override
@@ -72,8 +75,8 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
           _videoController = VideoPlayerController.file(selected.file!);
         } else if (selected.networkUrl != null) {
           AppLogger.d("🎥 Creating controller from network");
-          _videoController =
-              VideoPlayerController.network(selected.networkUrl!,
+          _videoController = VideoPlayerController.network(
+            selected.networkUrl!,
             httpHeaders: {
               'User-Agent':
                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -138,22 +141,15 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
 
     // Whenever the bottom sheet changes, reinitialize the media
     if (oldWidget.sheetType != widget.sheetType) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _initMedia(_currentIndex);
-      });
-    }
-  }
-
-// IMPORTANT: Wait for initialization before building
-  Future<void> _ensureVideoInitialized() async {
-    if (_videoController != null && !_videoController!.value.isInitialized) {
-      await _videoController!.initialize();
-      if (mounted) {
-        setState(() => _isVideoInitialized = true);
-        _videoController!.play();
+      if (widget.isFilterApplied.value == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _initMedia(_currentIndex);
+        });
       }
     }
   }
+
+
 
   Widget _buildMediaView(SelectedMedia media) {
     if (media.type == MediaType.image) {
@@ -193,6 +189,17 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
   Widget build(BuildContext context) {
     return AppScaffold(
       isAvoidbottom: true,
+      onWillPop: () async {
+        if (controller.captionForNewPost.text.isNotEmpty ||
+            controller.selectedCategoryIds.isNotEmpty) {
+          controller.captionForNewPost.text = '';
+          controller.selectedCategoryIds.clear();
+          controller.selectedBrandIds.clear();
+          return _showExitDialog(context);
+        } else {
+          return true;
+        }
+      },
       backgroundColor: AppColors.screenBackgroundColor,
       body: Stack(
         children: [
@@ -334,7 +341,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: AppText(
-                    "Edit Content",
+                    "Edit Content".tr,
                     color: AppColors.white,
                     fontSize: 16.sp,
                     textAlign: TextAlign.center,
@@ -362,12 +369,16 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                     ),
                     child: homeController.postNowIsLoading.value
                         ? Center(
+                            child: SizedBox(
+                            height: 20.h,
+                            width: 20.h,
                             child: CircularProgressIndicator(
+                              strokeWidth: 2,
                               color: AppColors.white,
                             ),
-                          )
+                          ))
                         : AppText(
-                            "Post Now",
+                            "Post Now".tr,
                             color: AppColors.white,
                             fontSize: 16.sp,
                             textAlign: TextAlign.center,
@@ -400,10 +411,14 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                   ),
                   child: homeController.saveDraftIsLoading.value
                       ? Center(
+                          child: SizedBox(
+                          height: 20.h,
+                          width: 20.h,
                           child: CircularProgressIndicator(
+                            strokeWidth: 2,
                             color: AppColors.white,
                           ),
-                        )
+                        ))
                       : AppText(
                           "Save & Draft",
                           color: AppColors.white,
@@ -467,7 +482,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
             // Centered Text
             Center(
               child: Text(
-                "SELECT:",
+                "SELECT:".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -487,7 +502,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                   Column(
                     children: [
                       Text(
-                        "CONTENT CATEGORY",
+                        "CONTENT CATEGORY".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -543,7 +558,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                   Column(
                     children: [
                       Text(
-                        "MY BRANDS",
+                        "MY BRANDS".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -572,7 +587,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                               return Column(
                                 children: [
                                   SelectableButton(
-                                    text: text.name,
+                                    text: text.name ?? "",
                                     isSelected: isSelected,
                                     width: 145.w,
                                     color: AppColors.red,
@@ -612,7 +627,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr,
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,
@@ -629,6 +644,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
   }
 
   Widget buildPostCaptionSheet() {
+    final RxBool hasFiltersApplied = false.obs;
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -648,7 +664,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -658,72 +674,100 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
               ),
             ),
             SizedBox(height: 20.h),
-            InkWell(
-              onTap: () async {
-                if (widget.selectedMedia.isEmpty) {
-                  Get.snackbar("No Media", "Please select an image or video");
-                  return;
-                }
 
-                // Navigate to filter editor and wait for result
-                final result = await Get.to(
-                  () => ImageFilterEditor(
-                    selectedMedia: widget.selectedMedia,
-                    filters: filters,
-                  ),
-                );
+            Obx(() => InkWell(
+                  onTap: () async {
+                    if (widget.selectedMedia.isEmpty) {
+                      Get.snackbar(
+                        "No Media",
+                        "Please select an image or video".tr,
+                        backgroundColor: AppColors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
 
-                // If filters were applied, update the selectedMedia
-                if (result != null && result is List<SelectedMedia>) {
-                  setState(() {
-                    widget.selectedMedia.clear();
-                    widget.selectedMedia.addAll(result);
-                  });
-
-                  // Show success message
-                  Get.snackbar(
-                    "Success",
-                    "Filters applied successfully",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: AppColors.lightRed,
-                    colorText: Colors.white,
-                  );
-                }
-              },
-              child: Stack(
-                children: [
-                  Container(
-                    width: 50.w,
-                    height: 50.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.screenBackgroundColor.withOpacity(0.7),
-                      border: Border.all(color: AppColors.white, width: 1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(
-                        "assets/icons/filter_icon.png",
-                        height: 10.sp,
-                        alignment: Alignment.center,
+                    // Navigate to filter editor and wait for result
+                    final result = await Get.to(
+                      () => ImageFilterEditor(
+                        selectedMedia: widget.selectedMedia,
+                        filters: AppFilters
+                            .getPopularFilters(), // Your existing filters list
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      width: 10.w,
-                      height: 10.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(30),
+                    );
+
+                    // If filters were applied, update the selectedMedia
+                    if (result != null && result is List<SelectedMedia>) {
+                      setState(() {
+                        // Clear existing media
+                        widget.selectedMedia.clear();
+                        // Add filtered media
+                        widget.selectedMedia.addAll(result);
+                        hasFiltersApplied.value = true;
+                      });
+
+                      // Reinitialize the current media to show filtered version
+                      await _initMedia(_currentIndex);
+
+                      // Show success message
+                      Get.snackbar(
+                        "Success".tr,
+                        "Filters applied successfully".tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.lightRed,
+                        colorText: Colors.white,
+                        duration: const Duration(seconds: 2),
+                      );
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 50.w,
+                        height: 50.w,
+                        decoration: BoxDecoration(
+                          color:
+                              AppColors.screenBackgroundColor.withOpacity(0.7),
+                          border: Border.all(
+                            color: hasFiltersApplied.value
+                                ? AppColors.lightRed
+                                : AppColors.white,
+                            width: hasFiltersApplied.value ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Image.asset(
+                            "assets/icons/filter_icon.png",
+                            height: 10.sp,
+                            alignment: Alignment.center,
+                            color: hasFiltersApplied.value
+                                ? AppColors.lightRed
+                                : null,
+                          ),
+                        ),
                       ),
-                    ),
+                      // Indicator dot
+                      if (hasFiltersApplied.value)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            width: 10.w,
+                            height: 10.w,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(30),
+                              border:
+                                  Border.all(color: Colors.white, width: 1.5),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                )),
+
             SizedBox(height: 20.h),
             TextField(
               controller: controller.captionForNewPost,
@@ -731,7 +775,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
               minLines: 3,
               style: TextStyle(color: AppColors.white, fontSize: 16.sp),
               decoration: InputDecoration(
-                hintText: 'Add Caption',
+                hintText: 'Add Caption'.tr,
                 hintStyle: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
@@ -789,7 +833,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr,
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,
@@ -825,7 +869,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -900,13 +944,13 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                         decoration: BoxDecoration(
                           color: AppColors.black,
                           border: Border.all(
-                            color: AppColors.lightRed,
+                            color: AppColors.primaryColor,
                             width: 1.5,
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: AppText(
-                          "Next",
+                          "Next".tr,
                           color: AppColors.white,
                           fontSize: 16.sp,
                           textAlign: TextAlign.center,
@@ -944,7 +988,7 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -1050,10 +1094,14 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
                       ),
                       child: homeController.scheduleNowIsLoading.value
                           ? Center(
+                              child: SizedBox(
+                              height: 20.h,
+                              width: 20.h,
                               child: CircularProgressIndicator(
+                                strokeWidth: 2,
                                 color: AppColors.white,
                               ),
-                            )
+                            ))
                           : AppText(
                               "Schedule Post",
                               color: AppColors.white,
@@ -1069,6 +1117,10 @@ class _AthleteChannelUploadState extends State<AthleteChannelUpload> {
         ),
       ),
     );
+  }
+
+  _showExitDialog(BuildContext context) {
+    return true;
   }
 }
 
@@ -1132,7 +1184,8 @@ class _AthleteNewPostCategorySelectScreenState
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -1312,7 +1365,7 @@ class _AthleteNewPostCategorySelectScreenState
             // Centered Text
             Center(
               child: Text(
-                "SELECT:",
+                "SELECT:".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -1331,7 +1384,7 @@ class _AthleteNewPostCategorySelectScreenState
                   Column(
                     children: [
                       Text(
-                        "CONTENT CATEGORY",
+                        "CONTENT CATEGORY".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -1393,7 +1446,7 @@ class _AthleteNewPostCategorySelectScreenState
                   Column(
                     children: [
                       Text(
-                        "MY BRANDS",
+                        "MY BRANDS".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -1421,7 +1474,7 @@ class _AthleteNewPostCategorySelectScreenState
                               return Column(
                                 children: [
                                   SelectableButton(
-                                    text: text.name,
+                                    text: text.name ?? "",
                                     isSelected: isSelected,
                                     width: 145.w,
                                     color: AppColors.red,
@@ -1456,7 +1509,7 @@ class _AthleteNewPostCategorySelectScreenState
                     if (controller.selectedCategoryIds.isEmpty) {
                       Get.snackbar(
                         "Selection Category",
-                        "Please select at least one category",
+                        "Please select at least one category".tr,
                         backgroundColor: AppColors.red,
                         colorText: AppColors.white,
                       );
@@ -1481,7 +1534,7 @@ class _AthleteNewPostCategorySelectScreenState
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr,
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,
@@ -1563,7 +1616,8 @@ class _AthleteNewStoryPostReadyViewScreenState
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -1754,7 +1808,7 @@ class _AthleteNewStoryPostReadyViewScreenState
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: AppText(
-                    "Edit Content",
+                    "Edit Content".tr,
                     color: AppColors.white,
                     fontSize: 16.sp,
                     textAlign: TextAlign.center,
@@ -1791,12 +1845,16 @@ class _AthleteNewStoryPostReadyViewScreenState
                     ),
                     child: homeController.postNowIsLoading.value
                         ? Center(
+                            child: SizedBox(
+                            height: 20.h,
+                            width: 20.h,
                             child: CircularProgressIndicator(
+                              strokeWidth: 2,
                               color: AppColors.white,
                             ),
-                          )
+                          ))
                         : AppText(
-                            "Post Now",
+                            "Post Now".tr,
                             color: AppColors.white,
                             fontSize: 16.sp,
                             textAlign: TextAlign.center,
@@ -1814,10 +1872,19 @@ class _AthleteNewStoryPostReadyViewScreenState
                 return InkWell(
                   onTap: () {
                     if (!homeController.saveDraftIsLoading.value) {
-                      homeController.postNewChannelViaDirectUpload(
-                        "SAVE_DRAFT",
+                      homeController
+                          .uploadStoryForAthlete(
+                        'SAVE_DRAFT',
                         homeController.saveDraftIsLoading,
-                      );
+                      )
+                          .then((value) {
+                        NavigationHelper.offAllNamed(
+                          AppRoutes.atheleteHomeScreen,
+                          arguments: {"isAthlete": true},
+                          transition: Transition.rightToLeft,
+                        );
+                        CustomToast.show("Story saved successfully");
+                      });
                     }
                   },
                   child: Container(
@@ -1830,10 +1897,14 @@ class _AthleteNewStoryPostReadyViewScreenState
                     ),
                     child: homeController.saveDraftIsLoading.value
                         ? Center(
+                            child: SizedBox(
+                            height: 20.h,
+                            width: 20.h,
                             child: CircularProgressIndicator(
+                              strokeWidth: 2,
                               color: AppColors.white,
                             ),
-                          )
+                          ))
                         : AppText(
                             "Save & Draft",
                             color: AppColors.white,
@@ -1939,7 +2010,8 @@ class _AthleteNewPostShcedulePostCategorySelectScreenState
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -2122,7 +2194,7 @@ class _AthleteNewPostShcedulePostCategorySelectScreenState
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -2311,7 +2383,8 @@ class _AthleteNewStoryShcedulePostCategorySelectScreenState
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -2494,7 +2567,7 @@ class _AthleteNewStoryShcedulePostCategorySelectScreenState
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -2610,10 +2683,14 @@ class _AthleteNewStoryShcedulePostCategorySelectScreenState
                       ),
                       child: homeController.scheduleNowIsLoading.value
                           ? Center(
+                              child: SizedBox(
+                              height: 20.h,
+                              width: 20.h,
                               child: CircularProgressIndicator(
+                                strokeWidth: 2,
                                 color: AppColors.white,
                               ),
-                            )
+                            ))
                           : AppText(
                               "Schedule Post",
                               color: AppColors.white,

@@ -39,7 +39,7 @@ Map<String, dynamic> _$$DraftDataImplToJson(_$DraftDataImpl instance) =>
 _$DraftCategoryItemImpl _$$DraftCategoryItemImplFromJson(
         Map<String, dynamic> json) =>
     _$DraftCategoryItemImpl(
-      categoryId: json['categoryId'] as String,
+      categoryId: json['categoryId'] as String?,
       categoryName: json['categoryName'] as String?,
       channels: (json['channels'] as List<dynamic>)
           .map((e) => DraftChannel.fromJson(e as Map<String, dynamic>))
@@ -69,6 +69,7 @@ _$DraftChannelImpl _$$DraftChannelImplFromJson(Map<String, dynamic> json) =>
       scheduledAt: json['scheduledAt'] as String?,
       publishedAt: json['publishedAt'] as String?,
       likesCount: (json['likesCount'] as num?)?.toInt(),
+      isLiked: json['isLiked'] as bool?,
       commentsCount: (json['commentsCount'] as num?)?.toInt(),
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
@@ -92,6 +93,7 @@ Map<String, dynamic> _$$DraftChannelImplToJson(_$DraftChannelImpl instance) =>
       'scheduledAt': instance.scheduledAt,
       'publishedAt': instance.publishedAt,
       'likesCount': instance.likesCount,
+      'isLiked': instance.isLiked,
       'commentsCount': instance.commentsCount,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,

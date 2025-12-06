@@ -56,6 +56,7 @@ class ContentItem with _$ContentItem {
     @JsonKey(name: "athlete") AthleteData? athlete,
     @JsonKey(name: "brand") BrandData? brand,
     required int likesCount,
+    required bool isLiked,
     required int commentsCount,
   }) = _ContentItem;
 

@@ -14,7 +14,7 @@ import '../../../widgets/common_text_field.dart';
 import '../../../widgets/custom_toast.dart';
 import 'reset_password_controller.dart';
 
-class ResetPasswordView extends GetView<ResetPasswordController> {
+class ResetPasswordView extends GetWidget<ResetPasswordController> {
   final bool isAthlete;
   final bool isFirstTimeLogin;
   final String userId;
@@ -52,7 +52,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppText(
-                            "RESET PASSWORD",
+                            "RESET PASSWORD".tr,
                             fontFamily: FontFamily.titleTextFont,
                             letterSpacing: 1.8,
                             color: AppColors.primaryColor,
@@ -62,17 +62,17 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                           SizedBox(height: 25.h),
                           CommonTextField(
                             controller: controller.newPasswordController,
-                            label: "Enter New Password",
+                            label: "Enter New Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Password is required.';
+                                return '*Password is required.'.tr;
                               }
                               final passwordRegex = RegExp(
                                 r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{8,}$',
                               );
                               if (!passwordRegex.hasMatch(value)) {
-                                return '*Password must be at least 8 characters with one uppercase letter and one special character.';
+                                return '*Password must be at least 8 characters with one uppercase letter and one special character.'.tr;
                               }
                               return null;
                             },
@@ -80,15 +80,15 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                           SizedBox(height: 25.h),
                           CommonTextField(
                             controller: controller.confirmPasswordController,
-                            label: "Confirm Password",
+                            label: "Confirm Password".tr,
                             isPassword: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please confirm your password.';
+                                return '*Please confirm your password.'.tr;
                               }
                               if (value !=
                                   controller.newPasswordController.text) {
-                                return '*Passwords do not match.';
+                                return '*Passwords do not match.'.tr;
                               }
                               return null;
                             },
@@ -102,7 +102,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
               ),
               Obx(
                 () => CommonButton(
-                  text: "Save Password",
+                  text: "Save Password".tr,
                   onPressed: () {
                     FocusScope.of(context).unfocus();
 
@@ -127,10 +127,9 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                       //     transition: Transition.rightToLeft,
                       //   );
                       // }
-                      // }
-                      CustomToast.show("Password Reset Successful");
+                      CustomToast.show("Password Reset Successful".tr);
                     } else {
-                      CustomToast.show("Please fix the errors.");
+                      CustomToast.show("Please enter valid details.".tr);
                     }
                   },
                   isDisabled: controller.isButtonDisabled.value,

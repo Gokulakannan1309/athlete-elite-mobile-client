@@ -13,10 +13,18 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
 
-String fixCorruptedUrl(String url) {
+String fixCorruptedUrl(String? url) {
+  // If API returns null or empty after delete,
+  // DO NOT attempt to fix or return any previous URL.
+  if (url == null || url.isEmpty) {
+    return "";
+  }
+
+  // Your existing corruption fix logic
   if (url.contains("http://atlete-backend-inln.vercel.apphttps")) {
     return url.replaceFirst("http://atlete-backend-inln.vercel.app", "");
   }
+
   return url;
 }
 
@@ -73,6 +81,7 @@ Widget buildProfileImage(double radius, AtheleteLandingController controller) {
     ),
   );
 }
+
 ApiProvider apiProvider =
     Get.isRegistered() ? Get.find<ApiProvider>() : Get.put(ApiProvider());
 
@@ -155,6 +164,7 @@ PreviewItem modelToPreview(DraftChannel item) {
     scheduledAt: item.scheduledAt,
     publishedAt: item.publishedAt ?? "",
     likesCount: item.likesCount ?? 0,
+    isLiked: item.isLiked ?? false,
     commentsCount: item.commentsCount ?? 0,
     createdAt: item.createdAt ?? "",
     updatedAt: item.updatedAt ?? "",
@@ -193,6 +203,7 @@ PreviewItem modelToReelPreview(dynamic item) {
     scheduledAt: get<String>("scheduledAt") ?? item.scheduledAt,
     publishedAt: get<String>("publishedAt") ?? item.publishedAt ?? "",
     likesCount: get<int>("likesCount") ?? item.likesCount ?? 0,
+    isLiked: get<bool>("isLiked") ?? item.isLiked ?? false,
     commentsCount: get<int>("commentsCount") ?? item.commentsCount ?? 0,
     createdAt: get<String>("createdAt") ?? item.createdAt ?? "",
     updatedAt: get<String>("updatedAt") ?? item.updatedAt ?? "",
@@ -266,6 +277,7 @@ class PreviewItemForFan {
 
   // Counts
   final int likesCount;
+  final bool isLiked;
   final int commentsCount;
 
   // Timestamps
@@ -291,6 +303,7 @@ class PreviewItemForFan {
     this.scheduledAt,
     required this.publishedAt,
     required this.likesCount,
+    required this.isLiked,
     required this.commentsCount,
     required this.createdAt,
     required this.updatedAt,
@@ -314,6 +327,7 @@ class PreviewItemForFan {
       scheduledAt: json['scheduledAt'],
       publishedAt: json['publishedAt'] ?? '',
       likesCount: json['likesCount'] ?? 0,
+      isLiked: json['isLiked'] ?? false,
       commentsCount: json['commentsCount'] ?? 0,
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
@@ -340,6 +354,7 @@ class PreviewItemForFan {
       'scheduledAt': scheduledAt,
       'publishedAt': publishedAt,
       'likesCount': likesCount,
+      'isLiked': isLiked,
       'commentsCount': commentsCount,
       'createdAt': createdAt,
       'updatedAt': updatedAt,

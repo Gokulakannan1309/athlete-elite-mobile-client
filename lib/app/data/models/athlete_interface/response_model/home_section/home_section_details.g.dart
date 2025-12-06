@@ -26,14 +26,15 @@ Map<String, dynamic> _$$HomeSectionResponseImplToJson(
 
 _$HomeDataImpl _$$HomeDataImplFromJson(Map<String, dynamic> json) =>
     _$HomeDataImpl(
-      profilePicture: json['profilePicture'] as String,
+      profilePicture: json['profilePicture'] as String?,
+      bio: json['bio'] as String?,
       fansCount: (json['fansCount'] as num).toInt(),
       heading: json['heading'] as String,
       intro: json['intro'] == null
           ? null
           : IntroData.fromJson(json['intro'] as Map<String, dynamic>),
       aboutMe:
-          (json['aboutMe'] as List<dynamic>).map((e) => e as String).toList(),
+          (json['aboutMe'] as List<dynamic>?)?.map((e) => e as String).toList(),
       favSportsMoments: (json['favSportsMoments'] as List<dynamic>)
           .map((e) => FavSportsMoment.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -45,6 +46,7 @@ _$HomeDataImpl _$$HomeDataImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$HomeDataImplToJson(_$HomeDataImpl instance) =>
     <String, dynamic>{
       'profilePicture': instance.profilePicture,
+      'bio': instance.bio,
       'fansCount': instance.fansCount,
       'heading': instance.heading,
       'intro': instance.intro,
@@ -55,24 +57,25 @@ Map<String, dynamic> _$$HomeDataImplToJson(_$HomeDataImpl instance) =>
 
 _$IntroDataImpl _$$IntroDataImplFromJson(Map<String, dynamic> json) =>
     _$IntroDataImpl(
-      id: json['id'] as String,
-      title: json['title'] as String,
+      id: json['id'] as String?,
+      title: json['title'] as String?,
       caption: json['caption'] as String?,
-      mediaUrl: json['mediaUrl'] as String,
+      mediaUrl: json['mediaUrl'] as String?,
       thumbnailUrl: json['thumbnailUrl'] as String?,
-      categoryId: json['categoryId'] as String,
+      categoryId: json['categoryId'] as String?,
       categoryName: json['categoryName'] as String?,
       brandId: json['brandId'] as String?,
       brandName: json['brandName'] as String?,
-      status: json['status'] as String,
-      type: json['type'] as String,
-      isArchived: json['isArchived'] as bool,
+      status: json['status'] as String?,
+      type: json['type'] as String?,
+      isArchived: json['isArchived'] as bool?,
       scheduledAt: json['scheduledAt'] as String?,
       publishedAt: json['publishedAt'] as String?,
-      likesCount: (json['likesCount'] as num).toInt(),
-      commentsCount: (json['commentsCount'] as num).toInt(),
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      likesCount: (json['likesCount'] as num?)?.toInt(),
+      isLiked: json['isLiked'] as bool?,
+      commentsCount: (json['commentsCount'] as num?)?.toInt(),
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
       media: (json['media'] as List<dynamic>)
           .map((e) => MediaItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -95,6 +98,7 @@ Map<String, dynamic> _$$IntroDataImplToJson(_$IntroDataImpl instance) =>
       'scheduledAt': instance.scheduledAt,
       'publishedAt': instance.publishedAt,
       'likesCount': instance.likesCount,
+      'isLiked': instance.isLiked,
       'commentsCount': instance.commentsCount,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
@@ -104,24 +108,25 @@ Map<String, dynamic> _$$IntroDataImplToJson(_$IntroDataImpl instance) =>
 _$FavSportsMomentImpl _$$FavSportsMomentImplFromJson(
         Map<String, dynamic> json) =>
     _$FavSportsMomentImpl(
-      id: json['id'] as String,
-      title: json['title'] as String,
+      id: json['id'] as String?,
+      title: json['title'] as String?,
       caption: json['caption'] as String?,
-      mediaUrl: json['mediaUrl'] as String,
+      mediaUrl: json['mediaUrl'] as String?,
       thumbnailUrl: json['thumbnailUrl'] as String?,
-      categoryId: json['categoryId'] as String,
+      categoryId: json['categoryId'] as String?,
       categoryName: json['categoryName'] as String?,
       brandId: json['brandId'] as String?,
       brandName: json['brandName'] as String?,
-      status: json['status'] as String,
-      type: json['type'] as String,
-      isArchived: json['isArchived'] as bool,
+      status: json['status'] as String?,
+      type: json['type'] as String?,
+      isArchived: json['isArchived'] as bool?,
       scheduledAt: json['scheduledAt'] as String?,
       publishedAt: json['publishedAt'] as String?,
-      likesCount: (json['likesCount'] as num).toInt(),
-      commentsCount: (json['commentsCount'] as num).toInt(),
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      likesCount: (json['likesCount'] as num?)?.toInt(),
+      isLiked: json['isLiked'] as bool?,
+      commentsCount: (json['commentsCount'] as num?)?.toInt(),
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
       media: (json['media'] as List<dynamic>)
           .map((e) => MediaItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -145,6 +150,7 @@ Map<String, dynamic> _$$FavSportsMomentImplToJson(
       'scheduledAt': instance.scheduledAt,
       'publishedAt': instance.publishedAt,
       'likesCount': instance.likesCount,
+      'isLiked': instance.isLiked,
       'commentsCount': instance.commentsCount,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,

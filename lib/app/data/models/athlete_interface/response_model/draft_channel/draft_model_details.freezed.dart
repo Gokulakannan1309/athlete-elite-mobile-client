@@ -432,7 +432,7 @@ DraftCategoryItem _$DraftCategoryItemFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DraftCategoryItem {
-  String get categoryId => throw _privateConstructorUsedError;
+  String? get categoryId => throw _privateConstructorUsedError;
   String? get categoryName => throw _privateConstructorUsedError;
   List<DraftChannel> get channels => throw _privateConstructorUsedError;
 
@@ -453,7 +453,7 @@ abstract class $DraftCategoryItemCopyWith<$Res> {
       _$DraftCategoryItemCopyWithImpl<$Res, DraftCategoryItem>;
   @useResult
   $Res call(
-      {String categoryId, String? categoryName, List<DraftChannel> channels});
+      {String? categoryId, String? categoryName, List<DraftChannel> channels});
 }
 
 /// @nodoc
@@ -471,15 +471,15 @@ class _$DraftCategoryItemCopyWithImpl<$Res, $Val extends DraftCategoryItem>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? channels = null,
   }) {
     return _then(_value.copyWith(
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -501,7 +501,7 @@ abstract class _$$DraftCategoryItemImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String categoryId, String? categoryName, List<DraftChannel> channels});
+      {String? categoryId, String? categoryName, List<DraftChannel> channels});
 }
 
 /// @nodoc
@@ -517,15 +517,15 @@ class __$$DraftCategoryItemImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? categoryId = null,
+    Object? categoryId = freezed,
     Object? categoryName = freezed,
     Object? channels = null,
   }) {
     return _then(_$DraftCategoryItemImpl(
-      categoryId: null == categoryId
+      categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       categoryName: freezed == categoryName
           ? _value.categoryName
           : categoryName // ignore: cast_nullable_to_non_nullable
@@ -542,7 +542,7 @@ class __$$DraftCategoryItemImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DraftCategoryItemImpl implements _DraftCategoryItem {
   const _$DraftCategoryItemImpl(
-      {required this.categoryId,
+      {this.categoryId,
       this.categoryName,
       required final List<DraftChannel> channels})
       : _channels = channels;
@@ -551,7 +551,7 @@ class _$DraftCategoryItemImpl implements _DraftCategoryItem {
       _$$DraftCategoryItemImplFromJson(json);
 
   @override
-  final String categoryId;
+  final String? categoryId;
   @override
   final String? categoryName;
   final List<DraftChannel> _channels;
@@ -603,7 +603,7 @@ class _$DraftCategoryItemImpl implements _DraftCategoryItem {
 
 abstract class _DraftCategoryItem implements DraftCategoryItem {
   const factory _DraftCategoryItem(
-      {required final String categoryId,
+      {final String? categoryId,
       final String? categoryName,
       required final List<DraftChannel> channels}) = _$DraftCategoryItemImpl;
 
@@ -611,7 +611,7 @@ abstract class _DraftCategoryItem implements DraftCategoryItem {
       _$DraftCategoryItemImpl.fromJson;
 
   @override
-  String get categoryId;
+  String? get categoryId;
   @override
   String? get categoryName;
   @override
@@ -644,6 +644,7 @@ mixin _$DraftChannel {
   String? get scheduledAt => throw _privateConstructorUsedError;
   String? get publishedAt => throw _privateConstructorUsedError;
   int? get likesCount => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
   int? get commentsCount => throw _privateConstructorUsedError;
   String? get createdAt => throw _privateConstructorUsedError;
   String? get updatedAt => throw _privateConstructorUsedError;
@@ -679,6 +680,7 @@ abstract class $DraftChannelCopyWith<$Res> {
       String? scheduledAt,
       String? publishedAt,
       int? likesCount,
+      bool? isLiked,
       int? commentsCount,
       String? createdAt,
       String? updatedAt,
@@ -713,6 +715,7 @@ class _$DraftChannelCopyWithImpl<$Res, $Val extends DraftChannel>
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
     Object? likesCount = freezed,
+    Object? isLiked = freezed,
     Object? commentsCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -771,6 +774,10 @@ class _$DraftChannelCopyWithImpl<$Res, $Val extends DraftChannel>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -813,6 +820,7 @@ abstract class _$$DraftChannelImplCopyWith<$Res>
       String? scheduledAt,
       String? publishedAt,
       int? likesCount,
+      bool? isLiked,
       int? commentsCount,
       String? createdAt,
       String? updatedAt,
@@ -845,6 +853,7 @@ class __$$DraftChannelImplCopyWithImpl<$Res>
     Object? scheduledAt = freezed,
     Object? publishedAt = freezed,
     Object? likesCount = freezed,
+    Object? isLiked = freezed,
     Object? commentsCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -903,6 +912,10 @@ class __$$DraftChannelImplCopyWithImpl<$Res>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int?,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -940,6 +953,7 @@ class _$DraftChannelImpl implements _DraftChannel {
       this.scheduledAt,
       this.publishedAt,
       this.likesCount,
+      this.isLiked,
       this.commentsCount,
       this.createdAt,
       this.updatedAt,
@@ -976,6 +990,8 @@ class _$DraftChannelImpl implements _DraftChannel {
   @override
   final int? likesCount;
   @override
+  final bool? isLiked;
+  @override
   final int? commentsCount;
   @override
   final String? createdAt;
@@ -991,7 +1007,7 @@ class _$DraftChannelImpl implements _DraftChannel {
 
   @override
   String toString() {
-    return 'DraftChannel(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, status: $status, type: $type, isArchived: $isArchived, brandId: $brandId, brandName: $brandName, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
+    return 'DraftChannel(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, status: $status, type: $type, isArchived: $isArchived, brandId: $brandId, brandName: $brandName, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
   }
 
   @override
@@ -1019,6 +1035,7 @@ class _$DraftChannelImpl implements _DraftChannel {
                 other.publishedAt == publishedAt) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -1045,6 +1062,7 @@ class _$DraftChannelImpl implements _DraftChannel {
       scheduledAt,
       publishedAt,
       likesCount,
+      isLiked,
       commentsCount,
       createdAt,
       updatedAt,
@@ -1081,6 +1099,7 @@ abstract class _DraftChannel implements DraftChannel {
       final String? scheduledAt,
       final String? publishedAt,
       final int? likesCount,
+      final bool? isLiked,
       final int? commentsCount,
       final String? createdAt,
       final String? updatedAt,
@@ -1115,6 +1134,8 @@ abstract class _DraftChannel implements DraftChannel {
   String? get publishedAt;
   @override
   int? get likesCount;
+  @override
+  bool? get isLiked;
   @override
   int? get commentsCount;
   @override

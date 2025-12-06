@@ -3,12 +3,13 @@ import 'package:athlete_elite/app/modules/athlete_interface/settings/settings_co
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
 import 'package:athlete_elite/app/widgets/common_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import '../../../widgets/common_back_button.dart';
 
-class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
+class HelpAndSupportScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const HelpAndSupportScreen({super.key, required this.isAthlete});
 
@@ -33,7 +34,7 @@ class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
                     ),
                     Center(
                       child: Text(
-                        'Help & Support',
+                        'Help & Support'.tr,
                         style: TextStyle(
                           fontSize: 28.sp,
                           fontFamily: GoogleFonts.anton().fontFamily,
@@ -47,7 +48,7 @@ class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
                 ),
                 SizedBox(height: 30.h),
                 Text(
-                  'Enter Your queries here',
+                  'Enter Your queries here'.tr,
                   style: TextStyle(color: Colors.white, fontSize: 16.sp),
                 ),
                 SizedBox(height: 8.h),
@@ -56,8 +57,13 @@ class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
                   maxLines: 7,
                   minLines: 5,
                   style: TextStyle(color: AppColors.white, fontSize: 16.sp),
+                   inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9\s.,!@#$%^&*()_+=-]'),
+                    ),
+                  ],
                   decoration: InputDecoration(
-                    hintText: 'Enter your queries here..',
+                    hintText: 'Enter your queries here..'.tr,
                     hintStyle: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
@@ -83,7 +89,7 @@ class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
                 const Spacer(),
                 Obx(
                   () => CommonButton(
-                    text: 'Submit',
+                    text: 'Submit'.tr,
                     color: AppColors.lightRed,
                     onPressed: controller.isSubmitQueryLoading.value
                         ? null
@@ -98,7 +104,7 @@ class HelpAndSupportScreen extends GetView<AthleteSettingsController> {
                             }
                           },
                     isLoading: controller.isSubmitQueryLoading.value,
-                    isDisabled: !controller.isQueryValid.value,
+                    isDisabled: controller.isQueryValid.value,
                     disabledColor: AppColors.lightRed,
                   ),
                 ),

@@ -14,7 +14,7 @@ import '../../../../widgets/common_text_field.dart';
 import '../../../../widgets/custom_toast.dart';
 import '../reset_password_controller.dart';
 
-class ForgotPasswordRequestScreen extends GetView<ResetPasswordController> {
+class ForgotPasswordRequestScreen extends GetWidget<ResetPasswordController> {
   final bool isAthlete;
   const ForgotPasswordRequestScreen({super.key, required this.isAthlete});
 
@@ -44,7 +44,7 @@ class ForgotPasswordRequestScreen extends GetView<ResetPasswordController> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppText(
-                            "ENTER DETAILS",
+                            "ENTER DETAILS".tr.toUpperCase(),
                             fontFamily: FontFamily.titleTextFont,
                             color: AppColors.primaryColor,
                             fontSize: 24.sp,
@@ -55,10 +55,10 @@ class ForgotPasswordRequestScreen extends GetView<ResetPasswordController> {
                           CommonTextField(
                             controller:
                                 controller.forgotPasswordEmailController,
-                            label: "Enter Mobile Number/Email",
+                            label: "Enter Mobile Number/Email".tr,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return '*Please Enter Mobile Number/Email.';
+                                return '*Please Enter Mobile Number/Email.'.tr;
                               }
                               return null;
                             },
@@ -71,7 +71,7 @@ class ForgotPasswordRequestScreen extends GetView<ResetPasswordController> {
               ),
               Obx(
                 () => CommonButton(
-                  text: "GET OTP",
+                  text: "GET OTP".tr.toUpperCase(),
                   onPressed: () {
                     if (controller.forgotPasswordRequestFormKey.currentState!
                         .validate()) {

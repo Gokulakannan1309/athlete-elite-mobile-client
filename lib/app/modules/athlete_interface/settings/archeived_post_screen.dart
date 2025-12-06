@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/content_library/content_library_summary.dart';
 import 'package:athlete_elite/app/data/models/athlete_interface/response_model/draft_channel/draft_model_details.dart';
+import 'package:athlete_elite/app/modules/athlete_interface/athelete_landing/athelete_landing_controller.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
 import 'package:athlete_elite/app/routes/navigation_helper.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
@@ -20,7 +21,7 @@ import '../../../widgets/AppText.dart';
 import '../../../widgets/common_back_button.dart';
 import 'settings_controller.dart';
 
-class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
+class ArcheivedPostScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const ArcheivedPostScreen({super.key, required this.isAthlete});
 
@@ -43,10 +44,10 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
                   ),
                   Center(
                     child: Text(
-                      'ARCHIVED POSTS',
+                      'ARCHIVED POSTS'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 28.sp,
-                        fontFamily: GoogleFonts.anton().fontFamily,
+                        fontFamily: GoogleFonts.bebasNeue().fontFamily,
                         color: AppColors.lightWhite,
                         letterSpacing: 2.0,
                       ),
@@ -73,9 +74,9 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
       if (grouped.isEmpty && controller.isArchivedLoading.isFalse) {
         return Center(
           child: AppText(
-            "Your archived posts will appear here.",
-            color: AppColors.white,
-            fontSize: 16.sp,
+            "Your archived posts will appear here.".tr,
+            color: Colors.white54,
+            fontSize: 14.sp,
           ),
         );
       }
@@ -91,14 +92,22 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
             if (index == grouped.length) {
               return Padding(
                 padding: EdgeInsets.all(20.h),
-                child: const Center(child: CircularProgressIndicator()),
+                child: Center(
+                    child: SizedBox(
+                  height: 20.h,
+                  width: 20.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryColor,
+                  ),
+                )),
               );
             }
 
             final categoryName = grouped[index].key;
             final items = grouped[index].value;
 
-            return archivedCategorySection(categoryName, items);
+            return archivedCategorySection(categoryName, categoryName, items);
           },
         ),
       );
@@ -106,13 +115,14 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
   }
 
   // CATEGORY SECTION
-  Widget archivedCategorySection(String title, List<ArchivedItem> items) {
+  Widget archivedCategorySection(
+      String title, String categoryName, List<ArchivedItem> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          child: Text(title.toUpperCase(),
+          child: Text(categoryName.toUpperCase(),
               style: TextStyle(
                 color: AppColors.lightWhite,
                 fontSize: 16.sp,
@@ -128,10 +138,10 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            crossAxisCount: 2,
             crossAxisSpacing: 11.w,
             mainAxisSpacing: 15.h,
-            childAspectRatio: 0.6,
+            childAspectRatio: 0.9,
           ),
           itemBuilder: (context, index) {
             final item = items[index];
@@ -148,8 +158,12 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
   // SINGLE ARCHIVED CARD
   Widget buildArchivedCard(
       String videoUrl, ArchivedItem item, int index, List<ArchivedItem> items) {
+    AtheleteLandingController landingController = Get.isRegistered()
+        ? Get.find<AtheleteLandingController>()
+        : Get.put(AtheleteLandingController());
     return FutureBuilder<String>(
-        future: controller.generateDraftVideoThumbnail(fixCorruptedUrl(videoUrl)),
+        future:
+            controller.generateDraftVideoThumbnail(fixCorruptedUrl(videoUrl)),
         builder: (context, snap) {
           final thumbnail = snap.data;
           return Stack(
@@ -157,8 +171,8 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: Container(
-                  height: 125.h,
-                  width: 100.w,
+                  height: 216.h,
+                  width: 173.w,
                   color: Colors.grey.shade900,
                   child: thumbnail == null || thumbnail.isEmpty
                       ? shimmerBox(w: 100.w, h: 100.h, radius: 12)
@@ -173,6 +187,7 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
                                 'isAthlete': isAthlete,
                                 'reels': previewList,
                                 'startIndex': index,
+                                'comesFrom': "archived",
                               },
                               transition: Transition.rightToLeft,
                             );
@@ -195,9 +210,29 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
                   ),
                   onSelected: (value) {
                     if (value == "unarchive") {
-                      // controller.unArchivePost(item.id);
+                      landingController
+                          .restoreChannelFromarchive(item.id)
+                          .then((success) async {
+                        if (success) {
+                          CustomToast.show("Channel restored successfully!");
+                          await controller.getAthleteArchivedContent(
+                              isRefresh: true);
+                        } else {
+                          CustomToast.show("Failed to restore channel");
+                        }
+                      });
                     } else {
-                      // controller.deleteArchivedPost(item.id);
+                      landingController
+                          .deleteChannelFromArchive(item.id)
+                          .then((success) async {
+                        if (success) {
+                          CustomToast.show("Channel deleted successfully!");
+                          await controller.getAthleteArchivedContent(
+                              isRefresh: true);
+                        } else {
+                          CustomToast.show("Failed to delete channel");
+                        }
+                      });
                     }
                   },
                   itemBuilder: (context) => [
@@ -237,15 +272,17 @@ class ArcheivedPostScreen extends GetView<AthleteSettingsController> {
       id: item.id,
       title: item.title ?? "",
       caption: item.caption ?? "",
-      mediaUrl: item.mediaUrl ?? "",
+      mediaUrl: fixCorruptedUrl(item.mediaUrl ?? "") ?? "",
       thumbnailUrl: item.thumbnailUrl,
-      categoryId: "" ?? "",
+      categoryId: item.category ?? "",
+      brandId: item.brand ?? "",
       status: "" ?? "",
       type: "" ?? "",
       isArchived: true ?? false,
       scheduledAt: "" ?? "",
       publishedAt: "" ?? "",
       likesCount: 0 ?? 0,
+      isLiked: false ?? false,
       commentsCount: 0 ?? 0,
       createdAt: item.createdAt ?? "",
       updatedAt: item.updatedAt ?? "",

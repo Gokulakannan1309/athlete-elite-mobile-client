@@ -18,9 +18,13 @@ class ApiEndpoints {
   //Go to Channel - Home View
   static const String homeSectionDetailsOfGoToChannel =
       '/athlete/go-to-channel/home-section';
+  static const String removeFanFromTrack = '/athlete/go-to-channel/fans/';
   static const String getAthleteChannelCategories =
       '/athlete/go-to-channel/categories';
   static const String getAthleteChannelBrands = '/athlete/go-to-channel/brands';
+  static const String postChannelToArchive = '/athlete/general-flows/channels/';
+  static const String deleteChannelFromUpload =
+      '/athlete/go-to-channel/channels/';
 
 // Go to Channel - Intro
   static const String updateAtheleteIntroVideo =
@@ -83,6 +87,10 @@ class ApiEndpoints {
   // Settings - Archived Content
   static const String getAthleteArchivedContent =
       '/athlete/settings/archived-channels';
+  static const String restoreChannelFromArchive =
+      '/athlete/settings/archived-channels/';
+  static const String deleteChannelFromArchive =
+      '/athlete/settings/archived-channels/';
 
   static const String submitAthleteQuery = '/athlete/settings/help-support';
 
@@ -147,6 +155,11 @@ class ApiEndpoints {
   static const String deletePrevateCommunityPostByAthlete =
       '/athlete/go-to-channel/private-community/';
 
+  static const String getAthleteNotifications = '/athlete/notifications';
+  static const String markAllAthleteNotificationsAsRead =
+      '/athlete/notifications/mark-all-read';
+  static const String markAthleteNotificationAsRead = '/athlete/notifications/';
+
   static const String fanLogin = '/auth/fan/login';
   static const String fanResetPassword = '/auth/fan/reset-password';
   static const String fanForgotPasswordRequest = '/auth/fan/forgot-password';
@@ -157,7 +170,7 @@ class ApiEndpoints {
   static const String fanSignupVerify = '/auth/fan/verify-signup-otp';
   static const String fanSignupResendOtp = '/auth/fan/resend-signup-otp';
   static const String fanfirstTimerSetPassword = '/auth/fan/set-password';
-  static const String fanFirstTimeAboutMe = '/auth/fan/complete-profile';
+  static const String fanFirstTimeAboutMe = '/fan/profile/complete-profile';
 
   static const String getAllAthletes = '/fan/athletes';
   static const String getSearchedAthletes = '/fan/search/athletes';
@@ -204,14 +217,23 @@ class ApiEndpoints {
 
   static const String changeFanPassword = '/auth/fan/change-password';
 
-  static const String getFanPreferences = ''; //  -----> TO DO
+  static const String getFanPreferences =
+      '/fan/settings/preferences'; //  -----> TO DO
   static const String postFanQuery = '/fan/settings/help';
 
   // Athlete profile
   static const String getAthleteProfileByFan = '/fan/athletes/';
   static const String trackSingleAthleteProfile = '/fan/athletes/track';
+  static const String trackMultipleAthleteProfiles = '/fan/track-athlete';
   static const String untrackSingleAthleteProfile = '/fan/athletes/track';
   static const String updateFcmDeviceToken = '/auth/save-device-token';
 
-  static const String getUploadedStoryViewForAthlete = '/athlete/general-flows/stories';
+  static const String getUploadedStoryViewForAthlete =
+      '/athlete/general-flows/stories';
+  static const String actionChannelInFanView = '/fan/interactions/channels/';
+  static const String reactCommentInFanView = '/fan/interactions/comments/';
+  static const String getFanNotifications = '/fan/home/notifications';
+  static const String getTrackedAthletesByFan = '/fan/athletes/tracked';
+  static const String markAllNotificationsAsRead =
+      '/fan/home/notifications/read';
 }

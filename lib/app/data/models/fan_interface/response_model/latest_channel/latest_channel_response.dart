@@ -43,6 +43,7 @@ class LatestChannelItem with _$LatestChannelItem {
     required BrandRes? brand,
     required int likesCount,
     required int commentsCount,
+    required bool isLiked,
   }) = _LatestChannelItem;
 
   factory LatestChannelItem.fromJson(Map<String, dynamic> json) =>

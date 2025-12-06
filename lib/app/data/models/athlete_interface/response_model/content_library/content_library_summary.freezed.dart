@@ -710,6 +710,7 @@ mixin _$PreviewItem {
   String? get scheduledAt => throw _privateConstructorUsedError;
   String get publishedAt => throw _privateConstructorUsedError; // Counts
   int get likesCount => throw _privateConstructorUsedError;
+  bool? get isLiked => throw _privateConstructorUsedError;
   int get commentsCount => throw _privateConstructorUsedError; // Timestamps
   String get createdAt => throw _privateConstructorUsedError;
   String get updatedAt => throw _privateConstructorUsedError; // Media list
@@ -747,6 +748,7 @@ abstract class $PreviewItemCopyWith<$Res> {
       String? scheduledAt,
       String publishedAt,
       int likesCount,
+      bool? isLiked,
       int commentsCount,
       String createdAt,
       String updatedAt,
@@ -783,6 +785,7 @@ class _$PreviewItemCopyWithImpl<$Res, $Val extends PreviewItem>
     Object? scheduledAt = freezed,
     Object? publishedAt = null,
     Object? likesCount = null,
+    Object? isLiked = freezed,
     Object? commentsCount = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -849,6 +852,10 @@ class _$PreviewItemCopyWithImpl<$Res, $Val extends PreviewItem>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: null == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -893,6 +900,7 @@ abstract class _$$PreviewItemImplCopyWith<$Res>
       String? scheduledAt,
       String publishedAt,
       int likesCount,
+      bool? isLiked,
       int commentsCount,
       String createdAt,
       String updatedAt,
@@ -927,6 +935,7 @@ class __$$PreviewItemImplCopyWithImpl<$Res>
     Object? scheduledAt = freezed,
     Object? publishedAt = null,
     Object? likesCount = null,
+    Object? isLiked = freezed,
     Object? commentsCount = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -993,6 +1002,10 @@ class __$$PreviewItemImplCopyWithImpl<$Res>
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
               as int,
+      isLiked: freezed == isLiked
+          ? _value.isLiked
+          : isLiked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       commentsCount: null == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
@@ -1032,6 +1045,7 @@ class _$PreviewItemImpl implements _PreviewItem {
       this.scheduledAt,
       required this.publishedAt,
       required this.likesCount,
+      this.isLiked,
       required this.commentsCount,
       required this.createdAt,
       required this.updatedAt,
@@ -1076,6 +1090,8 @@ class _$PreviewItemImpl implements _PreviewItem {
   @override
   final int likesCount;
   @override
+  final bool? isLiked;
+  @override
   final int commentsCount;
 // Timestamps
   @override
@@ -1094,7 +1110,7 @@ class _$PreviewItemImpl implements _PreviewItem {
 
   @override
   String toString() {
-    return 'PreviewItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
+    return 'PreviewItem(id: $id, title: $title, caption: $caption, mediaUrl: $mediaUrl, thumbnailUrl: $thumbnailUrl, categoryId: $categoryId, categoryName: $categoryName, brandId: $brandId, brandName: $brandName, status: $status, type: $type, isArchived: $isArchived, scheduledAt: $scheduledAt, publishedAt: $publishedAt, likesCount: $likesCount, isLiked: $isLiked, commentsCount: $commentsCount, createdAt: $createdAt, updatedAt: $updatedAt, media: $media)';
   }
 
   @override
@@ -1126,6 +1142,7 @@ class _$PreviewItemImpl implements _PreviewItem {
                 other.publishedAt == publishedAt) &&
             (identical(other.likesCount, likesCount) ||
                 other.likesCount == likesCount) &&
+            (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.commentsCount, commentsCount) ||
                 other.commentsCount == commentsCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -1154,6 +1171,7 @@ class _$PreviewItemImpl implements _PreviewItem {
         scheduledAt,
         publishedAt,
         likesCount,
+        isLiked,
         commentsCount,
         createdAt,
         updatedAt,
@@ -1193,6 +1211,7 @@ abstract class _PreviewItem implements PreviewItem {
       final String? scheduledAt,
       required final String publishedAt,
       required final int likesCount,
+      final bool? isLiked,
       required final int commentsCount,
       required final String createdAt,
       required final String updatedAt,
@@ -1231,6 +1250,8 @@ abstract class _PreviewItem implements PreviewItem {
   String get publishedAt; // Counts
   @override
   int get likesCount;
+  @override
+  bool? get isLiked;
   @override
   int get commentsCount; // Timestamps
   @override

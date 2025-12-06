@@ -478,12 +478,12 @@ mixin _$AthleteFanview {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: "profilePicture")
-  String get profilePicture => throw _privateConstructorUsedError;
-  String get bio => throw _privateConstructorUsedError;
-  String get country => throw _privateConstructorUsedError;
-  String get sports => throw _privateConstructorUsedError;
-  String get league => throw _privateConstructorUsedError;
-  String get ranking => throw _privateConstructorUsedError;
+  String? get profilePicture => throw _privateConstructorUsedError;
+  String? get bio => throw _privateConstructorUsedError;
+  String? get country => throw _privateConstructorUsedError;
+  String? get sports => throw _privateConstructorUsedError;
+  String? get league => throw _privateConstructorUsedError;
+  String? get ranking => throw _privateConstructorUsedError;
 
   /// Serializes this AthleteFanview to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -504,12 +504,12 @@ abstract class $AthleteFanviewCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      @JsonKey(name: "profilePicture") String profilePicture,
-      String bio,
-      String country,
-      String sports,
-      String league,
-      String ranking});
+      @JsonKey(name: "profilePicture") String? profilePicture,
+      String? bio,
+      String? country,
+      String? sports,
+      String? league,
+      String? ranking});
 }
 
 /// @nodoc
@@ -529,12 +529,12 @@ class _$AthleteFanviewCopyWithImpl<$Res, $Val extends AthleteFanview>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? profilePicture = null,
-    Object? bio = null,
-    Object? country = null,
-    Object? sports = null,
-    Object? league = null,
-    Object? ranking = null,
+    Object? profilePicture = freezed,
+    Object? bio = freezed,
+    Object? country = freezed,
+    Object? sports = freezed,
+    Object? league = freezed,
+    Object? ranking = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -545,30 +545,30 @@ class _$AthleteFanviewCopyWithImpl<$Res, $Val extends AthleteFanview>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      profilePicture: null == profilePicture
+      profilePicture: freezed == profilePicture
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
-              as String,
-      bio: null == bio
+              as String?,
+      bio: freezed == bio
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
-              as String,
-      country: null == country
+              as String?,
+      country: freezed == country
           ? _value.country
           : country // ignore: cast_nullable_to_non_nullable
-              as String,
-      sports: null == sports
+              as String?,
+      sports: freezed == sports
           ? _value.sports
           : sports // ignore: cast_nullable_to_non_nullable
-              as String,
-      league: null == league
+              as String?,
+      league: freezed == league
           ? _value.league
           : league // ignore: cast_nullable_to_non_nullable
-              as String,
-      ranking: null == ranking
+              as String?,
+      ranking: freezed == ranking
           ? _value.ranking
           : ranking // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -584,12 +584,12 @@ abstract class _$$AthleteFanviewImplCopyWith<$Res>
   $Res call(
       {String id,
       String name,
-      @JsonKey(name: "profilePicture") String profilePicture,
-      String bio,
-      String country,
-      String sports,
-      String league,
-      String ranking});
+      @JsonKey(name: "profilePicture") String? profilePicture,
+      String? bio,
+      String? country,
+      String? sports,
+      String? league,
+      String? ranking});
 }
 
 /// @nodoc
@@ -607,12 +607,12 @@ class __$$AthleteFanviewImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? profilePicture = null,
-    Object? bio = null,
-    Object? country = null,
-    Object? sports = null,
-    Object? league = null,
-    Object? ranking = null,
+    Object? profilePicture = freezed,
+    Object? bio = freezed,
+    Object? country = freezed,
+    Object? sports = freezed,
+    Object? league = freezed,
+    Object? ranking = freezed,
   }) {
     return _then(_$AthleteFanviewImpl(
       id: null == id
@@ -623,30 +623,30 @@ class __$$AthleteFanviewImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      profilePicture: null == profilePicture
+      profilePicture: freezed == profilePicture
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
-              as String,
-      bio: null == bio
+              as String?,
+      bio: freezed == bio
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
-              as String,
-      country: null == country
+              as String?,
+      country: freezed == country
           ? _value.country
           : country // ignore: cast_nullable_to_non_nullable
-              as String,
-      sports: null == sports
+              as String?,
+      sports: freezed == sports
           ? _value.sports
           : sports // ignore: cast_nullable_to_non_nullable
-              as String,
-      league: null == league
+              as String?,
+      league: freezed == league
           ? _value.league
           : league // ignore: cast_nullable_to_non_nullable
-              as String,
-      ranking: null == ranking
+              as String?,
+      ranking: freezed == ranking
           ? _value.ranking
           : ranking // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -657,7 +657,7 @@ class _$AthleteFanviewImpl implements _AthleteFanview {
   const _$AthleteFanviewImpl(
       {required this.id,
       required this.name,
-      @JsonKey(name: "profilePicture") required this.profilePicture,
+      @JsonKey(name: "profilePicture") this.profilePicture,
       required this.bio,
       required this.country,
       required this.sports,
@@ -673,17 +673,17 @@ class _$AthleteFanviewImpl implements _AthleteFanview {
   final String name;
   @override
   @JsonKey(name: "profilePicture")
-  final String profilePicture;
+  final String? profilePicture;
   @override
-  final String bio;
+  final String? bio;
   @override
-  final String country;
+  final String? country;
   @override
-  final String sports;
+  final String? sports;
   @override
-  final String league;
+  final String? league;
   @override
-  final String ranking;
+  final String? ranking;
 
   @override
   String toString() {
@@ -732,12 +732,12 @@ abstract class _AthleteFanview implements AthleteFanview {
   const factory _AthleteFanview(
       {required final String id,
       required final String name,
-      @JsonKey(name: "profilePicture") required final String profilePicture,
-      required final String bio,
-      required final String country,
-      required final String sports,
-      required final String league,
-      required final String ranking}) = _$AthleteFanviewImpl;
+      @JsonKey(name: "profilePicture") final String? profilePicture,
+      required final String? bio,
+      required final String? country,
+      required final String? sports,
+      required final String? league,
+      required final String? ranking}) = _$AthleteFanviewImpl;
 
   factory _AthleteFanview.fromJson(Map<String, dynamic> json) =
       _$AthleteFanviewImpl.fromJson;
@@ -748,17 +748,17 @@ abstract class _AthleteFanview implements AthleteFanview {
   String get name;
   @override
   @JsonKey(name: "profilePicture")
-  String get profilePicture;
+  String? get profilePicture;
   @override
-  String get bio;
+  String? get bio;
   @override
-  String get country;
+  String? get country;
   @override
-  String get sports;
+  String? get sports;
   @override
-  String get league;
+  String? get league;
   @override
-  String get ranking;
+  String? get ranking;
 
   /// Create a copy of AthleteFanview
   /// with the given fields replaced by the non-null parameter values.

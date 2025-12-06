@@ -490,6 +490,7 @@ mixin _$CommentItem {
   int get repliesCount => throw _privateConstructorUsedError;
   int get reactionsCount => throw _privateConstructorUsedError;
   Map<String, dynamic> get reactionCounts => throw _privateConstructorUsedError;
+  bool get isReacted => throw _privateConstructorUsedError;
   String? get userReaction => throw _privateConstructorUsedError;
   List<CommentItem> get replies => throw _privateConstructorUsedError;
 
@@ -518,6 +519,7 @@ abstract class $CommentItemCopyWith<$Res> {
       int repliesCount,
       int reactionsCount,
       Map<String, dynamic> reactionCounts,
+      bool isReacted,
       String? userReaction,
       List<CommentItem> replies});
 
@@ -547,6 +549,7 @@ class _$CommentItemCopyWithImpl<$Res, $Val extends CommentItem>
     Object? repliesCount = null,
     Object? reactionsCount = null,
     Object? reactionCounts = null,
+    Object? isReacted = null,
     Object? userReaction = freezed,
     Object? replies = null,
   }) {
@@ -583,6 +586,10 @@ class _$CommentItemCopyWithImpl<$Res, $Val extends CommentItem>
           ? _value.reactionCounts
           : reactionCounts // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
+      isReacted: null == isReacted
+          ? _value.isReacted
+          : isReacted // ignore: cast_nullable_to_non_nullable
+              as bool,
       userReaction: freezed == userReaction
           ? _value.userReaction
           : userReaction // ignore: cast_nullable_to_non_nullable
@@ -622,6 +629,7 @@ abstract class _$$CommentItemImplCopyWith<$Res>
       int repliesCount,
       int reactionsCount,
       Map<String, dynamic> reactionCounts,
+      bool isReacted,
       String? userReaction,
       List<CommentItem> replies});
 
@@ -650,6 +658,7 @@ class __$$CommentItemImplCopyWithImpl<$Res>
     Object? repliesCount = null,
     Object? reactionsCount = null,
     Object? reactionCounts = null,
+    Object? isReacted = null,
     Object? userReaction = freezed,
     Object? replies = null,
   }) {
@@ -686,6 +695,10 @@ class __$$CommentItemImplCopyWithImpl<$Res>
           ? _value._reactionCounts
           : reactionCounts // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>,
+      isReacted: null == isReacted
+          ? _value.isReacted
+          : isReacted // ignore: cast_nullable_to_non_nullable
+              as bool,
       userReaction: freezed == userReaction
           ? _value.userReaction
           : userReaction // ignore: cast_nullable_to_non_nullable
@@ -710,6 +723,7 @@ class _$CommentItemImpl implements _CommentItem {
       required this.repliesCount,
       required this.reactionsCount,
       required final Map<String, dynamic> reactionCounts,
+      required this.isReacted,
       this.userReaction,
       required final List<CommentItem> replies})
       : _reactionCounts = reactionCounts,
@@ -741,6 +755,8 @@ class _$CommentItemImpl implements _CommentItem {
   }
 
   @override
+  final bool isReacted;
+  @override
   final String? userReaction;
   final List<CommentItem> _replies;
   @override
@@ -752,7 +768,7 @@ class _$CommentItemImpl implements _CommentItem {
 
   @override
   String toString() {
-    return 'CommentItem(id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, repliesCount: $repliesCount, reactionsCount: $reactionsCount, reactionCounts: $reactionCounts, userReaction: $userReaction, replies: $replies)';
+    return 'CommentItem(id: $id, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, repliesCount: $repliesCount, reactionsCount: $reactionsCount, reactionCounts: $reactionCounts, isReacted: $isReacted, userReaction: $userReaction, replies: $replies)';
   }
 
   @override
@@ -773,6 +789,8 @@ class _$CommentItemImpl implements _CommentItem {
                 other.reactionsCount == reactionsCount) &&
             const DeepCollectionEquality()
                 .equals(other._reactionCounts, _reactionCounts) &&
+            (identical(other.isReacted, isReacted) ||
+                other.isReacted == isReacted) &&
             (identical(other.userReaction, userReaction) ||
                 other.userReaction == userReaction) &&
             const DeepCollectionEquality().equals(other._replies, _replies));
@@ -790,6 +808,7 @@ class _$CommentItemImpl implements _CommentItem {
       repliesCount,
       reactionsCount,
       const DeepCollectionEquality().hash(_reactionCounts),
+      isReacted,
       userReaction,
       const DeepCollectionEquality().hash(_replies));
 
@@ -819,6 +838,7 @@ abstract class _CommentItem implements CommentItem {
       required final int repliesCount,
       required final int reactionsCount,
       required final Map<String, dynamic> reactionCounts,
+      required final bool isReacted,
       final String? userReaction,
       required final List<CommentItem> replies}) = _$CommentItemImpl;
 
@@ -841,6 +861,8 @@ abstract class _CommentItem implements CommentItem {
   int get reactionsCount;
   @override
   Map<String, dynamic> get reactionCounts;
+  @override
+  bool get isReacted;
   @override
   String? get userReaction;
   @override

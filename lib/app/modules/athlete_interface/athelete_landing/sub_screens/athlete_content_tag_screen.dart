@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:photofilters/filters/filters.dart';
+import 'package:photofilters/filters/preset_filters.dart';
+import 'package:photofilters/filters/subfilters.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../constants/app_colors.dart';
@@ -76,7 +79,8 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -307,7 +311,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: AppText(
-                    "Edit Content",
+                    "Edit Content".tr,
                     color: AppColors.white,
                     fontSize: 16.sp,
                     textAlign: TextAlign.center,
@@ -328,7 +332,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: AppText(
-                    "Post Now",
+                    "Post Now".tr,
                     color: AppColors.white,
                     fontSize: 16.sp,
                     textAlign: TextAlign.center,
@@ -428,7 +432,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
             // Centered Text
             Center(
               child: Text(
-                "SELECT:",
+                "SELECT:".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -448,7 +452,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                   Column(
                     children: [
                       Text(
-                        "CONTENT CATEGORY",
+                        "CONTENT CATEGORY".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -504,7 +508,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                   Column(
                     children: [
                       Text(
-                        "MY BRANDS",
+                        "MY BRANDS".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -533,7 +537,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                               return Column(
                                 children: [
                                   SelectableButton(
-                                    text: text.name,
+                                    text: text.name ?? "",
                                     isSelected: isSelected,
                                     width: 145.w,
                                     color: AppColors.red,
@@ -573,7 +577,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr.toUpperCase(),
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,
@@ -609,7 +613,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -622,7 +626,8 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
             InkWell(
               onTap: () async {
                 if (widget.selectedMedia.isEmpty) {
-                  Get.snackbar("No Media", "Please select an image or video");
+                  Get.snackbar(
+                      "No Media", "Please select an image or video".tr);
                   return;
                 }
 
@@ -630,7 +635,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                 final result = await Get.to(
                   () => ImageFilterEditor(
                     selectedMedia: widget.selectedMedia,
-                    filters: filters,
+                    filters: AppFilters.getPopularFilters(),
                   ),
                 );
 
@@ -644,7 +649,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                   // Show success message
                   Get.snackbar(
                     "Success",
-                    "Filters applied successfully",
+                    "Filters applied successfully".tr,
                     snackPosition: SnackPosition.BOTTOM,
                     backgroundColor: AppColors.lightRed,
                     colorText: Colors.white,
@@ -692,7 +697,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
               minLines: 3,
               style: TextStyle(color: AppColors.white, fontSize: 16.sp),
               decoration: InputDecoration(
-                hintText: 'Add Caption',
+                hintText: 'Add Caption'.tr,
                 hintStyle: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
@@ -726,7 +731,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                 child: InkWell(
                   onTap: () {
                     if (controller.captionForNewPost.text.isEmpty) {
-                      Get.snackbar("Caption", "Please enter a caption",
+                      Get.snackbar("Caption", "Please enter a caption".tr,
                           backgroundColor: AppColors.lightRed);
                     } else {
                       NavigationHelper.toNamed(
@@ -751,7 +756,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr,
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,
@@ -787,7 +792,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -858,7 +863,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: AppText(
-                          "Next",
+                          "Next".tr,
                           color: AppColors.white,
                           fontSize: 16.sp,
                           textAlign: TextAlign.center,
@@ -896,7 +901,7 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
             // Centered Text
             Center(
               child: Text(
-                "New Post",
+                "New Post".tr,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -1017,5 +1022,225 @@ class _AthleteContentTagScreenState extends State<AthleteContentTagScreen> {
         ),
       ),
     );
+  }
+}
+
+/// Predefined filter list for image and video filtering
+///
+/// This provides a comprehensive list of popular Instagram-style filters
+/// using the photofilters package.
+
+class AppFilters {
+  /// Get all available preset filters
+  static List<Filter> getAllFilters() {
+    return [
+      NoFilter(),
+      AddictiveBlueFilter(),
+      AddictiveRedFilter(),
+      AdenFilter(),
+      AmaroFilter(),
+      AshbyFilter(),
+      BrannanFilter(),
+      BrooklynFilter(),
+      ClarendonFilter(),
+      CremaFilter(),
+      DogpatchFilter(),
+      EarlybirdFilter(),
+      // Filter1977Filter(),
+      GinghamFilter(),
+      GinzaFilter(),
+      HefeFilter(),
+      HelenaFilter(),
+      HudsonFilter(),
+      InkwellFilter(),
+      JunoFilter(),
+      KelvinFilter(),
+      LarkFilter(),
+      LoFiFilter(),
+      LudwigFilter(),
+      MavenFilter(),
+      MayfairFilter(),
+      MoonFilter(),
+      NashvilleFilter(),
+      PerpetuaFilter(),
+      ReyesFilter(),
+      RiseFilter(),
+      SierraFilter(),
+      SkylineFilter(),
+      SlumberFilter(),
+      StinsonFilter(),
+      SutroFilter(),
+      ToasterFilter(),
+      ValenciaFilter(),
+      VesperFilter(),
+      WaldenFilter(),
+      WillowFilter(),
+      XProIIFilter(),
+    ];
+  }
+
+  /// Get popular/commonly used filters (subset)
+  static List<Filter> getPopularFilters() {
+    return [
+      NoFilter(),
+      ClarendonFilter(),
+      GinghamFilter(),
+      JunoFilter(),
+      LarkFilter(),
+      LudwigFilter(),
+      SlumberFilter(),
+      CremaFilter(),
+      AdenFilter(),
+      PerpetuaFilter(),
+      AmaroFilter(),
+      MayfairFilter(),
+      RiseFilter(),
+      HudsonFilter(),
+      ValenciaFilter(),
+      XProIIFilter(),
+      SierraFilter(),
+      WillowFilter(),
+      LoFiFilter(),
+      InkwellFilter(),
+      NashvilleFilter(),
+    ];
+  }
+
+  /// Get filters categorized by style
+  static Map<String, List<Filter>> getCategorizedFilters() {
+    return {
+      'No Filter': [NoFilter()],
+      'Warm Tones': [
+        ValenciaFilter(),
+        RiseFilter(),
+        MayfairFilter(),
+        ToasterFilter(),
+        SutroFilter(),
+      ],
+      'Cool Tones': [
+        AdenFilter(),
+        JunoFilter(),
+        LarkFilter(),
+        GinghamFilter(),
+        SkylineFilter(),
+      ],
+      'Vintage': [
+        // Filter1977Filter(),
+        BrannanFilter(),
+        EarlybirdFilter(),
+        HefeFilter(),
+        LudwigFilter(),
+        NashvilleFilter(),
+        WaldenFilter(),
+      ],
+      'Black & White': [
+        InkwellFilter(),
+        WillowFilter(),
+        MoonFilter(),
+      ],
+      'Dramatic': [
+        XProIIFilter(),
+        LoFiFilter(),
+        KelvinFilter(),
+        HudsonFilter(),
+        AmaroFilter(),
+      ],
+      'Soft & Light': [
+        SlumberFilter(),
+        CremaFilter(),
+        PerpetuaFilter(),
+        ReyesFilter(),
+        HelenaFilter(),
+        VesperFilter(),
+      ],
+      'Urban': [
+        BrooklynFilter(),
+        ClarendonFilter(),
+        DogpatchFilter(),
+        GinzaFilter(),
+        SierraFilter(),
+        StinsonFilter(),
+      ],
+      'Vibrant': [
+        AddictiveBlueFilter(),
+        AddictiveRedFilter(),
+        AshbyFilter(),
+        MavenFilter(),
+      ],
+    };
+  }
+
+  /// Get filter by name (case-insensitive)
+  static Filter? getFilterByName(String name) {
+    final allFilters = getAllFilters();
+    try {
+      return allFilters.firstWhere(
+        (filter) => filter.name.toLowerCase() == name.toLowerCase(),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get filter names list
+  static List<String> getFilterNames() {
+    return getAllFilters().map((filter) => filter.name).toList();
+  }
+}
+
+/// Custom filter definitions (optional - for creating your own filters)
+
+/// Video filter names mapping
+/// (for use with video filter processors)
+class VideoFilterNames {
+  static const String grayscale = "Grayscale";
+  static const String sepia = "Sepia";
+  static const String vintage = "Vintage";
+  static const String cool = "Cool";
+  static const String warm = "Warm";
+  static const String brightness = "Brightness";
+  static const String contrast = "Contrast";
+  static const String noir = "Noir";
+  static const String vignette = "Vignette";
+
+  /// Get all video filter names
+  static List<String> getAllVideoFilterNames() {
+    return [
+      grayscale,
+      sepia,
+      vintage,
+      cool,
+      warm,
+      brightness,
+      contrast,
+      noir,
+      vignette,
+    ];
+  }
+
+  /// Map filter name to FFmpeg command
+  static String getFFmpegCommand(String filterName) {
+    switch (filterName.toLowerCase()) {
+      case 'grayscale':
+        return 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3';
+      case 'sepia':
+        return 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131';
+      case 'vintage':
+        return 'curves=vintage';
+      case 'cool':
+        return 'colorbalance=rs=-.2:gs=-.1:bs=.2';
+      case 'warm':
+        return 'colorbalance=rs=.2:gs=.1:bs=-.2';
+      case 'brightness':
+        return 'eq=brightness=0.10';
+      case 'contrast':
+        return 'eq=contrast=1.5';
+      case 'noir':
+        return 'colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3,eq=contrast=1.2:brightness=0.05';
+      case 'vignette':
+        return 'vignette=angle=PI/4';
+      default:
+        return 'null';
+    }
   }
 }

@@ -43,6 +43,7 @@ class ScheduleItem with _$ScheduleItem {
     String? scheduledAt,
     String? publishedAt,
     int? likesCount,
+    bool? isLiked,
     int? commentsCount,
     String? createdAt,
     String? updatedAt,

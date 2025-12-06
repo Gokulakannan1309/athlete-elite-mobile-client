@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../fan_signup_controller.dart';
 
-class FanSignupOTPView extends GetView<FanSignupController> {
+class FanSignupOTPView extends GetWidget<FanSignupController> {
   final bool isAthlete;
   const FanSignupOTPView({super.key, required this.isAthlete});
 
@@ -31,7 +31,7 @@ class FanSignupOTPView extends GetView<FanSignupController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "SIGN UP",
+                        "SIGN UP".tr.toUpperCase(),
                         style: TextStyle(
                           fontFamily:
                               GoogleFonts.barlowSemiCondensed().fontFamily,
@@ -44,13 +44,13 @@ class FanSignupOTPView extends GetView<FanSignupController> {
                       SizedBox(height: 75.h),
                       CommonTextField(
                         controller: controller.otpController,
-                        label: "OTP",
+                        label: "OTP".tr.toUpperCase(),
                         inputType: TextInputType.number,
                         validator: (value) {
                           if (value == null ||
                               value.isEmpty ||
                               value.length < 6) {
-                            return '*Please Enter correct OTP';
+                            return '*Please Enter correct OTP'.tr;
                           }
                           return null;
                         },
@@ -60,7 +60,7 @@ class FanSignupOTPView extends GetView<FanSignupController> {
                         () => Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            AppText("Didn’t get the OTP? "),
+                            AppText("Didn’t get the OTP? ".tr),
                             if (controller.secondsRemaining.value > 0)
                               AppText(
                                 "Resend OTP in 00:${controller.secondsRemaining.value.toString().padLeft(2, '0')}",
@@ -72,7 +72,7 @@ class FanSignupOTPView extends GetView<FanSignupController> {
                                   controller.resendOtpTimer();
                                 },
                                 child: AppText(
-                                  "Resend OTP",
+                                  "Resend OTP".tr,
                                   color: AppColors.primaryColor,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -87,13 +87,13 @@ class FanSignupOTPView extends GetView<FanSignupController> {
               Spacer(),
               Obx(
                 () => CommonButton(
-                  text: "Verify OTP",
+                  text: "Verify OTP".tr,
                   onPressed: () {
                     if (controller.signUpOtpFormKey.currentState!.validate()) {
                       controller.onSignupOTPVerify(isAthlete);
                     } else {
                       CustomToast.show(
-                        "Please Enter Username, Email or Phone no.",
+                        "Please Enter Username, Email or Phone no.".tr,
                       );
                     }
                   },

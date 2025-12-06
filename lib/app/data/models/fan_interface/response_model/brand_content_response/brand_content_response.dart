@@ -61,6 +61,7 @@ class BrandContentItem with _$BrandContentItem {
     // category object inside content
     @JsonKey(name: "category") CategoryInfo? category,
     required int likesCount,
+    required bool isLiked,
     required int commentsCount,
   }) = _BrandContentItem;
 

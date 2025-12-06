@@ -57,6 +57,7 @@ class PreviewItem with _$PreviewItem {
     String? scheduledAt,
     String? publishedAt,
     int? likesCount,
+    bool? isLiked,
     int? commentsCount,
     String? createdAt,
     String? updatedAt,

@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../routes/navigation_helper.dart';
 import 'fan_signup_controller.dart';
 
-class FanSignupView extends GetView<FanSignupController> {
+class FanSignupView extends GetWidget<FanSignupController> {
   final bool isAthlete;
   const FanSignupView({super.key, required this.isAthlete});
 
@@ -34,7 +34,7 @@ class FanSignupView extends GetView<FanSignupController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "SIGN UP",
+                        "SIGN UP".tr.toUpperCase(),
                         style: TextStyle(
                           fontFamily:
                               GoogleFonts.barlowSemiCondensed().fontFamily,
@@ -46,17 +46,17 @@ class FanSignupView extends GetView<FanSignupController> {
                       ),
                       SizedBox(height: 25.h),
                       AppText(
-                        "Welcome to Fan..!!",
+                        "Welcome Fan".tr,
                         color: AppColors.white,
                         fontSize: 16.sp,
                       ),
                       SizedBox(height: 17.h),
                       CommonTextField(
                         controller: controller.emailOrUsernameOrPhoneController,
-                        label: "Username, Email or Phone no",
+                        label: "Email or Phone no.".tr,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '*Please Enter Username, Email or Phone no.';
+                            return '*Please Enter Email or Phone no.'.tr;
                           }
                           return null;
                         },
@@ -68,7 +68,7 @@ class FanSignupView extends GetView<FanSignupController> {
               Spacer(),
               Obx(
                 () => CommonButton(
-                  text: "Sign In",
+                  text: "Sign Up".tr,
                   onPressed: () {
                     if (controller.signUpFormKey.currentState!.validate()) {
                       final input = controller
@@ -89,12 +89,12 @@ class FanSignupView extends GetView<FanSignupController> {
                         controller.onSignupRequest("mobile number", isAthlete);
                       } else {
                         CustomToast.show(
-                          "Please enter a valid Email or Phone number.",
+                          "Please enter a valid Email or Phone number.".tr,
                         );
                       }
                     } else {
                       CustomToast.show(
-                        "Please Enter Username, Email or Phone no.",
+                        "Please Enter Username, Email or Phone no.".tr,
                       );
                     }
                   },
@@ -135,7 +135,7 @@ class FanSignupView extends GetView<FanSignupController> {
                             ),
                             SizedBox(width: 12.w),
                             Text(
-                              'Sign in with Google',
+                              'Sign Up with Google'.tr,
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 color: AppColors.primaryColor,
@@ -151,7 +151,7 @@ class FanSignupView extends GetView<FanSignupController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppText(
-                    "Already have an Account?",
+                    "Already have an Account? ".tr,
                     color: AppColors.white,
                     fontSize: 12.sp,
                   ),
@@ -164,7 +164,7 @@ class FanSignupView extends GetView<FanSignupController> {
                       );
                     },
                     child: AppText(
-                      "Sign In",
+                      "Sign In".tr,
                       color: AppColors.primaryColor,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,

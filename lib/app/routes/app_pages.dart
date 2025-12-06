@@ -311,6 +311,7 @@ class AppPages {
           isAthlete: args?['isAthlete'] ?? 'default',
           reelsData: args?['reels'],
           startIndex: args?['startIndex'] ?? 0,
+          comesFrom: args?['comesFrom'] ?? 'default',
         );
       },
       binding: AtheleteHomeBinding(),
@@ -332,6 +333,7 @@ class AppPages {
       page: () {
         final args = Get.arguments as Map<String, dynamic>?;
         return StoryViewerScreen(
+          isAthlete: args?['isAthlete'] ?? 'default',
           initialIndex: args?['initialIndex'] ?? 0,
           stories: args?['stories'],
         );
@@ -453,6 +455,7 @@ class AppPages {
         return AboutMeDetailScreen(
           isAthlete: args?['isAthlete'] ?? 'default',
           userId: args?['userId'] ?? '',
+          accessToken: args?['accessToken'] ?? '',
         );
       },
       binding: FanSignupBinding(),
@@ -481,6 +484,7 @@ class AppPages {
         final args = Get.arguments as Map<String, dynamic>?;
         return FanTrackAthleteScreen(
           isAthlete: args?['isAthlete'] ?? 'default',
+          isSearchPage: args?['isSearchPage'] ?? false,
         );
       },
       binding: FanSignupBinding(),

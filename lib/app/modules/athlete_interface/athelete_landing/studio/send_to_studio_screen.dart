@@ -164,6 +164,8 @@ class _SendToStudioScreenState extends State<SendToStudioScreen> {
     }
 
     return Container(
+       height: 20.h,
+      width: 20.h,
       color: Colors.black,
       child: const Center(
         child: CircularProgressIndicator(
@@ -280,7 +282,7 @@ class _SendToStudioScreenState extends State<SendToStudioScreen> {
                   // Centered Text
                   Center(
                     child: Text(
-                      "Content Studio ",
+                      "Content Studio ".tr,
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
@@ -298,7 +300,7 @@ class _SendToStudioScreenState extends State<SendToStudioScreen> {
                     minLines: 6,
                     style: TextStyle(color: AppColors.white, fontSize: 16.sp),
                     decoration: InputDecoration(
-                      hintText: 'Add description',
+                      hintText: 'Add description'.tr,
                       hintStyle: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w400,
@@ -330,7 +332,7 @@ class _SendToStudioScreenState extends State<SendToStudioScreen> {
                     alignment: Alignment.bottomRight,
                     child: Obx(
                       () => CommonButton(
-                        text: "Send to Studio",
+                        text: "Send to Studio".tr,
                         onPressed: () {
                           homeController.uploadContentStudio().then((value) {
                             if (value) {

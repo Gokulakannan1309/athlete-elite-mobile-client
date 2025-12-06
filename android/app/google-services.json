@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464569309566",
+    "project_id": "testing-elite-7be52",
+    "storage_bucket": "testing-elite-7be52.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464569309566:android:758ee8ef7f9fabc7be3b2f",
+        "android_client_info": {
+          "package_name": "com.athlete_elite.athlete_fan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD41kH9T5B0NHiQq8bSalVPhrGJnv6UxZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

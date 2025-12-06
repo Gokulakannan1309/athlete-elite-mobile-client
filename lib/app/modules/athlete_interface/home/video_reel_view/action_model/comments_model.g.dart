@@ -53,6 +53,7 @@ _$CommentItemImpl _$$CommentItemImplFromJson(Map<String, dynamic> json) =>
       repliesCount: (json['repliesCount'] as num).toInt(),
       reactionsCount: (json['reactionsCount'] as num).toInt(),
       reactionCounts: json['reactionCounts'] as Map<String, dynamic>,
+      isReacted: json['isReacted'] as bool,
       userReaction: json['userReaction'] as String?,
       replies: (json['replies'] as List<dynamic>)
           .map((e) => CommentItem.fromJson(e as Map<String, dynamic>))
@@ -69,6 +70,7 @@ Map<String, dynamic> _$$CommentItemImplToJson(_$CommentItemImpl instance) =>
       'repliesCount': instance.repliesCount,
       'reactionsCount': instance.reactionsCount,
       'reactionCounts': instance.reactionCounts,
+      'isReacted': instance.isReacted,
       'userReaction': instance.userReaction,
       'replies': instance.replies,
     };

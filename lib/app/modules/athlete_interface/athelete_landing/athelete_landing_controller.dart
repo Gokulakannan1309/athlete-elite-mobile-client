@@ -49,6 +49,7 @@ class AtheleteLandingController extends GetxController {
   RxString favMomentThumbnail = "".obs;
   RxString profilePicture = "".obs;
   RxString athleteFanCount = "".obs;
+  RxString athleteBio = "".obs;
 
   Rxn<HomeSectionResponse> homeSectionResponse = Rxn<HomeSectionResponse>();
 
@@ -253,9 +254,10 @@ class AtheleteLandingController extends GetxController {
       if (homeSectionResponse.value != null) {
         profilePicture.value =
             fixCorruptedUrl(homeSectionResponse.value!.data.profilePicture);
-        aboutMe.assignAll(homeSectionResponse.value!.data.aboutMe);
+        aboutMe.assignAll(homeSectionResponse.value!.data.aboutMe ?? []);
         athleteFanCount.value =
             homeSectionResponse.value!.data.fansCount.toString();
+        athleteBio.value = homeSectionResponse.value!.data?.bio ?? "ss";
 
         if (homeSectionResponse.value!.data.intro != null) {
           backendIntroUrl.value = fixCorruptedUrl(
@@ -455,17 +457,18 @@ class AtheleteLandingController extends GetxController {
   }
 
   Future<bool> getAllAthleteChannelsByCategory() async {
-    final result = await apiProvider.get(
-      ApiEndpoints.getAllAthleteChannelsByCategory,
-      isLoading: isHomeContentLibraryLoading,
-    );
-
-    if (!result.success) {
-      AppLogger.e(result.error);
-      return false;
-    }
+    isHomeContentLibraryLoading.value = true;
 
     try {
+      final result = await apiProvider.get(
+        ApiEndpoints.getAllAthleteChannelsByCategory,
+        // isLoading: isHomeContentLibraryLoading,
+      );
+
+      if (!result.success) {
+        AppLogger.e(result.error);
+        return false;
+      }
       AppLogger.d('API Response: ${result.data}'); // Log to debug
 
       final response = ContentLibrarySummaryResponse.fromJson(result.data);
@@ -517,11 +520,15 @@ class AtheleteLandingController extends GetxController {
 
       AppLogger.d(
           'Successfully loaded ${contentCategoryList.length} categories');
+      isHomeContentLibraryLoading.value = false;
       return true;
     } catch (e, stackTrace) {
       AppLogger.e('Error parsing content library: $e');
       AppLogger.e('Stack trace: $stackTrace');
+      isHomeContentLibraryLoading.value = false;
       return false;
+    } finally {
+      isHomeContentLibraryLoading.value = false;
     }
   }
 
@@ -833,6 +840,79 @@ class AtheleteLandingController extends GetxController {
     selectedTab.value = index;
   }
 
+  Future<void> removeFanFromTrack(String fanId) async {
+    final result = await apiProvider.delete(
+      "${ApiEndpoints.removeFanFromTrack}$fanId",
+    );
+
+    if (result.success) {
+      AppLogger.d("Fan removed from track");
+      CustomToast.show("Successfully fan removed from track");
+      getAllAthleteFansList(isRefresh: true);
+    } else {
+      AppLogger.d(result.error);
+    }
+  }
+
+  Future<bool> deleteChannelFromUpload(String id) async {
+    final result = await apiProvider.delete(
+      "${ApiEndpoints.deleteChannelFromUpload}$id",
+    );
+
+    if (result.success) {
+      AppLogger.d("Channel deleted from upload");
+      return result.success;
+      // getAllAthleteChannelsList(isRefresh: true);
+    } else {
+      AppLogger.d(result.error);
+      return false;
+    }
+  }
+
+  Future<bool> uploadChannelToarchive(String channelId) async {
+    final result = await apiProvider.patch(
+      "${ApiEndpoints.postChannelToArchive}$channelId/archive",
+      {},
+    );
+
+    if (result.success) {
+      AppLogger.d("Channel uploaded to archive");
+      return result.success;
+    } else {
+      AppLogger.d(result.error);
+      return false;
+    }
+  }
+
+  Future<bool> deleteChannelFromArchive(String id) async {
+    final result = await apiProvider.delete(
+      "${ApiEndpoints.deleteChannelFromArchive}$id",
+    );
+
+    if (result.success) {
+      AppLogger.d("Channel deleted from archive");
+      return result.success;
+    } else {
+      AppLogger.d(result.error);
+      return false;
+    }
+  }
+
+  Future<bool> restoreChannelFromarchive(String channelId) async {
+    final result = await apiProvider.patch(
+      "${ApiEndpoints.restoreChannelFromArchive}$channelId/restore",
+      {},
+    );
+
+    if (result.success) {
+      AppLogger.d("Channel restored to archive");
+      return result.success;
+    } else {
+      AppLogger.d(result.error);
+      return false;
+    }
+  }
+
   // Update reaction count
   void updateReaction(int postIndex, String reactionType) {
     if (postIndex < adviceItems.length) {
@@ -917,7 +997,7 @@ class AtheleteLandingController extends GetxController {
     if (selectedBrandIds.contains(brandId)) {
       selectedBrandIds.remove(brandId);
     } else {
-      selectedBrandIds.add(brandId);
+      selectedBrandIds.add(brandId ?? "");
     }
 
     AppLogger.d("selectedBrandIds: $selectedBrandIds");
@@ -970,27 +1050,28 @@ class BrandResponse {
 }
 
 class BrandItem {
-  final String id;
-  final String name;
-  final String imageData;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? id;
+  final String? name;
+  final String? imageData;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   BrandItem({
-    required this.id,
-    required this.name,
-    required this.imageData,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.name,
+    this.imageData,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory BrandItem.fromJson(Map<String, dynamic> json) {
     return BrandItem(
-      id: json["id"],
-      name: json["name"],
-      imageData: json["imageData"],
-      createdAt: DateTime.parse(json["createdAt"]),
-      updatedAt: DateTime.parse(json["updatedAt"]),
+      id: json["id"] as String?,
+      name: json["name"] as String?,
+      imageData: json["imageData"] as String?,
+      createdAt: json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
+      updatedAt: json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
     );
   }
+
 }

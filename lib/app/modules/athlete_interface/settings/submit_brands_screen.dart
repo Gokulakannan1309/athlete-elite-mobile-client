@@ -10,7 +10,7 @@ import '../../../widgets/common_button.dart';
 import '../../../widgets/common_text_field.dart';
 import 'settings_controller.dart';
 
-class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
+class SubmitBrandsScreen extends GetWidget<AthleteSettingsController> {
   final bool isAthlete;
   const SubmitBrandsScreen({super.key, required this.isAthlete});
 
@@ -34,7 +34,7 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                       ),
                       Center(
                         child: Text(
-                          'SUBMIT YOUR BRANDS',
+                          'SUBMIT YOUR BRANDS'.tr.toUpperCase(),
                           style: TextStyle(
                             fontSize: 28.sp,
                             fontFamily: GoogleFonts.anton().fontFamily,
@@ -46,14 +46,13 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 30.h),
                   Row(
                     children: [
                       Expanded(
                         child: CommonTextField(
                           controller: controller.brandsController,
-                          label: "YOUR BRANDS",
+                          label: "YOUR BRANDS".tr.toUpperCase(),
                           inputType: TextInputType.text,
                         ),
                       ),
@@ -67,7 +66,7 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             color: AppColors.primaryColor.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Icon(
                             Icons.add,
@@ -78,7 +77,6 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20.h),
                   Expanded(
                     child: Obx(
@@ -91,16 +89,13 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                               Expanded(
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 10.h),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 10.h,
-                                  ),
+                                  padding: EdgeInsets.all(15.r),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color: AppColors.primaryColor,
                                       width: 0.8,
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(16.r),
                                   ),
                                   child: Text(
                                     item,
@@ -112,18 +107,19 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                                 ),
                               ),
                               SizedBox(width: 10.w),
-                              InkWell(
-                                onTap: () => controller.removeItem(index),
-                                child: Container(
-                                  padding: EdgeInsets.all(12.w),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFD71D24).withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Icon(
-                                    Icons.close,
-                                    color: AppColors.white,
-                                    size: 24.sp,
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10.h),
+                                child: InkWell(
+                                  onTap: () => controller.removeItem(index),
+                                  child: Container(
+                                    padding: EdgeInsets.all(7.5.r),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFD71D24)
+                                          .withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Icon(Icons.close,
+                                        color: AppColors.white, size: 24.sp),
                                   ),
                                 ),
                               ),
@@ -133,15 +129,18 @@ class SubmitBrandsScreen extends GetView<AthleteSettingsController> {
                       ),
                     ),
                   ),
-
                   SizedBox(height: 20.h),
                   Spacer(),
                   CommonButton(
-                    text: "Submit",
-                    onPressed: () {},
+                    text: "Submit".tr,
+                    onPressed: () {
+                      if (controller.aboutItems.isNotEmpty) {
+                        controller.postAthleteSubmitedBrands();
+                      }
+                    },
                     color: AppColors.lightRed,
-                    height: 42.h,
-                    borderRadius: 5,
+                    isLoading: controller.isSubmittedBrandsLoading.value,
+                    disabledColor: AppColors.lightRed,
                   ),
                   SizedBox(height: 20.h),
                 ],

@@ -1,11 +1,13 @@
 import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
 import 'package:athlete_elite/app/routes/navigation_helper.dart';
+import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:athlete_elite/app/utils/app_scaffold.dart';
 import 'package:athlete_elite/app/widgets/common_button.dart';
 import 'package:athlete_elite/app/widgets/common_text_field.dart';
 import 'package:athlete_elite/app/widgets/custom_toast.dart';
 import 'package:athlete_elite/app/widgets/selectable_button.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,11 +17,15 @@ import '../../../../widgets/AppText.dart';
 import '../../../../widgets/common_back_button.dart';
 import '../fan_signup_controller.dart';
 
-class AboutMeDetailScreen extends GetView<FanSignupController> {
+class AboutMeDetailScreen extends GetWidget<FanSignupController> {
   final bool isAthlete;
   final String userId;
+  final String accessToken;
   const AboutMeDetailScreen(
-      {super.key, required this.isAthlete, required this.userId});
+      {super.key,
+      required this.isAthlete,
+      required this.userId,
+      required this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +42,11 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                   SizedBox(height: 10.h),
                   Stack(
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: CommonBackButton(),
-                      ),
                       Padding(
                         padding: EdgeInsets.only(top: 70.h),
                         child: Center(
                           child: Text(
-                            'ABOUT ME',
+                            'ABOUT ME'.tr.toUpperCase(),
                             style: TextStyle(
                               fontSize: 28.sp,
                               fontFamily: GoogleFonts.anton().fontFamily,
@@ -63,10 +65,13 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                       Expanded(
                         child: CommonTextField(
                           controller: controller.firstnameController,
-                          label: "First Name",
+                          label: "First Name".tr,
                           validator: (p0) {
                             if (p0!.isEmpty) {
-                              return "Please enter first name";
+                              return "Please enter first name".tr;
+                            } else if (p0.length < 3 && p0.length > 15) {
+                              return "First name must be between 3 and 20 characters"
+                                  .tr;
                             }
                             return null;
                           },
@@ -76,10 +81,13 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                       Expanded(
                         child: CommonTextField(
                           controller: controller.lastnameController,
-                          label: "Last Name",
+                          label: "Last Name".tr,
                           validator: (p0) {
                             if (p0!.isEmpty) {
-                              return "Please enter last name";
+                              return "Please enter last name".tr;
+                            } else if (p0.length < 3 && p0.length > 15) {
+                              return "First name must be between 3 and 20 characters"
+                                  .tr;
                             }
                             return null;
                           },
@@ -90,11 +98,23 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                   SizedBox(height: 25),
                   CommonTextField(
                     controller: controller.usernameController,
-                    label: "Username",
-                    validator: (p0) {
-                      if (p0!.isEmpty) {
-                        return "Please enter username";
+                    label: "Username".tr,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter a username".tr;
                       }
+
+                      if (value.length < 3 || value.length > 20) {
+                        return "Username must be between 3 and 20 characters"
+                            .tr;
+                      }
+
+                      final regex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]+$');
+                      if (!regex.hasMatch(value)) {
+                        return "Username must start with a letter and contain only letters, numbers, or _"
+                            .tr;
+                      }
+
                       return null;
                     },
                   ),
@@ -105,10 +125,10 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                       width: 100.w,
                       child: CommonTextField(
                         controller: controller.ageController,
-                        label: "Age",
+                        label: "Age".tr,
                         validator: (p0) {
                           if (p0!.isEmpty) {
-                            return "Please enter your age";
+                            return "Please enter your age".tr;
                           }
                           return null;
                         },
@@ -121,7 +141,7 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SelectableButton(
-                            text: "Male",
+                            text: "Male".tr,
                             isSelected:
                                 controller.selectedGender.value == "Male",
                             textStyle: TextStyle(
@@ -137,7 +157,7 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                             borderColor: AppColors.primaryColor,
                           ),
                           SelectableButton(
-                            text: "Female",
+                            text: "Female".tr,
                             isSelected:
                                 controller.selectedGender.value == "Female",
                             onTap: () {
@@ -153,7 +173,7 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                             borderColor: AppColors.primaryColor,
                           ),
                           SelectableButton(
-                            text: "Prefer Not to Say",
+                            text: "Prefer Not to Say".tr,
                             isSelected: controller.selectedGender.value ==
                                 "Prefer Not to Say",
                             textStyle: TextStyle(
@@ -173,15 +193,33 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                         ],
                       )),
                   SizedBox(height: 25.h),
-                  Obx(() => CommonCountryDropdown(
-                        selectedCountry:
-                            controller.selectedCountry.value.isEmpty
-                                ? null
-                                : controller.selectedCountry.value,
-                        onChanged: (value) {
-                          controller.selectedCountry.value = value ?? '';
-                        },
-                        countryList: const [
+                  // Obx(() => CommonCountryDropdown(
+                  //       selectedCountry:
+                  //           controller.selectedCountry.value.isEmpty
+                  //               ? null
+                  //               : controller.selectedCountry.value,
+                  //       onChanged: (value) {
+                  //         controller.selectedCountry.value = value ?? '';
+                  //       },
+                  //       countryList: const [
+                  //         'India',
+                  //         'United States',
+                  //         'United Kingdom',
+                  //         'Australia',
+                  //         'Canada',
+                  //         'Germany',
+                  //         'France',
+                  //         'Japan',
+                  //         'Brazil',
+                  //       ],
+                  //     )),
+                  Obx(() => CommonDropdown(
+                        label: "Select Country",
+                        heading: "Country",
+                        selectedValue: controller.selectedCountry.value.isEmpty
+                            ? null
+                            : controller.selectedCountry.value,
+                        items: [
                           'India',
                           'United States',
                           'United Kingdom',
@@ -192,6 +230,10 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                           'Japan',
                           'Brazil',
                         ],
+                        onChanged: (value) {
+                          controller.selectedCountry.value = value ?? '';
+                        },
+                        showAbove: true,
                       )),
                   SizedBox(height: 20.h),
                   Container(
@@ -209,7 +251,7 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: AppText(
-                            "Preferred Languages",
+                            "Preferred Languages".tr,
                             fontSize: 16.sp,
                           ),
                         ),
@@ -219,17 +261,14 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                                 children: controller.languages.map((lang) {
                                   final isSelected =
                                       controller.selectedLanguage.value == lang;
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 10.w),
-                                    child: SelectableButton(
-                                      text: lang,
-                                      isSelected: isSelected,
-                                      onTap: () =>
-                                          controller.selectLanguage(lang),
-                                      color: AppColors.primaryColor,
-                                      borderColor: AppColors.primaryColor,
-                                      width: 45.w,
-                                    ),
+                                  return SelectableButton(
+                                    text: lang == "English" ? "EN" : "ES",
+                                    isSelected: isSelected,
+                                    onTap: () =>
+                                        controller.selectLanguage(lang),
+                                    color: AppColors.primaryColor,
+                                    borderColor: AppColors.primaryColor,
+                                    width: 45.w,
                                   );
                                 }).toList(),
                               )),
@@ -242,13 +281,16 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
                     () => Align(
                       alignment: Alignment.bottomCenter,
                       child: CommonButton(
-                        text: "Continue",
+                        text: "Continue".tr,
                         isLoading: controller.isLoading.value,
                         isDisabled: controller.isAboutMeButtonDisabled.value,
                         onPressed: () {
                           if (controller.signupAboutMeFormKey.currentState!
                               .validate()) {
-                            controller.onSignupAboutMe(isAthlete, userId);
+                            AppLogger.d(
+                                "accessToken in about me screen is $accessToken");
+                            controller.onSignupAboutMe(
+                                isAthlete, userId, accessToken);
                           } else {
                             Get.snackbar("Warning",
                                 "Please fill all the required fields",
@@ -270,55 +312,85 @@ class AboutMeDetailScreen extends GetView<FanSignupController> {
   }
 }
 
-class CommonCountryDropdown extends StatelessWidget {
-  final String? selectedCountry;
-  final ValueChanged<String?> onChanged;
-  final List<String> countryList;
+class CommonDropdown extends StatelessWidget {
+  final String? label;
+  final List<String> items;
+  final String? selectedValue;
+  final void Function(String?) onChanged;
+  final bool showAbove;
+  final String heading;
 
-  const CommonCountryDropdown({
+  const CommonDropdown({
     super.key,
-    required this.selectedCountry,
+    this.label,
+    required this.items,
+    required this.selectedValue,
     required this.onChanged,
-    required this.countryList,
+    this.showAbove = false,
+    required this.heading,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: AppColors.screenBackgroundColor,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: AppColors.primaryColor),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedCountry,
-          borderRadius: BorderRadius.circular(16.r),
-          icon: Icon(Icons.keyboard_arrow_down, color: AppColors.white),
-          dropdownColor: AppColors.screenBackgroundColor,
-          isExpanded: true,
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 15.sp,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-          ),
-          hint: Text(
-            "Select Country",
-            style: TextStyle(
-              color: AppColors.white.withOpacity(0.6),
-              fontSize: 15.sp,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            value: selectedValue,
+            isExpanded: true,
+            isDense: true,
+            hint: Text(
+              heading,
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  color: AppColors.white,
+                  fontFamily: GoogleFonts.jost().fontFamily),
+            ),
+            items: items
+                .map(
+                  (value) => DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value,
+                        style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16.sp,
+                            fontFamily: GoogleFonts.jost().fontFamily)),
+                  ),
+                )
+                .toList(),
+            onChanged: onChanged,
+            buttonStyleData: ButtonStyleData(
+              height: 53.h,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppColors.primaryColor,
+                ),
+                borderRadius: BorderRadius.circular(15.r),
+                color: AppColors.screenBackgroundColor,
+              ),
+            ),
+            iconStyleData: IconStyleData(
+              icon: Icon(Icons.keyboard_arrow_down_rounded,
+                  size: 20.sp, color: AppColors.lightGray),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              direction:
+                  showAbove ? DropdownDirection.left : DropdownDirection.right,
+              maxHeight: 200.h,
+              offset: Offset(0, -10.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.screenBackgroundColor,
+                border: Border.all(color: Colors.grey.withOpacity(0.7)),
+              ),
+              elevation: 3,
             ),
           ),
-          items: countryList.map((String country) {
-            return DropdownMenuItem<String>(
-              value: country,
-              child: Text(country),
-            );
-          }).toList(),
-          onChanged: onChanged,
         ),
-      ),
+      ],
     );
   }
 }

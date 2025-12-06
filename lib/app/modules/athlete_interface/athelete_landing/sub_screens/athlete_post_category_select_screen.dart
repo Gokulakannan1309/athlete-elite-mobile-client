@@ -258,7 +258,7 @@ class _AthletePostCategorySelectScreenState
             // Centered Text
             Center(
               child: Text(
-                "SELECT:",
+                "SELECT:".tr.toUpperCase(),
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -277,7 +277,7 @@ class _AthletePostCategorySelectScreenState
                   Column(
                     children: [
                       Text(
-                        "CONTENT CATEGORY",
+                        "CONTENT CATEGORY".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -339,7 +339,7 @@ class _AthletePostCategorySelectScreenState
                   Column(
                     children: [
                       Text(
-                        "MY BRANDS",
+                        "MY BRANDS".tr.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -367,7 +367,7 @@ class _AthletePostCategorySelectScreenState
                               return Column(
                                 children: [
                                   SelectableButton(
-                                    text: text.name,
+                                    text: text.name ?? "",
                                     isSelected: isSelected,
                                     width: 145.w,
                                     color: AppColors.red,
@@ -403,7 +403,7 @@ class _AthletePostCategorySelectScreenState
                     if (controller.selectedCategoryIds.isEmpty) {
                       Get.snackbar(
                         "Selection Category",
-                        "Please select at least one category",
+                        "Please select at least one category".tr,
                         backgroundColor: AppColors.red,
                         colorText: AppColors.white,
                       );
@@ -429,7 +429,7 @@ class _AthletePostCategorySelectScreenState
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: AppText(
-                      "Next",
+                      "Next".tr,
                       color: AppColors.white,
                       fontSize: 16.sp,
                       textAlign: TextAlign.center,

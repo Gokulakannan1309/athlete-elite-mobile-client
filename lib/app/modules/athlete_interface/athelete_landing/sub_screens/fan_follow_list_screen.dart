@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/state_manager.dart';
+import 'package:get/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../constants/app_colors.dart';
@@ -14,7 +15,7 @@ import '../../../../widgets/common_button.dart';
 import '../../../../widgets/custom_dialogbox.dart';
 import '../athelete_landing_controller.dart';
 
-class FanFollowListScreen extends GetView<AtheleteLandingController> {
+class FanFollowListScreen extends GetWidget<AtheleteLandingController> {
   final bool isAthlete;
   const FanFollowListScreen({super.key, required this.isAthlete});
 
@@ -62,7 +63,7 @@ class FanFollowListScreen extends GetView<AtheleteLandingController> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.h),
               child: Text(
-                "FANS",
+                "FANS".tr.toUpperCase(),
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 28.sp,
@@ -84,7 +85,7 @@ class FanFollowListScreen extends GetView<AtheleteLandingController> {
                 if (fans.isEmpty) {
                   return Center(
                     child: AppText(
-                      "No fans found",
+                      "No fans found".tr,
                       color: Colors.grey,
                       fontSize: 16.sp,
                     ),
@@ -172,7 +173,7 @@ class FanFollowListScreen extends GetView<AtheleteLandingController> {
                           ),
 
                           CommonButton(
-                            text: "Remove",
+                            text: "Remove".tr,
                             onPressed: () {
                               CustomDialogbox.showConfirmation(
                                 title: "Remove Fan?",
@@ -180,6 +181,7 @@ class FanFollowListScreen extends GetView<AtheleteLandingController> {
                                 confirmText: "Remove",
                                 onConfirm: () {
                                   print("Removed ${fan.name}");
+                                  controller.removeFanFromTrack(fan.id);
                                 },
                                 onCancel: () {},
                               );

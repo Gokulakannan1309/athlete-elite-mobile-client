@@ -291,7 +291,6 @@ import 'package:athlete_elite/app/constants/app_colors.dart';
 import 'package:athlete_elite/app/constants/app_config.dart';
 import 'package:athlete_elite/app/data/providers/api_result.dart';
 import 'package:athlete_elite/app/routes/app_routes.dart';
-import 'package:athlete_elite/app/routes/navigation_helper.dart';
 import 'package:athlete_elite/app/services/network_service.dart';
 import 'package:athlete_elite/app/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -333,7 +332,6 @@ class ApiProvider extends GetxService {
     _loadAccessToken();
   }
 
-  /// 🔐 Load access token from Hive
   Future<void> _loadAccessToken() async {
     final tokenBox = await Hive.openBox('auth_token');
     _accessToken = tokenBox.get('access_token');
@@ -413,7 +411,8 @@ class ApiProvider extends GetxService {
           final msg = e.response?.data?['message'] ??
               e.message ??
               'Something went wrong';
-          ToastHelper.showError(e.requestOptions.path);
+          AppLogger.d("the error message is ${e.requestOptions.path} and $msg");
+          ToastHelper.showError(msg);
           return handler.next(e);
         },
       ),
@@ -468,13 +467,13 @@ class ApiProvider extends GetxService {
     // Dynamic toJson() (reflection)
     if (_hasToJsonMethod(data)) {
       final json = (data as dynamic).toJson();
-      AppLogger.d("📦 Request Body (toJson detected): $json");
+      AppLogger.d("Request Body (toJson detected): $json");
       return json;
     }
 
     // Raw json string
     if (data is String) {
-      AppLogger.d("📦 Request Body (Raw String): $data");
+      AppLogger.d("Request Body (Raw String): $data");
       return data;
     }
 
@@ -560,6 +559,7 @@ class ApiProvider extends GetxService {
     String endpoint,
     dynamic data, {
     RxBool? isLoading,
+    Map<String, dynamic>? queryParameters,
   }) async {
     try {
       isLoading?.value = true;
@@ -573,7 +573,8 @@ class ApiProvider extends GetxService {
         requestBody = _prepareRequestBody(data);
       }
 
-      final response = await dio.post(endpoint, data: requestBody);
+      final response = await dio.post(endpoint,
+          data: requestBody, queryParameters: queryParameters);
 
       final status = response.data['status'];
 
@@ -608,6 +609,8 @@ class ApiProvider extends GetxService {
       isLoading?.value = true;
 
       final requestBody = _prepareRequestBody(data);
+
+      AppLogger.d("📦 Request Body: $requestBody");
 
       final response = await dio.put(endpoint, data: requestBody);
       final status = response.data['status'];

@@ -71,7 +71,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
           ..play();
         setState(() => _isVideoInitialized = true);
       } else if (selected.networkUrl != null) {
-        _videoController = VideoPlayerController.network(selected.networkUrl!,
+        _videoController = VideoPlayerController.network(
+          selected.networkUrl!,
           httpHeaders: {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -160,7 +161,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       child: CommonBackButton(),
                     ),
                     Text(
-                      widget.isEditpostType ? 'EDIT POST' : 'EDIT DRAFT',
+                      widget.isEditpostType
+                          ? 'EDIT POST'.tr.toUpperCase()
+                          : 'EDIT DRAFT'.tr.toUpperCase(),
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontFamily: GoogleFonts.bebasNeue().fontFamily,
@@ -280,7 +283,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
                       /// Caption label
                       Text(
-                        'Caption',
+                        'Caption'.tr,
                         style: TextStyle(color: Colors.grey[400], fontSize: 13),
                       ),
                       SizedBox(height: 8),
@@ -298,7 +301,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(16),
                             border: InputBorder.none,
-                            hintText: 'Write a caption...',
+                            hintText: 'Write a caption...'.tr,
                             hintStyle: TextStyle(color: Colors.grey[600]),
                           ),
                         ),
@@ -324,7 +327,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     );
                   }
                   return CommonButton(
-                    text: "Save Changes",
+                    text: "Save Changes".tr,
                     onPressed: () {
                       if (homeController.saveDraftIsLoading.value == false) {
                         AppLogger.d(
